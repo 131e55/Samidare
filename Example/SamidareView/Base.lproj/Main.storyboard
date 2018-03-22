@@ -20,11 +20,41 @@
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YW8-dj-5Y2">
+                                <rect key="frame" x="0.0" y="81" width="375" height="586"/>
+                                <connections>
+                                    <segue destination="wIw-Mt-qLr" kind="embed" id="Hjk-dK-oVU"/>
+                                </connections>
+                            </containerView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SamidareView Sample" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OEC-XK-bax">
+                                <rect key="frame" x="102.5" y="40" width="169.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="YW8-dj-5Y2" secondAttribute="bottom" id="3J4-n4-T3h"/>
+                            <constraint firstItem="OEC-XK-bax" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="C3K-KD-wyq"/>
+                            <constraint firstItem="YW8-dj-5Y2" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Gtb-Ga-ORV"/>
+                            <constraint firstItem="OEC-XK-bax" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="20" id="OP3-un-PqL"/>
+                            <constraint firstItem="YW8-dj-5Y2" firstAttribute="top" secondItem="OEC-XK-bax" secondAttribute="bottom" constant="20" id="qoe-yM-pHN"/>
+                            <constraint firstAttribute="trailing" secondItem="YW8-dj-5Y2" secondAttribute="trailing" id="x2a-Dq-IwY"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Samidare View Controller-->
+        <scene sceneID="lf9-3j-uMa">
+            <objects>
+                <viewController id="wIw-Mt-qLr" customClass="SamidareViewController" customModule="SamidareView" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eLX-o2-iAz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="764" y="33"/>
         </scene>
     </scenes>
 </document>
