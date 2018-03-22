@@ -1,0 +1,16 @@
+PODS:
+  - SamidareView (0.1.0)
+
+DEPENDENCIES:
+  - SamidareView (from `../`)
+
+EXTERNAL SOURCES:
+  SamidareView:
+    :path: ../
+
+SPEC CHECKSUMS:
+  SamidareView: d8378f2f1b1347ed29c3d8f79bc7a2bf409d81b2
+
+PODFILE CHECKSUM: 6eebde7fab88aec2024ccd4d89cf991fb3666d70
+
+COCOAPODS: 1.4.0
