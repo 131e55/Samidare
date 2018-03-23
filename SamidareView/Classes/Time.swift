@@ -9,35 +9,40 @@ import Foundation
 
 public struct Time {
 
-    public var hour: Int = 0 {
+    public var hours: Int = 0 {
         didSet {
-            hour = min(max(hour, 0), 24)
-            if hour == 24 {
-                minute = 0
+            hours = min(max(hours, 0), 24)
+            if hours == 24 {
+                minutes = 0
             }
         }
     }
 
-    public var minute: Int = 0 {
+    public var minutes: Int = 0 {
         didSet {
-            let upper = hour == 24 ? 0 : 59
-            minute = min(max(minute, 0), upper)
+            let additionalHours = minutes / 60
+            if additionalHours > 0 {
+                hours += additionalHours
+            }
+            minutes = max(minutes % 60, 0)
         }
     }
 
-    public init(hour: Int, minute: Int) {
-        setup(hour: hour, minute: minute)
+    public var totalMinutes: Int { return hours * 60 + minutes }
+
+    public init(hours: Int, minutes: Int) {
+        setup(hours: hours, minutes: minutes)
     }
 
-    private mutating func setup(hour h: Int, minute m: Int) {
-        hour = h
-        minute = m
+    private mutating func setup(hours h: Int, minutes m: Int) {
+        hours = h
+        minutes = m
     }
+}
 
-    static func calcTotalMinutes(from: Time, to: Time) -> Int {
-        let fromMinutes = from.hour * 60 + from.minute
-        let toMinutes = to.hour * 60 + to.minute
-        let minutes = Int(abs(toMinutes - fromMinutes))
-        return minutes
+extension Time: Equatable {
+
+    static public func ==(lfs: Time, rhs: Time) -> Bool {
+        return lfs.hours == rhs.hours && lfs.minutes == rhs.minutes
     }
 }

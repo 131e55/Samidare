@@ -10,65 +10,125 @@ import UIKit
 
 open class SamidareViewController: UIViewController {
 
-    public var timeUnit = 10
-    public var startTime = Time(hour: 1, minute: 30)
-    public var endTime = Time(hour: 23, minute: 40)
-    public var heightPerMinute: CGFloat = 1
-    public var timeLabelWidth: CGFloat = 64
+    public var timeUnit = 10 {
+        didSet { timeUnit = min(max(timeUnit, 0), 59) }
+    }
+    public var startTime = Time(hours: 1, minutes: 38)
+    public var endTime = Time(hours: 23, minutes: 49)
 
+    public var heightPerMinute: CGFloat = 1
+
+    private weak var timeTableView: UITableView!
     private weak var samidareView: SamidareView!
 
     open override func viewDidLoad() {
 
         super.viewDidLoad()
 
-        setupSamidareView()
+        print(startTime)
+        print(endTime)
 
-        view.backgroundColor = .red
-        samidareView.backgroundColor = .cyan
-    }
+        print(startTime == endTime)
 
-    private func setupSamidareView() {
+        let tableView = UITableView(frame: view.bounds, style: .plain)
+        tableView.backgroundColor = .red
+        tableView.dataSource = self
+        tableView.delegate = self
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        timeTableView = tableView
 
         let samidareView = SamidareView()
+        samidareView.dataSource = self
+        samidareView.backgroundColor = .green
         view.addSubview(samidareView)
         samidareView.translatesAutoresizingMaskIntoConstraints = false
         samidareView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         samidareView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        samidareView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        samidareView.leadingAnchor.constraint(equalTo: timeTableView.trailingAnchor).isActive = true
         samidareView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         self.samidareView = samidareView
 
-        let totalMinutes = Time.calcTotalMinutes(from: startTime, to: endTime)
-        samidareView.contentHeight = heightPerMinute * CGFloat(totalMinutes)
-
-        let floorStartTime = Time(hour: startTime.hour, minute: 0)
-        let ceilEndTime = endTime.minute > 0 ? Time(hour: endTime.hour + 1, minute: 0) : endTime
-        samidareView.numberOfRows = ceilEndTime.hour - floorStartTime.hour + 1
-        print(floorStartTime)
-        print(ceilEndTime)
+        samidareView.reload()
     }
 }
 
-open class SamidareView: UIScrollView {
+extension SamidareViewController: SamidareViewDataSource {
 
-    private weak var contentView: UIView!
-    private weak var contentStackView: UIStackView!
+    public func numberOfColumns(in samidareView: SamidareView) -> Int {
+        return 50
+    }
+}
+
+extension SamidareViewController: UITableViewDataSource {
+
+    public func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+        let floorStartTime = Time(hours: startTime.hours, minutes: startTime.minutes / timeUnit * timeUnit)
+
+        var ceilEndTime = Time(hours: endTime.hours, minutes: endTime.minutes)
+        let modulo = ceilEndTime.minutes % timeUnit
+        if modulo > 0 {
+            ceilEndTime.minutes -= modulo
+            ceilEndTime.minutes += timeUnit
+        }
+
+        let numberOfRows = (ceilEndTime.totalMinutes - floorStartTime.totalMinutes) / timeUnit
+        return numberOfRows
+    }
+
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
+    }
+}
+
+extension SamidareViewController: UITableViewDelegate {
+
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 32
+    }
+}
+
+public protocol SamidareViewDataSource: class {
+    func numberOfColumns(in samidareView: SamidareView) -> Int
+//    func events(in samidareView: SamidareView, inColumn column: Int)
+}
+
+protocol SamidareViewDelegate {
+
+}
+
+
+open class SamidareView: UIView {
+
+    private weak var scrollView: UIScrollView!
+    private weak var stackView: UIStackView!
+
+    private var contentViewWidthConstraint: NSLayoutConstraint!
     private var contentViewHeightConstraint: NSLayoutConstraint!
-
-    public var timeLabelWidth: CGFloat = 64
 
     public var contentHeight: CGFloat = 0 {
         didSet { layoutContentView() }
     }
 
-    public var numberOfRows: Int = 0 {
-        didSet { reloadContentStackView() }
+    public var timeUnit = 10 {
+        didSet { timeUnit = min(max(timeUnit, 0), 59) }
     }
 
-    public var heightForRow: CGFloat = 0 {
-        didSet { reloadContentStackView() }
-    }
+    public var startTime = Time(hours: 1, minutes: 38)
+    public var endTime = Time(hours: 23, minutes: 49)
+
+    public var heightPerUnit: CGFloat = 2
+
+    public weak var dataSource: SamidareViewDataSource?
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -82,47 +142,74 @@ open class SamidareView: UIScrollView {
 
     private func commonInit() {
 
-        let contentView = UIView(frame: bounds)
-        addSubview(contentView)
+        let scrollView = UIScrollView()
+        addSubview(scrollView)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        self.scrollView = scrollView
+
+        let contentView = UIView()
+        contentView.backgroundColor = .cyan
+        scrollView.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        contentView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
-        contentViewHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: contentHeight)
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+
+        contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 0)
+        contentViewWidthConstraint.isActive = true
+        contentViewHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: 0)
         contentViewHeightConstraint.isActive = true
-        self.contentView = contentView
 
         let stackView = UIStackView()
-        stackView.axis = .vertical
+        stackView.axis = .horizontal
+        stackView.alignment = .fill
         stackView.distribution = .fillEqually
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        self.contentStackView = stackView
+        stackView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        self.stackView = stackView
+    }
 
-        reloadContentStackView()
+    public func reload() {
+
+        layoutContentView()
+        layoutIfNeeded()
+        reloadStackView()
     }
 
     private func layoutContentView() {
+        print(dataSource)
+        guard let dataSource = dataSource else { return }
+        let numberOfColumns = dataSource.numberOfColumns(in: self)
 
-        contentViewHeightConstraint.constant = contentHeight
-        layoutIfNeeded()
+        contentViewWidthConstraint.constant = CGFloat(numberOfColumns) * 32
+        contentViewHeightConstraint.constant = 3000
     }
 
-    private func reloadContentStackView() {
+    private func reloadStackView() {
 
-        for view in contentStackView.arrangedSubviews {
+        guard let dataSource = dataSource else { return }
+        let numberOfColumns = dataSource.numberOfColumns(in: self)
+
+        for view in stackView.arrangedSubviews {
             view.removeFromSuperview()
         }
 
-        for row in 0 ..< numberOfRows {
+        for column in 0 ..< numberOfColumns {
             let view = UIView()
-            view.backgroundColor = [.red, .green, .blue][row % 3]
-            contentStackView.addArrangedSubview(view)
+            view.backgroundColor = [.red, .green, .blue][column % 3]
+            stackView.addArrangedSubview(view)
         }
     }
 }
+
+
 
