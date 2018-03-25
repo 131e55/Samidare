@@ -54,7 +54,7 @@
                 <viewController id="wIw-Mt-qLr" customClass="SamidareViewController" customModule="SamidareView" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eLX-o2-iAz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="764" y="33"/>
+            <point key="canvasLocation" x="916" y="133"/>
         </scene>
     </scenes>
 </document>

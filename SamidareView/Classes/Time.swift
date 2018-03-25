@@ -28,7 +28,13 @@ public struct Time {
         }
     }
 
-    public var totalMinutes: Int { return hours * 60 + minutes }
+    public var totalMinutes: Int {
+        return hours * 60 + minutes
+    }
+
+    public var formattedString: String {
+        return String(format: "%02d:%02d", arguments: [hours, minutes])
+    }
 
     public init(hours: Int, minutes: Int) {
         setup(hours: hours, minutes: minutes)
