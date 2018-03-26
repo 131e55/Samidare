@@ -37,10 +37,11 @@ public struct Time {
     }
 
     public init(hours: Int, minutes: Int) {
-        setup(hours: hours, minutes: minutes)
+        // to call didSet
+        initialize(hours: hours, minutes: minutes)
     }
 
-    private mutating func setup(hours h: Int, minutes m: Int) {
+    private mutating func initialize(hours h: Int, minutes m: Int) {
         hours = h
         minutes = m
     }

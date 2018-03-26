@@ -10,15 +10,15 @@ import Foundation
 public struct Event {
 
     public var id: Int? = nil
+    public var title: String? = nil
     public var start: Time
     public var end: Time
-    public var title: String? = nil
 
-    public init(id: Int? = nil, start: Time, end: Time, title: String? = nil) {
+    public init(id: Int? = nil, title: String? = nil, start: Time, end: Time) {
 
         self.id = id
+        self.title = title
         self.start = start
         self.end = end
-        self.title = title
     }
 }
