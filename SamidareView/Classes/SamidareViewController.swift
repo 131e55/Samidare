@@ -8,12 +8,6 @@
 import UIKit
 
 
-extension Notification.Name {
-
-    static let SamidareViewDidLongPressEventView = Notification.Name.init("SamidareViewDidLongPressEventView")
-}
-
-
 public protocol SamidareViewDataSource: class {
 
     func timeRange(in samidareView: SamidareView) -> TimeRange
@@ -81,15 +75,16 @@ open class SamidareViewController: UIViewController {
 
         // Fit samidareView contentInset to timeLabel
         let timeColumnWidth = delegate?.widthForTimeColumn(in: samidareView) ?? 50
+        let additionalInsetLeft: CGFloat = 8
         let numberOfRows = tableView(timeTableView, numberOfRowsInSection: 0)
         let halfTimeHeight = SamidareTimeCell.font.lineHeight / 2
         let lastRowHeight = tableView(timeTableView, heightForRowAt: IndexPath(row: numberOfRows - 1, section: 0))
         let inset = UIEdgeInsets(top: halfTimeHeight,
-                                 left: timeColumnWidth,
+                                 left: timeColumnWidth + additionalInsetLeft,
                                  bottom: lastRowHeight - halfTimeHeight,
                                  right: samidareView.scrollView.contentInset.right)
         samidareView.scrollView.contentInset = inset
-        samidareView.scrollView.scrollIndicatorInsets.left = timeColumnWidth
+        samidareView.scrollView.scrollIndicatorInsets.left = timeColumnWidth + additionalInsetLeft
     }
 }
 

@@ -9,8 +9,13 @@ import UIKit
 
 open class EventView: UIView {
 
-    private(set) var event: Event!
+    public var themeColor: UIColor = .cyan {
+        didSet {
+            backgroundColor = themeColor
+        }
+    }
 
+    private(set) var event: Event!
     private(set) weak var titleLabel: UILabel!
 
     public init(event: Event) {

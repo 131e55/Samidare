@@ -79,7 +79,7 @@ extension ViewController: SamidareViewDelegate {
     func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView {
 
         let view = CustomEventView(event: event)
-        view.backgroundColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
+        view.themeColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
 
         return view
     }
@@ -91,6 +91,7 @@ class CustomEventView: EventView {
         super.init(event: event)
 
         layer.cornerRadius = 4
+
         let label = UILabel()
         label.text = "😻"
         addSubview(label)

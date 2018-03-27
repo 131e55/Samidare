@@ -19,9 +19,7 @@ open class SamidareView: UIView {
     private weak var stackView: UIStackView!
 
     private var impactFeedbackGenerator: UIImpactFeedbackGenerator!
-    private var selectionFeedbackGenerator: UISelectionFeedbackGenerator!
-
-    private weak var editingView: EditingEventView!
+    private weak var editingView: EditingEventView?
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
     private var lastLocationInSelf: CGPoint!
@@ -85,12 +83,12 @@ open class SamidareView: UIView {
         stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
         self.stackView = stackView
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTap))
+        addGestureRecognizer(tapGesture)
+
         // for LongPress
         impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedbackGenerator.prepare()
-        // for Drag
-        selectionFeedbackGenerator = UISelectionFeedbackGenerator()
-        selectionFeedbackGenerator.prepare()
     }
 
     public func reload() {
@@ -136,6 +134,7 @@ open class SamidareView: UIView {
 
                 let topInterval = (event.start.totalMinutes - timeRange.start.totalMinutes) / timeRange.minInterval
                 let topConstraint = eventView.topAnchor.constraint(equalTo: columnView.topAnchor)
+                topConstraint.identifier = "EventViewTopConstraint"
                 topConstraint.constant = CGFloat(topInterval) * heightPerInterval
                 topConstraint.isActive = true
 
@@ -151,7 +150,49 @@ open class SamidareView: UIView {
     }
 }
 
+// MARK: - Extension for Edit
+
 extension SamidareView {
+
+    private func translateToTime(fromYInContentView y: CGFloat) -> Time {
+
+        guard let dataSource = dataSource else { fatalError() }
+
+        let timeRange = dataSource.timeRange(in: self)
+        let startMinutes = timeRange.start.totalMinutes
+        let endMinutes = timeRange.end.totalMinutes
+        let minInterval = timeRange.minInterval
+        let totalHeight = contentViewHeightConstraint.constant
+        let yRatio = y / totalHeight
+
+        var minutes = Int(round(CGFloat(endMinutes - startMinutes) * yRatio)) + startMinutes
+
+        let modulo = minutes % minInterval
+        if modulo > 0 {
+            if Float(modulo) / Float(minInterval) >= 0.5 {
+                // ceil
+                minutes -= modulo
+                minutes += minInterval
+            } else {
+                // floor
+                minutes = minutes / minInterval * minInterval
+            }
+        }
+
+        let result = Time(hours: 0, minutes: minutes)
+        return result
+    }
+
+    @objc private func viewDidTap(_ sender: UITapGestureRecognizer) {
+
+        guard let editingView = editingView else { return }
+        guard let targetEventView = editingView.targetEventView else { return }
+        print("👿Edit Ended")
+//        let topConstraint = targetEventView.constraints.first(where: { $0.identifier == "EventViewTopConstraint" })!
+
+//        topConstraint.constant
+        print(editingView.targetEventView.constraints)
+    }
 
     @objc private func eventViewDidLongPress(_ sender: UILongPressGestureRecognizer) {
 
@@ -166,7 +207,7 @@ extension SamidareView {
             lastTouchLocationInEditingEventView = locationInEventView
 
             let eventViewFrameInContentView = targetEventView.convert(targetEventView.bounds, to: contentView)
-            let editingView = EditingEventView(sourceEventView: targetEventView)
+            let editingView = EditingEventView(targetEventView: targetEventView)
             editingView.frame = eventViewFrameInContentView
             contentView.addSubview(editingView)
 
@@ -214,6 +255,7 @@ extension SamidareView {
         }
     }
 
+    /// for EventViewDidLongPress and EditingViewDidPan
     private func handleGestureLocationChanged(_ sender: UIGestureRecognizer) {
 
         lastLocationInSelf = sender.location(in: self)
@@ -223,17 +265,22 @@ extension SamidareView {
         updateEditingViewFrame()
     }
 
-
+    /// for EventViewDidLongPress and EditingViewDidPan
     private func updateEditingViewFrame() {
 
+        guard let editingView = editingView else { return }
         guard let recognizer = handlingGestureRecognizer else { return }
         guard let lastTouchLocation = lastTouchLocationInEditingEventView else { return }
 
         let locationInContentView = recognizer.location(in: contentView)
-        let x = editingView.frame.origin.x
-        let y = locationInContentView.y - lastTouchLocation.y
-        let point = CGPoint(x: x, y: y)
-        editingView.frame.origin = point
+        editingView.frame.origin = CGPoint(x: editingView.frame.origin.x,
+                                           y: locationInContentView.y - lastTouchLocation.y)
+
+        // Calculate estimeated event time range
+        let y = editingView.frame.origin.y
+        let estimatedStartTime = translateToTime(fromYInContentView: y)
+        let estimatedEndTime = translateToTime(fromYInContentView: y + editingView.bounds.height)
+        editingView.updateEstimatedTime(start: estimatedStartTime, end: estimatedEndTime)
     }
 
     private func shouldAutoScroll() -> (should: Bool, strength: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat)) {
