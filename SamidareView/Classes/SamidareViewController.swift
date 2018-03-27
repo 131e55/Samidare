@@ -8,6 +8,12 @@
 import UIKit
 
 
+extension Notification.Name {
+
+    static let SamidareViewDidLongPressEventView = Notification.Name.init("SamidareViewDidLongPressEventView")
+}
+
+
 public protocol SamidareViewDataSource: class {
 
     func timeRange(in samidareView: SamidareView) -> TimeRange
@@ -15,11 +21,13 @@ public protocol SamidareViewDataSource: class {
     func events(in samidareView: SamidareView, inColumn column: Int) -> [Event]
 }
 
+
 public protocol SamidareViewDelegate: class {
 
     func widthForTimeColumn(in samidareView: SamidareView) -> CGFloat
     func widthForEventColumn(in samidareView: SamidareView) -> CGFloat
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat
+    func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView
 }
 
 

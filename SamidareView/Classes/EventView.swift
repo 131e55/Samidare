@@ -7,20 +7,30 @@
 
 import UIKit
 
-class EventView: UIView {
+open class EventView: UIView {
 
     private(set) var event: Event!
 
-    init(event: Event) {
+    private(set) weak var titleLabel: UILabel!
+
+    public init(event: Event) {
 
         super.init(frame: .zero)
 
         self.event = event
 
-        
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 14)
+        titleLabel.textAlignment = .center
+        titleLabel.text = event.title
+        titleLabel.textColor = .white
+        addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        self.titleLabel = titleLabel
     }
 
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }

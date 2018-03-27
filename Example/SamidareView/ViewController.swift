@@ -30,7 +30,7 @@ extension ViewController: SamidareViewDataSource {
 
         return TimeRange(start:  Time(hours: 1, minutes: 40),
                          end: Time(hours: 23, minutes: 50),
-                         minInterval: 10)
+                         minInterval: 15)
     }
 
     func numberOfColumns(in samidareView: SamidareView) -> Int {
@@ -41,7 +41,7 @@ extension ViewController: SamidareViewDataSource {
 
         let events = [
             [
-                Event(start: Time(hours: 4, minutes: 30), end: Time(hours: 7, minutes: 45)),
+                Event(title: "テスト", start: Time(hours: 4, minutes: 30), end: Time(hours: 7, minutes: 45)),
                 Event(start: Time(hours: 8, minutes: 0), end: Time(hours: 17, minutes: 0))
             ],
             [
@@ -65,14 +65,41 @@ extension ViewController: SamidareViewDataSource {
 extension ViewController: SamidareViewDelegate {
 
     func widthForTimeColumn(in samidareView: SamidareView) -> CGFloat {
-        return 50
-    }
-
-    func widthForEventColumn(in samidareView: SamidareView) -> CGFloat {
         return 44
     }
 
+    func widthForEventColumn(in samidareView: SamidareView) -> CGFloat {
+        return 50
+    }
+
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
-        return 22
+        return 32
+    }
+
+    func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView {
+
+        let view = CustomEventView(event: event)
+        view.backgroundColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
+
+        return view
+    }
+}
+
+class CustomEventView: EventView {
+
+    override init(event: Event) {
+        super.init(event: event)
+
+        layer.cornerRadius = 4
+        let label = UILabel()
+        label.text = "😻"
+        addSubview(label)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
