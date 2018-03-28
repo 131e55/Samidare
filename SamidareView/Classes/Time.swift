@@ -47,9 +47,13 @@ public struct Time {
     }
 }
 
-extension Time: Equatable {
+extension Time: Comparable {
 
-    static public func ==(lfs: Time, rhs: Time) -> Bool {
+    static public func == (lfs: Time, rhs: Time) -> Bool {
         return lfs.hours == rhs.hours && lfs.minutes == rhs.minutes
+    }
+
+    static public func < (lfs: Time, rhs: Time) -> Bool {
+        return lfs.totalMinutes < rhs.totalMinutes
     }
 }

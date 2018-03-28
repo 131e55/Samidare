@@ -14,8 +14,8 @@ class EditingEventView: UIView {
     private(set) weak var targetEventView: EventView!
 
     private(set) var event: Event!
-    private(set) var estimatedStartTime: Time!
-    private(set) var estimatedEndTime: Time!
+    private(set) var startTimeInEditing: Time!
+    private(set) var endTimeInEditing: Time!
 
     private weak var startTimeView: UIView!
     private weak var startTimeLabel: UILabel!
@@ -30,8 +30,8 @@ class EditingEventView: UIView {
 
         targetEventView = eventView
         event = eventView.event
-        estimatedStartTime = eventView.event.start
-        estimatedEndTime = eventView.event.end
+        startTimeInEditing = eventView.event.start
+        endTimeInEditing = eventView.event.end
 
         let snapshot = eventView.snapshotView(afterScreenUpdates: true)!
         addSubview(snapshot)
@@ -99,18 +99,18 @@ class EditingEventView: UIView {
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
 
-    func updateEstimatedTime(start: Time, end: Time) {
+    func updateTimesInEditing(start: Time, end: Time) {
 
-        let oldStartTime = estimatedStartTime
-        let oldEndTime = estimatedEndTime
+        let oldStartTime = startTimeInEditing
+        let oldEndTime = endTimeInEditing
 
-        estimatedStartTime = start
-        estimatedEndTime = end
+        startTimeInEditing = start
+        endTimeInEditing = end
 
         startTimeLabel.text = start.formattedString
         endTimeLabel.text = end.formattedString
 
-        if oldStartTime != estimatedStartTime || oldEndTime != estimatedEndTime {
+        if oldStartTime != startTimeInEditing || oldEndTime != endTimeInEditing {
             feedbackGenerator.impactOccurred()
         }
     }

@@ -154,6 +154,7 @@ open class SamidareView: UIView {
 
 extension SamidareView {
 
+    /// Translate to Time from y in contentView
     private func translateToTime(fromYInContentView y: CGFloat) -> Time {
 
         guard let dataSource = dataSource else { fatalError() }
@@ -166,8 +167,8 @@ extension SamidareView {
         let yRatio = y / totalHeight
 
         var minutes = Int(round(CGFloat(endMinutes - startMinutes) * yRatio)) + startMinutes
-
         let modulo = minutes % minInterval
+
         if modulo > 0 {
             if Float(modulo) / Float(minInterval) >= 0.5 {
                 // ceil
@@ -181,6 +182,18 @@ extension SamidareView {
 
         let result = Time(hours: 0, minutes: minutes)
         return result
+    }
+
+    /// Translate to y in contentView from Time
+    private func translateToYInContentView(from time: Time) -> CGFloat {
+
+        guard let dataSource = dataSource else { fatalError() }
+        let timeRange = dataSource.timeRange(in: self)
+        let startMinutes = timeRange.start.totalMinutes
+        let minInterval = timeRange.minInterval
+        let heightPerInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
+
+        return CGFloat((time.totalMinutes - startMinutes) / minInterval) * heightPerInterval
     }
 
     @objc private func viewDidTap(_ sender: UITapGestureRecognizer) {
@@ -268,19 +281,32 @@ extension SamidareView {
     /// for EventViewDidLongPress and EditingViewDidPan
     private func updateEditingViewFrame() {
 
+        guard let dataSource = dataSource else { fatalError() }
+        let timeRange = dataSource.timeRange(in: self)
         guard let editingView = editingView else { return }
         guard let recognizer = handlingGestureRecognizer else { return }
         guard let lastTouchLocation = lastTouchLocationInEditingEventView else { return }
 
         let locationInContentView = recognizer.location(in: contentView)
-        editingView.frame.origin = CGPoint(x: editingView.frame.origin.x,
-                                           y: locationInContentView.y - lastTouchLocation.y)
+        let editingViewHeight = editingView.bounds.height
 
-        // Calculate estimeated event time range
-        let y = editingView.frame.origin.y
-        let estimatedStartTime = translateToTime(fromYInContentView: y)
-        let estimatedEndTime = translateToTime(fromYInContentView: y + editingView.bounds.height)
-        editingView.updateEstimatedTime(start: estimatedStartTime, end: estimatedEndTime)
+        // Calculate estimeated editingView position y and event time range
+        var estimatedY = locationInContentView.y - lastTouchLocation.y
+
+        // Restrict EditingView position to TimeRange
+        let minY = translateToYInContentView(from: timeRange.start)
+        let maxY = translateToYInContentView(from: timeRange.end) - editingViewHeight
+        estimatedY = max(estimatedY, minY)
+        estimatedY = min(estimatedY, maxY)
+
+        // Recalucate event time range
+        let decidedY = estimatedY
+        let editingStartTime = translateToTime(fromYInContentView: decidedY)
+        let editingEndTime = translateToTime(fromYInContentView: decidedY + editingViewHeight)
+
+        // Apply decided Y and event time range
+        editingView.frame.origin.y = decidedY
+        editingView.updateTimesInEditing(start: editingStartTime, end: editingEndTime)
     }
 
     private func shouldAutoScroll() -> (should: Bool, strength: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat)) {
