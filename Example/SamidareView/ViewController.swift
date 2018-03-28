@@ -69,7 +69,7 @@ extension ViewController: SamidareViewDelegate {
     }
 
     func widthForEventColumn(in samidareView: SamidareView) -> CGFloat {
-        return 50
+        return 44
     }
 
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
@@ -83,6 +83,12 @@ extension ViewController: SamidareViewDelegate {
         view.textColor = [.white, .black, .white, .black, .white, .black][column % 6]
         
         return view
+    }
+
+    func eventDidEdit(in samidareView: SamidareView, newEvent: Event, oldEvent: Event) {
+
+        print("oldEvent", oldEvent)
+        print("newEvent", newEvent)
     }
 }
 

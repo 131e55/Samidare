@@ -12,8 +12,8 @@ class EditingEventView: UIView {
 
     /// Only reference. Not subview.
     private(set) weak var targetEventView: EventView!
+    let originalEvent: Event
 
-    private(set) var event: Event!
     private(set) var startTimeInEditing: Time!
     private(set) var endTimeInEditing: Time!
 
@@ -22,70 +22,87 @@ class EditingEventView: UIView {
     private weak var endTimeView: UIView!
     private weak var endTimeLabel: UILabel!
 
+    static let preferredTimeViewWidth: CGFloat = 44
+    static let preferredTimeViewHeight: CGFloat = 18
+    static let preferredTimeViewSpace: CGFloat = 4
+
     private var feedbackGenerator: UIImpactFeedbackGenerator!
 
-    init(targetEventView eventView: EventView) {
+    init(targetEventView eventView: EventView, isTimeLabelRightSide: Bool = false) {
+
+        targetEventView = eventView
+        originalEvent = eventView.event
 
         super.init(frame: eventView.bounds)
 
-        targetEventView = eventView
-        event = eventView.event
         startTimeInEditing = eventView.event.start
         endTimeInEditing = eventView.event.end
 
         let snapshot = eventView.snapshotView(afterScreenUpdates: true)!
         addSubview(snapshot)
 
-        let font = UIFont.systemFont(ofSize: 14)
-        let space: CGFloat = 4
+        let font = UIFont.systemFont(ofSize: 13)
+        let timeViewWidth = EditingEventView.preferredTimeViewWidth
+        let timeViewHeight = EditingEventView.preferredTimeViewHeight
+        let timeViewSpace = EditingEventView.preferredTimeViewSpace
 
         let startTimeView = UIView()
         startTimeView.backgroundColor = targetEventView.themeColor
         addSubview(startTimeView)
         startTimeView.translatesAutoresizingMaskIntoConstraints = false
-        startTimeView.trailingAnchor.constraint(equalTo: leadingAnchor, constant: -space).isActive = true
         startTimeView.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
+        startTimeView.widthAnchor.constraint(equalToConstant: timeViewWidth).isActive = true
+        startTimeView.heightAnchor.constraint(equalToConstant: timeViewHeight).isActive = true
+        startTimeView.layer.cornerRadius = timeViewHeight / 2
+
+        if isTimeLabelRightSide {
+            startTimeView.leadingAnchor.constraint(equalTo: trailingAnchor, constant: timeViewSpace).isActive = true
+        } else {
+            startTimeView.trailingAnchor.constraint(equalTo: leadingAnchor, constant: -timeViewSpace).isActive = true
+        }
+
         self.startTimeView = startTimeView
 
         let startLabel = UILabel()
         startLabel.font = font
         startLabel.textColor = targetEventView.textColor
-        startLabel.text = event.start.formattedString
+        startLabel.text = originalEvent.start.formattedString
         startTimeView.addSubview(startLabel)
         startLabel.translatesAutoresizingMaskIntoConstraints = false
-        startLabel.topAnchor.constraint(equalTo: startTimeView.topAnchor, constant: space / 2).isActive = true
-        startLabel.bottomAnchor.constraint(equalTo: startTimeView.bottomAnchor, constant: -space / 2).isActive = true
-        startLabel.leadingAnchor.constraint(equalTo: startTimeView.leadingAnchor, constant: space).isActive = true
-        startLabel.trailingAnchor.constraint(equalTo: startTimeView.trailingAnchor, constant: -space).isActive = true
+        startLabel.centerYAnchor.constraint(equalTo: startTimeView.centerYAnchor).isActive = true
+        startLabel.centerXAnchor.constraint(equalTo: startTimeView.centerXAnchor).isActive = true
         self.startTimeLabel = startLabel
 
         let endTimeView = UIView()
         endTimeView.backgroundColor = targetEventView.themeColor
         addSubview(endTimeView)
         endTimeView.translatesAutoresizingMaskIntoConstraints = false
-        endTimeView.trailingAnchor.constraint(equalTo: leadingAnchor, constant: -space).isActive = true
         endTimeView.centerYAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        endTimeView.widthAnchor.constraint(equalToConstant: timeViewWidth).isActive = true
+        endTimeView.heightAnchor.constraint(equalToConstant: timeViewHeight).isActive = true
+        endTimeView.layer.cornerRadius = timeViewHeight / 2
+
+        if isTimeLabelRightSide {
+            endTimeView.leadingAnchor.constraint(equalTo: trailingAnchor, constant: timeViewSpace).isActive = true
+        } else {
+            endTimeView.trailingAnchor.constraint(equalTo: leadingAnchor, constant: -timeViewSpace).isActive = true
+        }
+
         self.endTimeView = endTimeView
 
         let endLabel = UILabel()
         endLabel.font = font
         endLabel.textColor = targetEventView.textColor
-        endLabel.text = event.end.formattedString
+        endLabel.text = originalEvent.end.formattedString
         endTimeView.addSubview(endLabel)
         endLabel.translatesAutoresizingMaskIntoConstraints = false
-        endLabel.topAnchor.constraint(equalTo: endTimeView.topAnchor, constant: space / 2).isActive = true
-        endLabel.bottomAnchor.constraint(equalTo: endTimeView.bottomAnchor, constant: -space / 2).isActive = true
-        endLabel.leadingAnchor.constraint(equalTo: endTimeView.leadingAnchor, constant: space).isActive = true
-        endLabel.trailingAnchor.constraint(equalTo: endTimeView.trailingAnchor, constant: -space).isActive = true
+        endLabel.centerYAnchor.constraint(equalTo: endTimeView.centerYAnchor).isActive = true
+        endLabel.centerXAnchor.constraint(equalTo: endTimeView.centerXAnchor).isActive = true
         self.endTimeLabel = endLabel
-
-        let fitHeight = startLabel.sizeThatFits(CGSize(width: 100, height: 100)).height
-        startTimeView.layer.cornerRadius = (fitHeight + space) / 2
-        endTimeView.layer.cornerRadius = (fitHeight + space) / 2
 
         layer.masksToBounds = false
         layer.shadowOffset = .zero
-        layer.shadowRadius = 4
+        layer.shadowRadius = 6
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.5
         layer.shadowPath = UIBezierPath(rect: bounds).cgPath
