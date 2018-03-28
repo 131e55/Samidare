@@ -49,7 +49,7 @@ class EditingEventView: UIView {
 
         let startLabel = UILabel()
         startLabel.font = font
-        startLabel.textColor = .white
+        startLabel.textColor = targetEventView.textColor
         startLabel.text = event.start.formattedString
         startTimeView.addSubview(startLabel)
         startLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +69,7 @@ class EditingEventView: UIView {
 
         let endLabel = UILabel()
         endLabel.font = font
-        endLabel.textColor = .white
+        endLabel.textColor = targetEventView.textColor
         endLabel.text = event.end.formattedString
         endTimeView.addSubview(endLabel)
         endLabel.translatesAutoresizingMaskIntoConstraints = false

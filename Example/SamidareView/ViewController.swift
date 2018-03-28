@@ -28,8 +28,8 @@ extension ViewController: SamidareViewDataSource {
 
     func timeRange(in samidareView: SamidareView) -> TimeRange {
 
-        return TimeRange(start:  Time(hours: 1, minutes: 40),
-                         end: Time(hours: 23, minutes: 50),
+        return TimeRange(start:  Time(hours: 1, minutes: 45),
+                         end: Time(hours: 23, minutes: 15),
                          minInterval: 15)
     }
 
@@ -41,20 +41,20 @@ extension ViewController: SamidareViewDataSource {
 
         let events = [
             [
-                Event(title: "テスト", start: Time(hours: 4, minutes: 30), end: Time(hours: 7, minutes: 45)),
-                Event(start: Time(hours: 8, minutes: 0), end: Time(hours: 17, minutes: 0))
+                Event(title: "テスト１", start: Time(hours: 1, minutes: 40), end: Time(hours: 7, minutes: 45)),
+                Event(title: "テスト２", start: Time(hours: 8, minutes: 0), end: Time(hours: 17, minutes: 0))
             ],
             [
-                Event(start: Time(hours: 5, minutes: 15), end: Time(hours: 6, minutes: 45)),
-                Event(start: Time(hours: 15, minutes: 0), end: Time(hours: 22, minutes: 15))
+                Event(title: "テスト３", start: Time(hours: 5, minutes: 15), end: Time(hours: 6, minutes: 45)),
+                Event(title: "テスト４", start: Time(hours: 15, minutes: 0), end: Time(hours: 22, minutes: 15))
             ],
             [
-                Event(start: Time(hours: 3, minutes: 45), end: Time(hours: 7, minutes: 45)),
-                Event(start: Time(hours: 22, minutes: 0), end: Time(hours: 23, minutes: 15))
+                Event(title: "テスト５", start: Time(hours: 3, minutes: 45), end: Time(hours: 7, minutes: 45)),
+                Event(title: "テスト６", start: Time(hours: 22, minutes: 0), end: Time(hours: 23, minutes: 50))
             ],
             [
-                Event(start: Time(hours: 3, minutes: 30), end: Time(hours: 7, minutes: 45)),
-                Event(start: Time(hours: 8, minutes: 45), end: Time(hours: 19, minutes: 30))
+                Event(title: "テスト７", start: Time(hours: 3, minutes: 30), end: Time(hours: 7, minutes: 45)),
+                Event(title: "テスト８", start: Time(hours: 8, minutes: 45), end: Time(hours: 19, minutes: 30))
             ]
         ][column % 4]
 
@@ -80,7 +80,8 @@ extension ViewController: SamidareViewDelegate {
 
         let view = CustomEventView(event: event)
         view.themeColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
-
+        view.textColor = [.white, .black, .white, .black, .white, .black][column % 6]
+        
         return view
     }
 }

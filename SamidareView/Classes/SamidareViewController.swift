@@ -59,12 +59,19 @@ open class SamidareViewController: UIViewController {
         tableView.register(SamidareTimeCell.self, forCellReuseIdentifier: "SamidareTimeCell")
         tableView.dataSource = self
         tableView.delegate = self
+        if #available(iOS 11.0, *) {
+            tableView.contentInsetAdjustmentBehavior = .never
+        } else {
+            automaticallyAdjustsScrollViewInsets = false
+        }
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.contentInset.top = SamidareTimeCell.font.lineHeight / 2
+        tableView.contentInset.bottom = SamidareTimeCell.font.lineHeight / 2
         timeTableView = tableView
     }
 
@@ -76,12 +83,10 @@ open class SamidareViewController: UIViewController {
         // Fit samidareView contentInset to timeLabel
         let timeColumnWidth = delegate?.widthForTimeColumn(in: samidareView) ?? 50
         let additionalInsetLeft: CGFloat = 8
-        let numberOfRows = tableView(timeTableView, numberOfRowsInSection: 0)
-        let halfTimeHeight = SamidareTimeCell.font.lineHeight / 2
-        let lastRowHeight = tableView(timeTableView, heightForRowAt: IndexPath(row: numberOfRows - 1, section: 0))
-        let inset = UIEdgeInsets(top: halfTimeHeight,
+        let timeLabelCenterY = SamidareTimeCell.preferredTimeLabelCenterY
+        let inset = UIEdgeInsets(top: timeTableView.contentInset.top + timeLabelCenterY,
                                  left: timeColumnWidth + additionalInsetLeft,
-                                 bottom: lastRowHeight - halfTimeHeight,
+                                 bottom: timeTableView.contentInset.bottom + timeLabelCenterY,
                                  right: samidareView.scrollView.contentInset.right)
         samidareView.scrollView.contentInset = inset
         samidareView.scrollView.scrollIndicatorInsets.left = timeColumnWidth + additionalInsetLeft
@@ -168,6 +173,6 @@ extension SamidareViewController: UIScrollViewDelegate {
 
         // Sync timeTableView scroll position to samidareView
         guard scrollView == samidareView.scrollView && scrollView.contentSize.height > 0 else { return }
-        timeTableView.contentOffset.y = scrollView.contentOffset.y + scrollView.contentInset.top
+        timeTableView.contentOffset.y = scrollView.contentOffset.y + scrollView.contentInset.top - timeTableView.contentInset.top
     }
 }

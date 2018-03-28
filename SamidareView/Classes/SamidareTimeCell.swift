@@ -14,7 +14,11 @@ class SamidareTimeCell: UITableViewCell {
 
     private(set) weak var timeLabel: UILabel!
 
-    static var font = UIFont.systemFont(ofSize: 12)
+    static let font = UIFont.systemFont(ofSize: 12)
+
+    static var preferredTimeLabelCenterY: CGFloat {
+        return SamidareTimeCell.font.lineHeight / 2
+    }
 
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -36,7 +40,7 @@ class SamidareTimeCell: UITableViewCell {
         timeView.addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.centerXAnchor.constraint(equalTo: timeView.centerXAnchor).isActive = true
-        label.topAnchor.constraint(equalTo: timeView.topAnchor).isActive = true
+        label.centerYAnchor.constraint(equalTo: timeView.topAnchor, constant: SamidareTimeCell.preferredTimeLabelCenterY).isActive = true
         timeLabel = label
 
         let lineView = UILabel()

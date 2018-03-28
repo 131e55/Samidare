@@ -14,6 +14,11 @@ open class EventView: UIView {
             backgroundColor = themeColor
         }
     }
+    public var textColor: UIColor = .black {
+        didSet {
+            titleLabel.textColor = textColor
+        }
+    }
 
     private(set) var event: Event!
     private(set) weak var titleLabel: UILabel!
@@ -25,10 +30,10 @@ open class EventView: UIView {
         self.event = event
 
         let titleLabel = UILabel()
-        titleLabel.font = UIFont.systemFont(ofSize: 14)
+        titleLabel.font = UIFont.systemFont(ofSize: 13)
         titleLabel.textAlignment = .center
         titleLabel.text = event.title
-        titleLabel.textColor = .white
+        titleLabel.textColor = textColor
         addSubview(titleLabel)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
