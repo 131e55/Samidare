@@ -16,9 +16,8 @@ open class SamidareView: UIView {
     private weak var contentView: UIView!
     private var contentViewWidthConstraint: NSLayoutConstraint!
     private var contentViewHeightConstraint: NSLayoutConstraint!
-    private weak var stackView: UIStackView!
+    private weak var eventStackView: UIStackView!
 
-    private var impactFeedbackGenerator: UIImpactFeedbackGenerator!
     private weak var editingView: EditingEventView?
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
@@ -28,6 +27,8 @@ open class SamidareView: UIView {
     private let autoScrollThreshold: CGFloat = 0.1   // max 1
     private let autoScrollMinSpeed: CGFloat = 50     // [point per frame]
     private let autoScrollMaxSpeed: CGFloat = 1000    // [point per frame]
+
+    private var impactFeedbackGenerator: UIImpactFeedbackGenerator!
 
     internal let defaultWidthForColumn: CGFloat = 44
     internal let defaultHeightPerInterval: CGFloat = 10
@@ -71,6 +72,9 @@ open class SamidareView: UIView {
         contentViewHeightConstraint.isActive = true
         self.contentView = contentView
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentViewDidTap))
+        contentView.addGestureRecognizer(tapGesture)
+
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .fill
@@ -81,12 +85,9 @@ open class SamidareView: UIView {
         stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
         stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
         stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        self.stackView = stackView
+        self.eventStackView = stackView
 
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTap))
-        addGestureRecognizer(tapGesture)
-
-        // for LongPress
+        // for LongPress EventView
         impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedbackGenerator.prepare()
     }
@@ -117,12 +118,12 @@ open class SamidareView: UIView {
         let timeRange = dataSource.timeRange(in: self)
         let heightPerInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
 
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        eventStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
         for column in 0 ..< dataSource.numberOfColumns(in: self) {
 
             let columnView = UIView()
-            stackView.addArrangedSubview(columnView)
+            eventStackView.addArrangedSubview(columnView)
 
             for event in dataSource.events(in: self, inColumn: column) {
 
@@ -143,6 +144,9 @@ open class SamidareView: UIView {
                 heightConstraint.constant = CGFloat(duration) * heightPerInterval
                 heightConstraint.isActive = true
 
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(eventViewDidTap))
+                eventView.addGestureRecognizer(tapGesture)
+
                 let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(eventViewDidLongPress))
                 eventView.addGestureRecognizer(longPressGesture)
             }
@@ -154,7 +158,9 @@ open class SamidareView: UIView {
 
 extension SamidareView {
 
-    /// Translate to Time from y in contentView
+    // MARK: - Utils
+
+    /// Translate to Time from y in contentView. Returned Time is rounded to nearest interval.
     private func translateToTime(fromYInContentView y: CGFloat) -> Time {
 
         guard let dataSource = dataSource else { fatalError() }
@@ -196,7 +202,9 @@ extension SamidareView {
         return CGFloat((time.totalMinutes - startMinutes) / minInterval) * heightPerInterval
     }
 
-    @objc private func viewDidTap(_ sender: UITapGestureRecognizer) {
+    // MARK: - ContentView Gesture Handlers
+
+    @objc private func contentViewDidTap(_ sender: UITapGestureRecognizer) {
 
         guard let editingView = editingView else { return }
         guard let targetEventView = editingView.targetEventView else { return }
@@ -205,6 +213,13 @@ extension SamidareView {
 
 //        topConstraint.constant
         print(editingView.targetEventView.constraints)
+    }
+
+    // MARK: - EventView Gesture Handlers
+
+    @objc private func eventViewDidTap(_ sender: UITapGestureRecognizer) {
+
+        print("🎉")
     }
 
     @objc private func eventViewDidLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -219,31 +234,39 @@ extension SamidareView {
             let locationInEventView = sender.location(in: targetEventView)
             lastTouchLocationInEditingEventView = locationInEventView
 
+            //
+            self.editingView?.removeFromSuperview()
+
             let eventViewFrameInContentView = targetEventView.convert(targetEventView.bounds, to: contentView)
             let editingView = EditingEventView(targetEventView: targetEventView)
             editingView.frame = eventViewFrameInContentView
             contentView.addSubview(editingView)
+            self.editingView = editingView
 
             let panGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewDidPan))
             editingView.addGestureRecognizer(panGesture)
-
-            self.editingView = editingView
 
             targetEventView.alpha = 0.2
 
             impactFeedbackGenerator.impactOccurred()
 
         case .changed:
-            handleGestureLocationChanged(sender)
+            // Move EditingEventView if EventView dragged after long press.
+            lastLocationInSelf = sender.location(in: self)
+            autoScrollIfNeeded()
+            updateEditingViewFrame()
 
         case .ended:
             invalidateAutoScrollDisplayLink()
             handlingGestureRecognizer = nil
+            alignEditingViewFrameToNearestInterval()
 
         default:
             break
         }
     }
+
+    // MARK: - EditingView Gesture Handlers
 
     @objc private func editingViewDidPan(_ sender: UIPanGestureRecognizer) {
 
@@ -257,28 +280,21 @@ extension SamidareView {
             lastTouchLocationInEditingEventView = locationInEditView
 
         case .changed:
-            handleGestureLocationChanged(sender)
+            lastLocationInSelf = sender.location(in: self)
+            autoScrollIfNeeded()
+            updateEditingViewFrame()
 
         case .ended:
             invalidateAutoScrollDisplayLink()
             handlingGestureRecognizer = nil
+            alignEditingViewFrameToNearestInterval()
 
         default:
             break
         }
     }
 
-    /// for EventViewDidLongPress and EditingViewDidPan
-    private func handleGestureLocationChanged(_ sender: UIGestureRecognizer) {
-
-        lastLocationInSelf = sender.location(in: self)
-
-        autoScrollIfNeeded()
-
-        updateEditingViewFrame()
-    }
-
-    /// for EventViewDidLongPress and EditingViewDidPan
+    /// for moving by PanGesture on EditingEventView or LongPressGesture on EventView
     private func updateEditingViewFrame() {
 
         guard let dataSource = dataSource else { fatalError() }
@@ -308,6 +324,21 @@ extension SamidareView {
         editingView.frame.origin.y = decidedY
         editingView.updateTimesInEditing(start: editingStartTime, end: editingEndTime)
     }
+
+    private func alignEditingViewFrameToNearestInterval() {
+
+        guard let editingView = editingView else { fatalError() }
+
+        let currentY = editingView.frame.origin.y
+        let roundedStartTime = translateToTime(fromYInContentView: currentY)
+        let alignedY = translateToYInContentView(from: roundedStartTime)
+
+        UIView.animate(withDuration: 0.1, animations: {
+            editingView.frame.origin.y = alignedY
+        })
+    }
+
+    // MARK: - Auto Scroll
 
     private func shouldAutoScroll() -> (should: Bool, strength: (top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat)) {
 
@@ -397,3 +428,14 @@ extension SamidareView {
         autoScrollDisplayLinkLastTimeStamp = displayLink.timestamp
     }
 }
+
+// MARK: - Memo
+
+//
+// View Hierarchy
+// self
+//  - scrollView: UIScrollView
+//      - contentView: UIView
+//          - eventStackView: UIStackView
+//
+
