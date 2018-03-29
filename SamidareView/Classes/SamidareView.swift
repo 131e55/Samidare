@@ -24,6 +24,7 @@ open class SamidareView: UIView {
     private let editingTargetEventViewAlpha: CGFloat = 0.3
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
+    private var lastEditingType: TimeEditingType?
     private var lastLocationInSelf: CGPoint!
     private var autoScrollDisplayLink: CADisplayLink?
     private var autoScrollDisplayLinkLastTimeStamp: CFTimeInterval!
@@ -361,6 +362,8 @@ extension SamidareView {
         guard let recognizer = handlingGestureRecognizer else { fatalError() }
         guard let lastTouchLocation = lastTouchLocationInEditingEventView else { fatalError() }
 
+        lastEditingType = type
+
         let heightPerMinInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
         let locationInContentView = recognizer.location(in: contentView)
         let editingViewHeight = editingView.bounds.height
@@ -384,10 +387,20 @@ extension SamidareView {
         }()
 
         // Restrict EditingView position to TimeRange
-        let minY = translateToYInContentView(from: timeRange.start)
-        let maxY = translateToYInContentView(from: timeRange.end) - (estimatedBottomY - estimatedTopY)
-        estimatedTopY = max(estimatedTopY, minY)
-        estimatedTopY = min(estimatedTopY, maxY)
+        let minTopY = translateToYInContentView(from: timeRange.start)
+        let maxTopY = translateToYInContentView(from: timeRange.end) - (estimatedBottomY - estimatedTopY)
+        let maxBottomY = translateToYInContentView(from: timeRange.end)
+
+        switch type {
+        case .both:
+            estimatedTopY = max(estimatedTopY, minTopY)
+            estimatedTopY = min(estimatedTopY, maxTopY)
+        case .startOnly:
+            estimatedTopY = max(estimatedTopY, minTopY)
+        case .endOnly:
+            estimatedBottomY = min(estimatedBottomY, maxBottomY)
+        }
+
         // Restrict to minimum interval or more
         if type == .startOnly {
             estimatedTopY = min(estimatedTopY, estimatedBottomY - heightPerMinInterval)
@@ -571,7 +584,7 @@ extension SamidareView {
 //                scrollView.contentOffset.x = min(scrollView.contentOffset.x, maxContentOffsetX)
 //            }
 
-            updateEditingViewFrame()
+            updateEditingViewFrame(type: lastEditingType!)
         }
 
         autoScrollDisplayLinkLastTimeStamp = displayLink.timestamp
