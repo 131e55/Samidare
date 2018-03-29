@@ -73,7 +73,7 @@ extension ViewController: SamidareViewDelegate {
     }
 
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
-        return 32
+        return 20
     }
 
     func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView {

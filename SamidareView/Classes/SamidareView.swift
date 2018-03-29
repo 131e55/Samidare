@@ -352,6 +352,7 @@ extension SamidareView {
 
         guard let editingView = editingView else { fatalError() }
         guard let eventView = editingView.targetEventView else { fatalError() }
+        guard let columnView = eventView.superview else { fatalError() }
         guard let topConstraint = eventView.superview!.constraints.first(where: {
             guard let firstItem = $0.firstItem as? EventView else { return false }
             return $0.identifier == "EventViewTopConstraint" && firstItem == eventView
@@ -379,6 +380,17 @@ extension SamidareView {
         }, completion: { _ in
             eventView.alpha = self.editingTargetEventViewAlpha
         })
+
+        // Adjust EventViews z-orders. Shortest event should be frontmost. Longest event should be backmost.
+        let sortedViews = columnView.subviews.sorted(by: {
+            guard let eventView1 = $0 as? EventView, let eventView2 = $1 as? EventView else { return false }
+            let duration1 = eventView1.event.end.totalMinutes - eventView1.event.start.totalMinutes
+            let duration2 = eventView2.event.end.totalMinutes - eventView2.event.start.totalMinutes
+            return duration1 > duration2
+        })
+        for view in sortedViews {
+            columnView.bringSubview(toFront: view)
+        }
 
         delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
     }
