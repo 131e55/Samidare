@@ -253,6 +253,8 @@ extension SamidareView {
 
             let panGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewDidPan))
             editingView.addGestureRecognizer(panGesture)
+            let topPanGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewTopDidPan))
+            editingView.topMarkArea.addGestureRecognizer(topPanGesture)
 
             targetEventView.alpha = editingTargetEventViewAlpha
 
@@ -290,7 +292,33 @@ extension SamidareView {
         case .changed:
             lastLocationInSelf = sender.location(in: self)
             autoScrollIfNeeded()
-            updateEditingViewFrame()
+            updateEditingViewFrame(type: .both)
+
+        case .ended:
+            invalidateAutoScrollDisplayLink()
+            handlingGestureRecognizer = nil
+            endEditingOfEventTime()
+
+        default:
+            break
+        }
+    }
+
+    @objc private func editingViewTopDidPan(_ sender: UIPanGestureRecognizer) {
+
+        guard let targetEditView = sender.view?.superview! as? EditingEventView else { return }
+
+        handlingGestureRecognizer = sender
+
+        switch sender.state {
+        case .began:
+            let locationInEditView = sender.location(in: targetEditView)
+            lastTouchLocationInEditingEventView = locationInEditView
+
+        case .changed:
+            lastLocationInSelf = sender.location(in: self)
+            autoScrollIfNeeded()
+            updateEditingViewFrame(type: .startOnly)
 
         case .ended:
             invalidateAutoScrollDisplayLink()
@@ -304,34 +332,68 @@ extension SamidareView {
 
     // MARK: - Moving of EditingEventView
 
+    private enum TimeEditingType {
+        case both
+        case startOnly
+        case endOnly
+    }
+
     /// for moving by PanGesture on EditingEventView or LongPressGesture on EventView
-    private func updateEditingViewFrame() {
+    private func updateEditingViewFrame(type: TimeEditingType = .both) {
 
         guard let dataSource = dataSource else { fatalError() }
         let timeRange = dataSource.timeRange(in: self)
-        guard let editingView = editingView else { return }
-        guard let recognizer = handlingGestureRecognizer else { return }
-        guard let lastTouchLocation = lastTouchLocationInEditingEventView else { return }
+        guard let editingView = editingView else { fatalError() }
+        guard let targetEventView = editingView.targetEventView else { fatalError() }
+        guard let recognizer = handlingGestureRecognizer else { fatalError() }
+        guard let lastTouchLocation = lastTouchLocationInEditingEventView else { fatalError() }
 
+        let heightPerMinInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
         let locationInContentView = recognizer.location(in: contentView)
+        let currentBottomY = editingView.frame.maxY
         let editingViewHeight = editingView.bounds.height
 
-        // Calculate estimeated editingView position y and event time range
-        var estimatedY = locationInContentView.y - lastTouchLocation.y
+        // Calculate estimeated editingView position y
+        var estimatedTopY: CGFloat = {
+            switch type {
+            case .both, .startOnly: return locationInContentView.y - lastTouchLocation.y
+            case .endOnly:          return targetEventView.frame.minY
+            }
+        }()
+        var estimatedBottomY: CGFloat = {
+            switch type {
+            case .both:         return estimatedTopY + editingViewHeight
+            case .startOnly:    return targetEventView.frame.maxY
+            case .endOnly:
+                let simulatedTopY = locationInContentView.y - lastTouchLocation.y
+                let movedLength = targetEventView.frame.minY - simulatedTopY
+                return currentBottomY - movedLength
+            }
+        }()
 
         // Restrict EditingView position to TimeRange
         let minY = translateToYInContentView(from: timeRange.start)
-        let maxY = translateToYInContentView(from: timeRange.end) - editingViewHeight
-        estimatedY = max(estimatedY, minY)
-        estimatedY = min(estimatedY, maxY)
+        let maxY = translateToYInContentView(from: timeRange.end) - (estimatedBottomY - estimatedTopY)
+        estimatedTopY = max(estimatedTopY, minY)
+        estimatedTopY = min(estimatedTopY, maxY)
+        // Restrict to minimum interval or more
+        estimatedTopY = min(estimatedTopY, estimatedBottomY - heightPerMinInterval)
+
+        if type == .both {
+            estimatedBottomY = estimatedTopY + editingViewHeight
+        }
 
         // Recalucate event time range
-        let decidedY = estimatedY
-        let editingStartTime = translateToTime(fromYInContentView: decidedY)
-        let editingEndTime = translateToTime(fromYInContentView: decidedY + editingViewHeight)
+        let decidedTopY = estimatedTopY
+        let decidedBottomY = estimatedBottomY
+        let editingStartTime = translateToTime(fromYInContentView: decidedTopY)
+        let editingEndTime = translateToTime(fromYInContentView: decidedBottomY)
+
+        print("decidedY", decidedTopY, decidedBottomY)
 
         // Apply decided Y and event time range
-        editingView.frame.origin.y = decidedY
+        editingView.frame.origin.y = decidedTopY
+        editingView.frame.size.height = decidedBottomY - decidedTopY
         editingView.updateTimesInEditing(start: editingStartTime, end: editingEndTime)
     }
 
@@ -339,12 +401,12 @@ extension SamidareView {
 
         guard let editingView = editingView else { fatalError() }
 
-        let currentY = editingView.frame.origin.y
-        let roundedStartTime = translateToTime(fromYInContentView: currentY)
-        let alignedY = translateToYInContentView(from: roundedStartTime)
+        let alignedTopY = translateToYInContentView(from: editingView.startTimeInEditing)
+        let alignedBottomY = translateToYInContentView(from: editingView.endTimeInEditing)
 
         UIView.animate(withDuration: 0.1, animations: {
-            editingView.frame.origin.y = alignedY
+            editingView.frame.origin.y = alignedTopY
+            editingView.frame.size.height = alignedBottomY - alignedTopY
         })
     }
 
@@ -391,6 +453,8 @@ extension SamidareView {
         for view in sortedViews {
             columnView.bringSubview(toFront: view)
         }
+
+        impactFeedbackGenerator.impactOccurred()
 
         delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
     }

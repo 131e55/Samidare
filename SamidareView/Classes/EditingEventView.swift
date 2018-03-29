@@ -22,6 +22,8 @@ class EditingEventView: UIView {
     private weak var endTimeView: UIView!
     private weak var endTimeLabel: UILabel!
 
+    private(set) weak var topMarkArea: UIView!
+
     static let preferredTimeViewWidth: CGFloat = 44
     static let preferredTimeViewHeight: CGFloat = 18
     static let preferredTimeViewSpace: CGFloat = 4
@@ -38,17 +40,43 @@ class EditingEventView: UIView {
         startTimeInEditing = eventView.event.start
         endTimeInEditing = eventView.event.end
 
-        let snapshot = eventView.snapshotView(afterScreenUpdates: true)!
-        addSubview(snapshot)
-
         let font = UIFont.systemFont(ofSize: 13)
+        let themeColor = targetEventView.themeColor
         let textColor = targetEventView.textColor
         let timeViewWidth = EditingEventView.preferredTimeViewWidth
         let timeViewHeight = EditingEventView.preferredTimeViewHeight
         let timeViewSpace = EditingEventView.preferredTimeViewSpace
 
+        layer.cornerRadius = 4
+
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = themeColor
+        backgroundView.layer.borderWidth = 1
+        backgroundView.layer.borderColor = UIColor.white.cgColor
+        backgroundView.layer.masksToBounds = true
+        backgroundView.layer.cornerRadius = layer.cornerRadius
+        addSubview(backgroundView)
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+
+        let titleLabel = UILabel()
+        titleLabel.font = UIFont.systemFont(ofSize: 13)
+        titleLabel.textAlignment = .center
+        titleLabel.text = originalEvent.title
+        titleLabel.textColor = textColor
+        addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 4).isActive = true
+
         let startTimeView = UIView()
-        startTimeView.backgroundColor = targetEventView.themeColor.withAlphaComponent(0.9)
+        startTimeView.backgroundColor = themeColor.withAlphaComponent(0.9)
+        startTimeView.layer.borderWidth = 1
+        startTimeView.layer.borderColor = UIColor.white.cgColor
         addSubview(startTimeView)
         startTimeView.translatesAutoresizingMaskIntoConstraints = false
         startTimeView.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -75,7 +103,9 @@ class EditingEventView: UIView {
         self.startTimeLabel = startLabel
 
         let endTimeView = UIView()
-        endTimeView.backgroundColor = targetEventView.themeColor.withAlphaComponent(0.9)
+        endTimeView.backgroundColor = themeColor.withAlphaComponent(0.9)
+        endTimeView.layer.borderWidth = 1
+        endTimeView.layer.borderColor = UIColor.white.cgColor
         addSubview(endTimeView)
         endTimeView.translatesAutoresizingMaskIntoConstraints = false
         endTimeView.centerYAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -101,6 +131,27 @@ class EditingEventView: UIView {
         endLabel.centerXAnchor.constraint(equalTo: endTimeView.centerXAnchor).isActive = true
         self.endTimeLabel = endLabel
 
+        let topMarkArea = UIView()
+        topMarkArea.backgroundColor = .red
+        addSubview(topMarkArea)
+        topMarkArea.translatesAutoresizingMaskIntoConstraints = false
+        topMarkArea.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
+        topMarkArea.widthAnchor.constraint(equalToConstant: 44).isActive = true
+        topMarkArea.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        topMarkArea.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        self.topMarkArea = topMarkArea
+
+        let topMark = UIView()
+        topMark.backgroundColor = themeColor
+        topMarkArea.addSubview(topMark)
+        topMark.translatesAutoresizingMaskIntoConstraints = false
+        topMark.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
+        topMark.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        topMark.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        topMark.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
+        topMark.layer.cornerRadius = 6
+        topMark.layer.borderColor = UIColor.white.cgColor
+        topMark.layer.borderWidth = 1
 
         feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         feedbackGenerator.prepare()
