@@ -42,12 +42,13 @@ class EditingEventView: UIView {
         addSubview(snapshot)
 
         let font = UIFont.systemFont(ofSize: 13)
+        let textColor = targetEventView.textColor
         let timeViewWidth = EditingEventView.preferredTimeViewWidth
         let timeViewHeight = EditingEventView.preferredTimeViewHeight
         let timeViewSpace = EditingEventView.preferredTimeViewSpace
 
         let startTimeView = UIView()
-        startTimeView.backgroundColor = targetEventView.themeColor
+        startTimeView.backgroundColor = targetEventView.themeColor.withAlphaComponent(0.9)
         addSubview(startTimeView)
         startTimeView.translatesAutoresizingMaskIntoConstraints = false
         startTimeView.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
@@ -65,7 +66,7 @@ class EditingEventView: UIView {
 
         let startLabel = UILabel()
         startLabel.font = font
-        startLabel.textColor = targetEventView.textColor
+        startLabel.textColor = textColor
         startLabel.text = originalEvent.start.formattedString
         startTimeView.addSubview(startLabel)
         startLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +75,7 @@ class EditingEventView: UIView {
         self.startTimeLabel = startLabel
 
         let endTimeView = UIView()
-        endTimeView.backgroundColor = targetEventView.themeColor
+        endTimeView.backgroundColor = targetEventView.themeColor.withAlphaComponent(0.9)
         addSubview(endTimeView)
         endTimeView.translatesAutoresizingMaskIntoConstraints = false
         endTimeView.centerYAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -92,7 +93,7 @@ class EditingEventView: UIView {
 
         let endLabel = UILabel()
         endLabel.font = font
-        endLabel.textColor = targetEventView.textColor
+        endLabel.textColor = textColor
         endLabel.text = originalEvent.end.formattedString
         endTimeView.addSubview(endLabel)
         endLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -100,21 +101,21 @@ class EditingEventView: UIView {
         endLabel.centerXAnchor.constraint(equalTo: endTimeView.centerXAnchor).isActive = true
         self.endTimeLabel = endLabel
 
-        layer.masksToBounds = false
-        layer.shadowOffset = .zero
-        layer.shadowRadius = 6
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.5
-        layer.shadowPath = UIBezierPath(rect: bounds).cgPath
-        layer.rasterizationScale = UIScreen.main.scale
-        layer.shouldRasterize = true
 
         feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         feedbackGenerator.prepare()
     }
 
-    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    override func layoutSubviews() {
+        super.layoutSubviews()
 
+        let black = UIColor.black.cgColor
+        layer.drawBorderShadow(borderWidth: 1, shadowRadius: 3, shadowOpacity: 0.5, shadowColor: black)
+        startTimeView.layer.drawBorderShadow(borderWidth: 1, shadowRadius: 3, shadowOpacity: 0.5, shadowColor: black)
+        endTimeView.layer.drawBorderShadow(borderWidth: 1, shadowRadius: 3, shadowOpacity: 0.5, shadowColor: black)
+    }
+
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     func updateTimesInEditing(start: Time, end: Time) {
 

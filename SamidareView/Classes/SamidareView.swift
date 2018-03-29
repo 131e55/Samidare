@@ -19,7 +19,7 @@ open class SamidareView: UIView {
     private weak var eventStackView: UIStackView!
 
     private weak var editingView: EditingEventView?
-    private let editingTargetEventViewAlpha: CGFloat = 0.25
+    private let editingTargetEventViewAlpha: CGFloat = 0.3
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
     private var lastLocationInSelf: CGPoint!
@@ -250,8 +250,6 @@ extension SamidareView {
             editingView.frame = eventViewFrameInContentView
             contentView.addSubview(editingView)
             self.editingView = editingView
-            print(columnX)
-            print(timeViewTotalWidth)
 
             let panGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewDidPan))
             editingView.addGestureRecognizer(panGesture)
