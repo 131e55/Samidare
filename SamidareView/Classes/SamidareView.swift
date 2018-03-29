@@ -29,7 +29,7 @@ open class SamidareView: UIView {
     private var autoScrollDisplayLinkLastTimeStamp: CFTimeInterval!
     private let autoScrollThreshold: CGFloat = 0.1   // max 1
     private let autoScrollMinSpeed: CGFloat = 50     // [point per frame]
-    private let autoScrollMaxSpeed: CGFloat = 1000    // [point per frame]
+    private let autoScrollMaxSpeed: CGFloat = 500    // [point per frame]
 
     private var impactFeedbackGenerator: UIImpactFeedbackGenerator!
 
@@ -363,7 +363,6 @@ extension SamidareView {
 
         let heightPerMinInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
         let locationInContentView = recognizer.location(in: contentView)
-        let currentBottomY = editingView.frame.maxY
         let editingViewHeight = editingView.bounds.height
 
         // Calculate estimeated editingView position y
@@ -380,7 +379,7 @@ extension SamidareView {
             case .endOnly:
                 let simulatedTopY = locationInContentView.y - lastTouchLocation.y
                 let movedLength = targetEventView.frame.minY - simulatedTopY
-                return currentBottomY - movedLength
+                return targetEventView.frame.maxY - movedLength
             }
         }()
 
@@ -390,7 +389,11 @@ extension SamidareView {
         estimatedTopY = max(estimatedTopY, minY)
         estimatedTopY = min(estimatedTopY, maxY)
         // Restrict to minimum interval or more
-        estimatedTopY = min(estimatedTopY, estimatedBottomY - heightPerMinInterval)
+        if type == .startOnly {
+            estimatedTopY = min(estimatedTopY, estimatedBottomY - heightPerMinInterval)
+        } else if type == .endOnly {
+            estimatedBottomY = max(estimatedBottomY, estimatedTopY + heightPerMinInterval)
+        }
 
         if type == .both {
             estimatedBottomY = estimatedTopY + editingViewHeight
