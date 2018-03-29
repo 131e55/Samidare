@@ -22,8 +22,6 @@ class EditingEventView: UIView {
     private weak var endTimeView: UIView!
     private weak var endTimeLabel: UILabel!
 
-    private(set) weak var topMarkArea: UIView!
-
     static let preferredTimeViewWidth: CGFloat = 44
     static let preferredTimeViewHeight: CGFloat = 18
     static let preferredTimeViewSpace: CGFloat = 4
@@ -131,28 +129,6 @@ class EditingEventView: UIView {
         endLabel.centerXAnchor.constraint(equalTo: endTimeView.centerXAnchor).isActive = true
         self.endTimeLabel = endLabel
 
-        let topMarkArea = UIView()
-        topMarkArea.backgroundColor = .red
-        addSubview(topMarkArea)
-        topMarkArea.translatesAutoresizingMaskIntoConstraints = false
-        topMarkArea.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
-        topMarkArea.widthAnchor.constraint(equalToConstant: 44).isActive = true
-        topMarkArea.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        topMarkArea.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-        self.topMarkArea = topMarkArea
-
-        let topMark = UIView()
-        topMark.backgroundColor = themeColor
-        topMarkArea.addSubview(topMark)
-        topMark.translatesAutoresizingMaskIntoConstraints = false
-        topMark.centerYAnchor.constraint(equalTo: topAnchor).isActive = true
-        topMark.widthAnchor.constraint(equalToConstant: 12).isActive = true
-        topMark.heightAnchor.constraint(equalToConstant: 12).isActive = true
-        topMark.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
-        topMark.layer.cornerRadius = 6
-        topMark.layer.borderColor = UIColor.white.cgColor
-        topMark.layer.borderWidth = 1
-
         feedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         feedbackGenerator.prepare()
     }
@@ -182,5 +158,34 @@ class EditingEventView: UIView {
         if oldStartTime != startTimeInEditing || oldEndTime != endTimeInEditing {
             feedbackGenerator.impactOccurred()
         }
+    }
+}
+
+extension EditingEventView {
+
+    static func createMarkAreaView(color: UIColor, isTop: Bool) -> UIView {
+
+        let markArea = UIView()
+        markArea.translatesAutoresizingMaskIntoConstraints = false
+        markArea.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        markArea.heightAnchor.constraint(equalToConstant: 40).isActive = true
+
+        let markView = UIView()
+        markView.backgroundColor = color
+        markArea.addSubview(markView)
+        markView.translatesAutoresizingMaskIntoConstraints = false
+        markView.centerYAnchor.constraint(equalTo: markArea.centerYAnchor).isActive = true
+        markView.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        markView.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        if isTop {
+            markView.trailingAnchor.constraint(equalTo: markArea.trailingAnchor, constant: -4).isActive = true
+        } else {
+            markView.leadingAnchor.constraint(equalTo: markArea.leadingAnchor, constant: 4).isActive = true
+        }
+        markView.layer.cornerRadius = 6
+        markView.layer.borderColor = UIColor.white.cgColor
+        markView.layer.borderWidth = 1
+
+        return markArea
     }
 }

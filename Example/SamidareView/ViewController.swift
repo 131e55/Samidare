@@ -92,19 +92,19 @@ extension ViewController: SamidareViewDelegate {
     }
 }
 
+// 廃止予定
 class CustomEventView: EventView {
 
     override init(event: Event) {
         super.init(event: event)
-
-        layer.cornerRadius = 4
-
-        let label = UILabel()
-        label.text = "😻"
-        addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+//        layer.cornerRadius = 4
+//
+//        let label = UILabel()
+//        label.text = "😻"
+//        addSubview(label)
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+//        label.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
 
     required init?(coder aDecoder: NSCoder) {

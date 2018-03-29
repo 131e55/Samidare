@@ -19,6 +19,8 @@ open class SamidareView: UIView {
     private weak var eventStackView: UIStackView!
 
     private weak var editingView: EditingEventView?
+    private weak var editingViewTopMarkArea: UIView?
+    private weak var editingViewBottomMarkArea: UIView?
     private let editingTargetEventViewAlpha: CGFloat = 0.3
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
@@ -236,25 +238,11 @@ extension SamidareView {
 
         switch sender.state {
         case .began:
-
             cancelEditingOfEventTime()
 
-            let locationInEventView = sender.location(in: targetEventView)
-            lastTouchLocationInEditingEventView = locationInEventView
+            createEditingEventView(targetEventView: targetEventView, targetColumnView: targetColumnView)
 
-            let eventViewFrameInContentView = targetEventView.convert(targetEventView.bounds, to: contentView)
-            let columnX = targetColumnView.frame.origin.x
-            let timeViewTotalWidth = EditingEventView.preferredTimeViewWidth + EditingEventView.preferredTimeViewSpace * 2
-            let editingView = EditingEventView(targetEventView: targetEventView,
-                                               isTimeLabelRightSide: columnX < timeViewTotalWidth)
-            editingView.frame = eventViewFrameInContentView
-            contentView.addSubview(editingView)
-            self.editingView = editingView
-
-            let panGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewDidPan))
-            editingView.addGestureRecognizer(panGesture)
-            let topPanGesture = UIPanGestureRecognizer(target: self, action: #selector(editingViewTopDidPan))
-            editingView.topMarkArea.addGestureRecognizer(topPanGesture)
+            lastTouchLocationInEditingEventView = sender.location(in: editingView!)
 
             targetEventView.alpha = editingTargetEventViewAlpha
 
@@ -262,14 +250,10 @@ extension SamidareView {
 
         case .changed:
             // Move EditingEventView if EventView dragged after long press.
-            lastLocationInSelf = sender.location(in: self)
-            autoScrollIfNeeded()
-            updateEditingViewFrame()
+            handlePanningToEditTime(sender)
 
         case .ended:
-            invalidateAutoScrollDisplayLink()
-            handlingGestureRecognizer = nil
-            endEditingOfEventTime()
+            handlePanningToEditTime(sender)
 
         default:
             break
@@ -278,47 +262,76 @@ extension SamidareView {
 
     // MARK: - EditingView Gesture Handlers
 
-    @objc private func editingViewDidPan(_ sender: UIPanGestureRecognizer) {
+    private func createEditingEventView(targetEventView: EventView, targetColumnView: UIView) {
+        //
+        // Initialize EditingEventView
+        //
+        let eventViewFrameInContentView = targetEventView.convert(targetEventView.bounds, to: contentView)
+        let columnX = targetColumnView.frame.origin.x
+        let timeViewTotalWidth = EditingEventView.preferredTimeViewWidth + EditingEventView.preferredTimeViewSpace * 2
+        let editingView = EditingEventView(targetEventView: targetEventView,
+                                           isTimeLabelRightSide: columnX < timeViewTotalWidth)
+        editingView.frame = eventViewFrameInContentView
+        contentView.addSubview(editingView)
+        self.editingView = editingView
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
+        editingView.addGestureRecognizer(panGesture)
 
-        guard let targetEditView = sender.view as? EditingEventView else { return }
+        //
+        // Add Top Circle Mark Area to edit start time
+        //
+        let topMarkArea = EditingEventView.createMarkAreaView(color: targetEventView.themeColor, isTop: true)
+        contentView.addSubview(topMarkArea)
+        topMarkArea.translatesAutoresizingMaskIntoConstraints = false
+        topMarkArea.centerYAnchor.constraint(equalTo: editingView.topAnchor).isActive = true
+        topMarkArea.trailingAnchor.constraint(equalTo: editingView.trailingAnchor).isActive = true
+        editingViewTopMarkArea = topMarkArea
+        let topPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
+        topMarkArea.addGestureRecognizer(topPanGesture)
 
-        handlingGestureRecognizer = sender
-
-        switch sender.state {
-        case .began:
-            let locationInEditView = sender.location(in: targetEditView)
-            lastTouchLocationInEditingEventView = locationInEditView
-
-        case .changed:
-            lastLocationInSelf = sender.location(in: self)
-            autoScrollIfNeeded()
-            updateEditingViewFrame(type: .both)
-
-        case .ended:
-            invalidateAutoScrollDisplayLink()
-            handlingGestureRecognizer = nil
-            endEditingOfEventTime()
-
-        default:
-            break
-        }
+        //
+        // Add Bottom Circle Mark Area to edit end time
+        //
+        let bottomMarkArea = EditingEventView.createMarkAreaView(color: targetEventView.themeColor, isTop: false)
+        contentView.addSubview(bottomMarkArea)
+        bottomMarkArea.translatesAutoresizingMaskIntoConstraints = false
+        bottomMarkArea.centerYAnchor.constraint(equalTo: editingView.bottomAnchor).isActive = true
+        bottomMarkArea.leadingAnchor.constraint(equalTo: editingView.leadingAnchor).isActive = true
+        editingViewBottomMarkArea = bottomMarkArea
+        let bottomPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
+        bottomMarkArea.addGestureRecognizer(bottomPanGesture)
     }
 
-    @objc private func editingViewTopDidPan(_ sender: UIPanGestureRecognizer) {
+    @objc private func handlePanningToEditTime(_ sender: UIGestureRecognizer) {
 
-        guard let targetEditView = sender.view?.superview! as? EditingEventView else { return }
+        guard let senderView = sender.view else { fatalError() }
+        guard let editingView = editingView else { fatalError() }
+        guard let topMarkArea = editingViewTopMarkArea else { fatalError() }
+        guard let bottomMarkArea = editingViewBottomMarkArea else { fatalError() }
 
         handlingGestureRecognizer = sender
 
         switch sender.state {
         case .began:
-            let locationInEditView = sender.location(in: targetEditView)
-            lastTouchLocationInEditingEventView = locationInEditView
+            lastTouchLocationInEditingEventView = sender.location(in: editingView)
 
         case .changed:
             lastLocationInSelf = sender.location(in: self)
             autoScrollIfNeeded()
-            updateEditingViewFrame(type: .startOnly)
+
+            switch senderView {
+            case editingView, editingView.targetEventView:
+                updateEditingViewFrame(type: .both)
+
+            case topMarkArea:
+                updateEditingViewFrame(type: .startOnly)
+
+            case bottomMarkArea:
+                updateEditingViewFrame(type: .endOnly)
+
+            default:
+                break
+            }
 
         case .ended:
             invalidateAutoScrollDisplayLink()
@@ -389,8 +402,6 @@ extension SamidareView {
         let editingStartTime = translateToTime(fromYInContentView: decidedTopY)
         let editingEndTime = translateToTime(fromYInContentView: decidedBottomY)
 
-        print("decidedY", decidedTopY, decidedBottomY)
-
         // Apply decided Y and event time range
         editingView.frame.origin.y = decidedTopY
         editingView.frame.size.height = decidedBottomY - decidedTopY
@@ -407,6 +418,8 @@ extension SamidareView {
         UIView.animate(withDuration: 0.1, animations: {
             editingView.frame.origin.y = alignedTopY
             editingView.frame.size.height = alignedBottomY - alignedTopY
+            // for animation of top mark and bottom mark
+            self.contentView.layoutIfNeeded()
         })
     }
 
@@ -461,12 +474,14 @@ extension SamidareView {
 
     private func cancelEditingOfEventTime() {
 
-        guard let editingView = editingView else { return }
-        guard let eventView = editingView.targetEventView else { return }
+        editingView?.targetEventView.alpha = 1
+        editingView?.removeFromSuperview()
+        editingViewTopMarkArea?.removeFromSuperview()
+        editingViewBottomMarkArea?.removeFromSuperview()
 
-        eventView.alpha = 1
-        editingView.removeFromSuperview()
-        self.editingView = nil
+        editingView = nil
+        editingViewTopMarkArea = nil
+        editingViewBottomMarkArea = nil
     }
 
     // MARK: - Auto Scroll
