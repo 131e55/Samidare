@@ -18,9 +18,24 @@ open class SamidareView: UIView {
     private var contentViewHeightConstraint: NSLayoutConstraint!
     private weak var eventStackView: UIStackView!
 
-    private weak var editingView: EditingEventView?
+    private weak var editingView: EventView?
+    private var editingViewTopConstraint: NSLayoutConstraint? {
+        let constraint = editingView?.superview?.constraints.first(where: {
+            guard let firstItem = $0.firstItem as? EventView else { return false }
+            return $0.identifier == "EventViewTopConstraint" && firstItem == editingView
+        })
+        return constraint
+    }
+    private var editingViewHeightConstraint: NSLayoutConstraint? {
+        let constraint = editingView?.constraints.first(where: {
+            return $0.identifier == "EventViewHeightConstraint"
+        })
+        return constraint
+    }
+    private weak var editingTargetEventViewSnapshot: UIView?
     private weak var editingViewTopMarkArea: UIView?
     private weak var editingViewBottomMarkArea: UIView?
+
     private let editingTargetEventViewAlpha: CGFloat = 0.3
     private var lastTouchLocationInEditingEventView: CGPoint?
     private var handlingGestureRecognizer: UIGestureRecognizer?
@@ -32,7 +47,8 @@ open class SamidareView: UIView {
     private let autoScrollMinSpeed: CGFloat = 50     // [point per frame]
     private let autoScrollMaxSpeed: CGFloat = 500    // [point per frame]
 
-    private var impactFeedbackGenerator: UIImpactFeedbackGenerator!
+    private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+    private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
 
     internal let defaultWidthForColumn: CGFloat = 44
     internal let defaultHeightPerInterval: CGFloat = 10
@@ -83,6 +99,7 @@ open class SamidareView: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fillEqually
+        stackView.spacing = 2
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
@@ -92,8 +109,8 @@ open class SamidareView: UIView {
         self.eventStackView = stackView
 
         // for LongPress EventView
-        impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
         impactFeedbackGenerator.prepare()
+        errorFeedbackGenerator.prepare()
     }
 
     public func reload() {
@@ -213,7 +230,7 @@ extension SamidareView {
     @objc private func contentViewDidTap(_ sender: UITapGestureRecognizer) {
 
         if editingView != nil {
-            cancelEditingOfEventTime()
+            endEditingOfEventTime()
         } else {
 
         }
@@ -223,8 +240,8 @@ extension SamidareView {
 
     @objc private func eventViewDidTap(_ sender: UITapGestureRecognizer) {
 
-        if let editingView = editingView, editingView.targetEventView != sender.view {
-            cancelEditingOfEventTime()
+        if let editingView = editingView, editingView != sender.view {
+            endEditingOfEventTime()
         } else {
 
         }
@@ -233,59 +250,75 @@ extension SamidareView {
     @objc private func eventViewDidLongPress(_ sender: UILongPressGestureRecognizer) {
 
         guard let targetEventView = sender.view as? EventView else { return }
-        guard let targetColumnView = targetEventView.superview else { return }
 
         handlingGestureRecognizer = sender
 
         switch sender.state {
         case .began:
-            cancelEditingOfEventTime()
+            endEditingOfEventTime()
 
-            createEditingEventView(targetEventView: targetEventView, targetColumnView: targetColumnView)
+            //
+            // Start editing if possible
+            //
+            if targetEventView.event.isEditable {
+                beginEditingEvent(target: targetEventView)
 
-            lastTouchLocationInEditingEventView = sender.location(in: editingView!)
+                lastTouchLocationInEditingEventView = sender.location(in: editingView!)
 
-            targetEventView.alpha = editingTargetEventViewAlpha
-
-            impactFeedbackGenerator.impactOccurred()
+                impactFeedbackGenerator.impactOccurred()
+            } else {
+                errorFeedbackGenerator.notificationOccurred(.error)
+            }
 
         case .changed:
-            // Move EditingEventView if EventView dragged after long press.
-            handlePanningToEditTime(sender)
+            if editingView != nil {
+                // Move EditingEventView if EventView dragged after long press.
+                handlePanningToEditTime(sender)
+            }
 
         case .ended:
-            handlePanningToEditTime(sender)
+            if editingView != nil {
+                handlePanningToEditTime(sender)
+            }
+            handlingGestureRecognizer = nil
 
         default:
-            break
+            handlingGestureRecognizer = nil
         }
     }
 
     // MARK: - EditingView Gesture Handlers
 
-    private func createEditingEventView(targetEventView: EventView, targetColumnView: UIView) {
+    private func beginEditingEvent(target eventView: EventView) {
+
+        guard let columnView = eventView.superview else { return }
+
         //
-        // Initialize EditingEventView
+        // Begin EventView edit mode
         //
-        let eventViewFrameInContentView = targetEventView.convert(targetEventView.bounds, to: contentView)
-        let columnX = targetColumnView.frame.origin.x
-        let timeViewTotalWidth = EditingEventView.preferredTimeViewWidth + EditingEventView.preferredTimeViewSpace * 2
-        let editingView = EditingEventView(targetEventView: targetEventView,
-                                           isTimeLabelRightSide: columnX < timeViewTotalWidth)
-        editingView.frame = eventViewFrameInContentView
-        contentView.addSubview(editingView)
-        self.editingView = editingView
+        let snapshot = eventView.snapshotView()
+        snapshot.frame = eventView.frame
+        snapshot.alpha = editingTargetEventViewAlpha
+        columnView.insertSubview(snapshot, belowSubview: eventView)
+        editingTargetEventViewSnapshot = snapshot
+
+        editingView = eventView
+        editingView!.isTimeViewsRightSide = columnView.frame.minX < editingView!.editingTimeView.bounds.width
+        editingView!.beginEditing()
+        columnView.bringSubview(toFront: editingView!)
+        eventStackView.bringSubview(toFront: columnView)
+
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
-        editingView.addGestureRecognizer(panGesture)
+        editingView!.addGestureRecognizer(panGesture)
 
         //
         // Add Top Circle Mark Area to edit start time
         //
-        let topMarkArea = EditingEventView.createMarkAreaView(color: targetEventView.themeColor, isTop: true)
+        let topMarkArea = EventView.createMarkAreaView(color: eventView.themeColor, isTop: true)
         contentView.addSubview(topMarkArea)
         topMarkArea.translatesAutoresizingMaskIntoConstraints = false
-        topMarkArea.centerYAnchor.constraint(equalTo: editingView.topAnchor).isActive = true
-        topMarkArea.trailingAnchor.constraint(equalTo: editingView.trailingAnchor).isActive = true
+        topMarkArea.centerYAnchor.constraint(equalTo: editingView!.topAnchor).isActive = true
+        topMarkArea.trailingAnchor.constraint(equalTo: editingView!.trailingAnchor).isActive = true
         editingViewTopMarkArea = topMarkArea
         let topPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
         topMarkArea.addGestureRecognizer(topPanGesture)
@@ -293,11 +326,11 @@ extension SamidareView {
         //
         // Add Bottom Circle Mark Area to edit end time
         //
-        let bottomMarkArea = EditingEventView.createMarkAreaView(color: targetEventView.themeColor, isTop: false)
+        let bottomMarkArea = EventView.createMarkAreaView(color: eventView.themeColor, isTop: false)
         contentView.addSubview(bottomMarkArea)
         bottomMarkArea.translatesAutoresizingMaskIntoConstraints = false
-        bottomMarkArea.centerYAnchor.constraint(equalTo: editingView.bottomAnchor).isActive = true
-        bottomMarkArea.leadingAnchor.constraint(equalTo: editingView.leadingAnchor).isActive = true
+        bottomMarkArea.centerYAnchor.constraint(equalTo: editingView!.bottomAnchor).isActive = true
+        bottomMarkArea.leadingAnchor.constraint(equalTo: editingView!.leadingAnchor).isActive = true
         editingViewBottomMarkArea = bottomMarkArea
         let bottomPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
         bottomMarkArea.addGestureRecognizer(bottomPanGesture)
@@ -306,7 +339,7 @@ extension SamidareView {
     @objc private func handlePanningToEditTime(_ sender: UIGestureRecognizer) {
 
         guard let senderView = sender.view else { fatalError() }
-        guard let editingView = editingView else { fatalError() }
+        guard let editingView = editingView else { fatalError() } // FIXME: - ここで落ちるときがある
         guard let topMarkArea = editingViewTopMarkArea else { fatalError() }
         guard let bottomMarkArea = editingViewBottomMarkArea else { fatalError() }
 
@@ -321,7 +354,7 @@ extension SamidareView {
             autoScrollIfNeeded()
 
             switch senderView {
-            case editingView, editingView.targetEventView:
+            case editingView:
                 updateEditingViewFrame(type: .both)
 
             case topMarkArea:
@@ -336,11 +369,11 @@ extension SamidareView {
 
         case .ended:
             invalidateAutoScrollDisplayLink()
+            decideEditingOfEventTime()
             handlingGestureRecognizer = nil
-            endEditingOfEventTime()
 
         default:
-            break
+            handlingGestureRecognizer = nil
         }
     }
 
@@ -358,7 +391,9 @@ extension SamidareView {
         guard let dataSource = dataSource else { fatalError() }
         let timeRange = dataSource.timeRange(in: self)
         guard let editingView = editingView else { fatalError() }
-        guard let targetEventView = editingView.targetEventView else { fatalError() }
+        guard let topConstraint = editingViewTopConstraint else { fatalError() }
+        guard let heightConstraint = editingViewHeightConstraint else { fatalError() }
+        guard let targetEventViewSnapshot = editingTargetEventViewSnapshot else { fatalError() }
         guard let recognizer = handlingGestureRecognizer else { fatalError() }
         guard let lastTouchLocation = lastTouchLocationInEditingEventView else { fatalError() }
 
@@ -372,17 +407,17 @@ extension SamidareView {
         var estimatedTopY: CGFloat = {
             switch type {
             case .both, .startOnly: return locationInContentView.y - lastTouchLocation.y
-            case .endOnly:          return targetEventView.frame.minY
+            case .endOnly:          return targetEventViewSnapshot.frame.minY
             }
         }()
         var estimatedBottomY: CGFloat = {
             switch type {
             case .both:         return estimatedTopY + editingViewHeight
-            case .startOnly:    return targetEventView.frame.maxY
+            case .startOnly:    return targetEventViewSnapshot.frame.maxY
             case .endOnly:
                 let simulatedTopY = locationInContentView.y - lastTouchLocation.y
-                let movedLength = targetEventView.frame.minY - simulatedTopY
-                return targetEventView.frame.maxY - movedLength
+                let movedLength = targetEventViewSnapshot.frame.minY - simulatedTopY
+                return targetEventViewSnapshot.frame.maxY - movedLength
             }
         }()
 
@@ -419,42 +454,38 @@ extension SamidareView {
         let editingEndTime = translateToTime(fromYInContentView: decidedBottomY)
 
         // Apply decided Y and event time range
-        editingView.frame.origin.y = decidedTopY
-        editingView.frame.size.height = decidedBottomY - decidedTopY
+        topConstraint.constant = decidedTopY
+        heightConstraint.constant = decidedBottomY - decidedTopY
         editingView.updateTimesInEditing(start: editingStartTime, end: editingEndTime)
     }
 
     private func alignEditingViewFrameToNearestInterval() {
 
         guard let editingView = editingView else { fatalError() }
+        guard let topConstraint = editingViewTopConstraint else { fatalError() }
+        guard let heightConstraint = editingViewHeightConstraint else { fatalError() }
 
         let alignedTopY = translateToYInContentView(from: editingView.startTimeInEditing)
         let alignedBottomY = translateToYInContentView(from: editingView.endTimeInEditing)
 
+        topConstraint.constant = alignedTopY
+        heightConstraint.constant = alignedBottomY - alignedTopY
+
         UIView.animate(withDuration: 0.1, animations: {
-            editingView.frame.origin.y = alignedTopY
-            editingView.frame.size.height = alignedBottomY - alignedTopY
-            // for animation of top mark and bottom mark
+            // Also animate top mark and bottom mark
             self.contentView.layoutIfNeeded()
         })
     }
 
-    private func endEditingOfEventTime() {
+    private func decideEditingOfEventTime() {
 
         guard let editingView = editingView else { fatalError() }
-        guard let eventView = editingView.targetEventView else { fatalError() }
-        guard let columnView = eventView.superview else { fatalError() }
-        guard let topConstraint = eventView.superview!.constraints.first(where: {
-            guard let firstItem = $0.firstItem as? EventView else { return false }
-            return $0.identifier == "EventViewTopConstraint" && firstItem == eventView
-        }) else { fatalError() }
-        guard let heightConstraint = eventView.constraints.first(where: {
-            return $0.identifier == "EventViewHeightConstraint"
-        }) else { fatalError() }
+        guard let oldSnapshot = editingTargetEventViewSnapshot else { fatalError() }
+        guard let columnView = editingView.superview else { fatalError() }
 
         alignEditingViewFrameToNearestInterval()
 
-        let oldEvent = editingView.originalEvent
+        let oldEvent = editingView.event
         let newEvent = Event(id: oldEvent.id,
                              title: oldEvent.title,
                              start: editingView.startTimeInEditing,
@@ -463,16 +494,33 @@ extension SamidareView {
         let y = translateToYInContentView(from: newEvent.start)
         let height = translateToYInContentView(from: newEvent.end) - y
 
-        topConstraint.constant = y
-        heightConstraint.constant = height
+        let newSnapshot = editingView.snapshotView()
+        newSnapshot.frame = CGRect(x: 0, y: y,
+                                   width: oldSnapshot.frame.width, height: height)
+        newSnapshot.alpha = 0
+        columnView.insertSubview(newSnapshot, belowSubview: editingView)
+        editingTargetEventViewSnapshot = newSnapshot
 
         UIView.animate(withDuration: 0.1, animations: {
-            eventView.alpha = 0
+            oldSnapshot.alpha = 0
+            newSnapshot.alpha = self.editingTargetEventViewAlpha
         }, completion: { _ in
-            eventView.alpha = self.editingTargetEventViewAlpha
+            oldSnapshot.removeFromSuperview()
         })
 
-        // Adjust EventViews z-orders. Shortest event should be frontmost. Longest event should be backmost.
+        impactFeedbackGenerator.impactOccurred()
+
+        delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
+    }
+
+    private func endEditingOfEventTime() {
+
+        guard let editingView = editingView else { return }
+        let columnView = editingView.superview!
+
+        editingView.endEditing()
+
+        // Adjust EventView z-orders. Shortest event should be frontmost. Longest event should be backmost.
         let sortedViews = columnView.subviews.sorted(by: {
             guard let eventView1 = $0 as? EventView, let eventView2 = $1 as? EventView else { return false }
             let duration1 = eventView1.event.end.totalMinutes - eventView1.event.start.totalMinutes
@@ -483,21 +531,13 @@ extension SamidareView {
             columnView.bringSubview(toFront: view)
         }
 
-        impactFeedbackGenerator.impactOccurred()
-
-        delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
-    }
-
-    private func cancelEditingOfEventTime() {
-
-        editingView?.targetEventView.alpha = 1
-        editingView?.removeFromSuperview()
+        self.editingView = nil
         editingViewTopMarkArea?.removeFromSuperview()
         editingViewBottomMarkArea?.removeFromSuperview()
-
-        editingView = nil
+        editingTargetEventViewSnapshot?.removeFromSuperview()
         editingViewTopMarkArea = nil
         editingViewBottomMarkArea = nil
+        editingTargetEventViewSnapshot = nil
     }
 
     // MARK: - Auto Scroll

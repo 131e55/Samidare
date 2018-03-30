@@ -45,8 +45,8 @@ extension ViewController: SamidareViewDataSource {
                 Event(title: "テスト２", start: Time(hours: 8, minutes: 0), end: Time(hours: 17, minutes: 0))
             ],
             [
-                Event(title: "テスト３", start: Time(hours: 5, minutes: 15), end: Time(hours: 6, minutes: 45)),
-                Event(title: "テスト４", start: Time(hours: 15, minutes: 0), end: Time(hours: 22, minutes: 15))
+                Event(title: "cantEdit", start: Time(hours: 5, minutes: 15), end: Time(hours: 6, minutes: 45), isEditable: false),
+                Event(title: "テスト４", start: Time(hours: 15, minutes: 0), end: Time(hours: 22, minutes: 15), icon: UIImage(named: "icon"))
             ],
             [
                 Event(title: "テスト５", start: Time(hours: 3, minutes: 45), end: Time(hours: 7, minutes: 45)),
@@ -78,10 +78,11 @@ extension ViewController: SamidareViewDelegate {
 
     func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView {
 
-        let view = CustomEventView(event: event)
+        let view = EventView(event: event)
         view.themeColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
         view.textColor = [.white, .black, .white, .black, .white, .black][column % 6]
-        
+        view.cornerRadius = 4
+
         return view
     }
 
@@ -89,25 +90,5 @@ extension ViewController: SamidareViewDelegate {
 
         print("oldEvent", oldEvent)
         print("newEvent", newEvent)
-    }
-}
-
-// 廃止予定
-class CustomEventView: EventView {
-
-    override init(event: Event) {
-        super.init(event: event)
-//        layer.cornerRadius = 4
-//
-//        let label = UILabel()
-//        label.text = "😻"
-//        addSubview(label)
-//        label.translatesAutoresizingMaskIntoConstraints = false
-//        label.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-//        label.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
