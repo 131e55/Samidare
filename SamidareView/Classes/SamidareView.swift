@@ -339,7 +339,7 @@ extension SamidareView {
     @objc private func handlePanningToEditTime(_ sender: UIGestureRecognizer) {
 
         guard let senderView = sender.view else { fatalError() }
-        guard let editingView = editingView else { fatalError() } // FIXME: - ここで落ちるときがある
+        guard let editingView = editingView else { fatalError() } // FIXME: - ここで落ちるときがあったが再現できない…
         guard let topMarkArea = editingViewTopMarkArea else { fatalError() }
         guard let bottomMarkArea = editingViewBottomMarkArea else { fatalError() }
 
