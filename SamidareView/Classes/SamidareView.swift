@@ -519,6 +519,8 @@ extension SamidareView {
         let columnView = editingView.superview!
 
         editingView.endEditing()
+        let panGesture = editingView.gestureRecognizers!.first(where: { $0 is UIPanGestureRecognizer })!
+        editingView.removeGestureRecognizer(panGesture)
 
         // Adjust EventView z-orders. Shortest event should be frontmost. Longest event should be backmost.
         let sortedViews = columnView.subviews.sorted(by: {
