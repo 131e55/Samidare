@@ -131,6 +131,7 @@ extension SamidareViewController: UITableViewDataSource {
             let time = Time(hours: timeRange.start.hours + indexPath.row, minutes: 0)
             cell.configure(timeText: time.formattedString, timeViewWidth: width)
         }
+        cell.timeLabel.superview!.backgroundColor = view.backgroundColor
 
         return cell
     }

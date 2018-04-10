@@ -26,7 +26,7 @@ class SamidareTimeCell: UITableViewCell {
         backgroundColor = .clear
 
         let timeView = UIView()
-        timeView.backgroundColor = .groupTableViewBackground
+        timeView.backgroundColor = .clear
         addSubview(timeView)
         timeView.translatesAutoresizingMaskIntoConstraints = false
         timeView.topAnchor.constraint(equalTo: topAnchor).isActive = true
