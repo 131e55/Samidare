@@ -99,7 +99,7 @@ extension SamidareViewController: UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-        guard let dataSource = dataSource else { fatalError("😿SamidareViewDataSource has not been implemented😿") }
+        guard let dataSource = dataSource else { print("😿SamidareViewDataSource has not been implemented😿"); return 0 }
 
         let timeRange = dataSource.timeRange(in: samidareView)
         let floorStartTime = Time(hours: timeRange.start.hours, minutes: 0)
@@ -111,7 +111,7 @@ extension SamidareViewController: UITableViewDataSource {
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        guard let dataSource = dataSource else { fatalError("😿SamidareViewDataSource has not been implemented😿") }
+        guard let dataSource = dataSource else { print("😿SamidareViewDataSource has not been implemented😿"); return UITableViewCell() }
 
         let timeRange = dataSource.timeRange(in: samidareView)
         let numberOfRows = self.tableView(tableView, numberOfRowsInSection: indexPath.section)
@@ -138,7 +138,7 @@ extension SamidareViewController: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
-        guard let dataSource = dataSource else { fatalError("😿SamidareViewDataSource has not been implemented😿") }
+        guard let dataSource = dataSource else { print("😿SamidareViewDataSource has not been implemented😿"); return 0 }
 
         let timeRange = dataSource.timeRange(in: samidareView)
         let numberOfRows = self.tableView(tableView, numberOfRowsInSection: indexPath.section)
