@@ -240,10 +240,14 @@ extension SamidareView {
 
     @objc private func eventViewDidTap(_ sender: UITapGestureRecognizer) {
 
-        if let editingView = editingView, editingView != sender.view {
-            endEditingOfEventTime()
-        } else {
+        guard let tappedEventView = sender.view as? EventView else { fatalError() }
 
+        if let editingView = editingView {
+            if editingView != tappedEventView {
+                endEditingOfEventTime()
+            }
+        } else {
+            delegate?.eventViewDidTap(in: self, eventView: tappedEventView)
         }
     }
 

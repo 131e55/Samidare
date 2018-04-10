@@ -23,6 +23,7 @@ public protocol SamidareViewDelegate: class {
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat
     func eventView(in samidareView: SamidareView, inColumn column: Int, for event: Event) -> EventView
 
+    func eventViewDidTap(in samidareView: SamidareView, eventView: EventView)
     func eventDidEdit(in samidareView: SamidareView, newEvent: Event, oldEvent: Event)
 }
 
