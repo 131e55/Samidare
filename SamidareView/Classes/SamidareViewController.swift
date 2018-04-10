@@ -45,6 +45,8 @@ open class SamidareViewController: UIViewController {
 
         let samidareView = SamidareView()
         samidareView.backgroundColor = .clear
+        samidareView.dataSource = dataSource
+        samidareView.delegate = delegate
         samidareView.scrollView.delegate = self
         view.addSubview(samidareView)
         samidareView.translatesAutoresizingMaskIntoConstraints = false
