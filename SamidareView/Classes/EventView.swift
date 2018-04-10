@@ -88,8 +88,10 @@ open class EventView: UIView {
         view.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
 
         backgroundView.backgroundColor = themeColor
+        backgroundView.layer.cornerRadius = cornerRadius
         backgroundViewInEditing.backgroundColor = themeColor
         backgroundViewInEditing.layer.borderColor = UIColor.white.cgColor
+        backgroundViewInEditing.layer.cornerRadius = cornerRadius
         startTimeView.layer.borderColor = UIColor.white.cgColor
         endTimeView.layer.borderColor = UIColor.white.cgColor
         let black = UIColor.black.cgColor
