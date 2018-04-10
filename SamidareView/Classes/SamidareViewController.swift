@@ -30,10 +30,10 @@ public protocol SamidareViewDelegate: class {
 open class SamidareViewController: UIViewController {
 
     public weak var dataSource: SamidareViewDataSource? {
-        didSet { samidareView.dataSource = dataSource }
+        didSet { samidareView?.dataSource = dataSource }
     }
     public weak var delegate: SamidareViewDelegate? {
-        didSet { samidareView.delegate = delegate }
+        didSet { samidareView?.delegate = delegate }
     }
 
     private weak var samidareView: SamidareView!
