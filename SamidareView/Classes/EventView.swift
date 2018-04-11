@@ -118,6 +118,9 @@ open class EventView: UIView {
 
     open override func layoutSubviews() {
         super.layoutSubviews()
+
+        titleLabel.isHidden = bounds.height <= iconImageViewHeightConstraint.constant
+
         drawShadowIfNeeded()
     }
 
