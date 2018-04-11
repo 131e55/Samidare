@@ -115,6 +115,7 @@ open class SamidareView: UIView {
 
     public func reload() {
 
+        endEditingOfEventTime()
         layoutContentView()
         reloadStackView()
     }
