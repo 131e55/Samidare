@@ -50,7 +50,7 @@ extension ViewController: SamidareViewDataSource {
             ],
             [
                 Event(title: "テスト５", start: Time(hours: 3, minutes: 45), end: Time(hours: 7, minutes: 45)),
-                Event(title: "テスト６", start: Time(hours: 22, minutes: 0), end: Time(hours: 23, minutes: 50))
+                Event(title: "テスト６", start: Time(hours: 22, minutes: 0), end: Time(hours: 23, minutes: 15))
             ],
             [
                 Event(title: "テスト７", start: Time(hours: 3, minutes: 30), end: Time(hours: 7, minutes: 45)),
