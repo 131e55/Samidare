@@ -161,10 +161,10 @@ open class SamidareView: UIView {
                 topConstraint.constant = CGFloat(topInterval) * heightPerInterval
                 topConstraint.isActive = true
 
-                let duration = (event.end.totalMinutes - event.start.totalMinutes) / timeRange.minInterval
+                let numberOfIntervals = max((event.end.totalMinutes - event.start.totalMinutes) / timeRange.minInterval, 1)
                 let heightConstraint = eventView.heightAnchor.constraint(equalToConstant: 0)
                 heightConstraint.identifier = "EventViewHeightConstraint"
-                heightConstraint.constant = CGFloat(duration) * heightPerInterval
+                heightConstraint.constant = CGFloat(numberOfIntervals) * heightPerInterval
                 heightConstraint.isActive = true
 
                 let tapGesture = UITapGestureRecognizer(target: self, action: #selector(eventViewDidTap))
