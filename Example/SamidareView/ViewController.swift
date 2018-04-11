@@ -86,6 +86,11 @@ extension ViewController: SamidareViewDelegate {
         return view
     }
 
+    func eventViewDidTap(in samidareView: SamidareView, eventView: EventView) {
+
+        print("eventViewDidTap", eventView.event)
+    }
+
     func eventDidEdit(in samidareView: SamidareView, newEvent: Event, oldEvent: Event) {
 
         print("oldEvent", oldEvent)
