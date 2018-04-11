@@ -163,6 +163,12 @@ open class EventView: UIView {
         }
     }
 
+    func applyTimesInEditing() {
+
+        event.start = startTimeInEditing
+        event.end = endTimeInEditing
+    }
+
     /// snapshotView excluded editing views
     func snapshotView() -> UIView {
 

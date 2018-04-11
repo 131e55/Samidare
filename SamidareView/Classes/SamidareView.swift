@@ -515,7 +515,10 @@ extension SamidareView {
 
         impactFeedbackGenerator.impactOccurred()
 
-        delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
+        if oldEvent.start != newEvent.start || oldEvent.end != newEvent.end {
+            editingView.applyTimesInEditing()
+            delegate?.eventDidEdit(in: self, newEvent: newEvent, oldEvent: oldEvent)
+        }
     }
 
     private func endEditingOfEventTime() {
