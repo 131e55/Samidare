@@ -65,6 +65,9 @@ open class SamidareView: UIView {
 
     private func commonInit() {
 
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTap))
+        addGestureRecognizer(tapGesture)
+
         let scrollView = UIScrollView()
         scrollView.bounces = true
         scrollView.alwaysBounceHorizontal = false
@@ -91,9 +94,6 @@ open class SamidareView: UIView {
         contentViewHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: 0)
         contentViewHeightConstraint.isActive = true
         self.contentView = contentView
-
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(contentViewDidTap))
-        contentView.addGestureRecognizer(tapGesture)
 
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -226,9 +226,9 @@ extension SamidareView {
         return CGFloat((time.totalMinutes - startMinutes) / minInterval) * heightPerInterval
     }
 
-    // MARK: - ContentView Gesture Handlers
+    // MARK: - SamidareView Gesture Handlers
 
-    @objc private func contentViewDidTap(_ sender: UITapGestureRecognizer) {
+    @objc private func viewDidTap(_ sender: UITapGestureRecognizer) {
 
         if editingView != nil {
             endEditingOfEventTime()
