@@ -84,6 +84,10 @@ class TimeInformationView: UIView {
 
     func reload() {
 
+        guard let delegate = layoutDelegate else { return }
+
+        numberOfRows = delegate.numberOfRows(in: self)
+
         layoutContentView()
         reloadStackView()
     }
@@ -91,8 +95,6 @@ class TimeInformationView: UIView {
     private func layoutContentView() {
 
         guard let delegate = layoutDelegate else { return }
-
-        numberOfRows = delegate.numberOfRows(in: self)
 
         var contentHeight: CGFloat = 0
 
