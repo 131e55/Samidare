@@ -11,10 +11,7 @@ public struct Time {
 
     public var hours: Int = 0 {
         didSet {
-            hours = min(max(hours, 0), 24)
-            if hours == 24 {
-                minutes = 0
-            }
+            hours = max(hours, 0)
         }
     }
 
