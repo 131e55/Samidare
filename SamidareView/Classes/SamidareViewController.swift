@@ -40,6 +40,10 @@ open class SamidareViewController: UIViewController {
     private weak var samidareView: SamidareView!
     private weak var timeInformationView: TimeInformationView!
 
+    // Cache of Delegate
+    private var widthForTimeColumn: CGFloat = 50
+
+
     open override func viewDidLoad() {
 
         super.viewDidLoad()
@@ -78,16 +82,16 @@ open class SamidareViewController: UIViewController {
         timeInformationView.reload()
 
         // Fit samidareView contentInset to timeLabel
-        let timeColumnWidth = delegate?.widthForTimeColumn(in: samidareView) ?? 50
+        widthForTimeColumn = delegate?.widthForTimeColumn(in: samidareView) ?? 50
         let additionalInsetLeft: CGFloat = 8
         let timeFontHeight = TimeInformationCell.preferredFont.lineHeight
         let timeViewContentInset = timeInformationView.scrollView.contentInset
         let inset = UIEdgeInsets(top: timeViewContentInset.top + timeFontHeight / 2,
-                                 left: timeColumnWidth + additionalInsetLeft,
+                                 left: widthForTimeColumn + additionalInsetLeft,
                                  bottom: timeViewContentInset.bottom + timeFontHeight / 2,
                                  right: samidareView.scrollView.contentInset.right)
         samidareView.scrollView.contentInset = inset
-        samidareView.scrollView.scrollIndicatorInsets.left = timeColumnWidth + additionalInsetLeft
+        samidareView.scrollView.scrollIndicatorInsets.left = widthForTimeColumn + additionalInsetLeft
     }
 }
 
@@ -95,9 +99,7 @@ extension SamidareViewController: TimeInformationViewLayoutDelegate {
 
     func numberOfRows(in timeInformationView: TimeInformationView) -> Int {
 
-        guard let dataSource = dataSource else { print("😿SamidareViewDataSource has not been implemented😿"); return 0 }
-
-        let timeRange = dataSource.timeRange(in: samidareView)
+        let timeRange = samidareView.timeRange
         let floorStartTime = Time(hours: timeRange.start.hours, minutes: 0)
         let ceilEndTime = Time(hours: timeRange.end.hours + 1, minutes: 0)
         let number = ceilEndTime.hours - floorStartTime.hours + 1
@@ -107,47 +109,38 @@ extension SamidareViewController: TimeInformationViewLayoutDelegate {
 
     func height(forRowAt row: Int, in timeInformationView: TimeInformationView) -> CGFloat {
 
-        guard let dataSource = dataSource else { print("😿SamidareViewDataSource has not been implemented😿"); return 0 }
-
-        let timeRange = dataSource.timeRange(in: samidareView)
+        let timeRange = samidareView.timeRange
         let numberOfRows = timeInformationView.numberOfRows
-        let minInterval = dataSource.timeRange(in: samidareView).minInterval
-        let heightPerIntervals = delegate?.heightPerMinInterval(in: samidareView) ?? samidareView.defaultHeightPerInterval
+        let heightPerIntervals = samidareView.heightPerMinInterval
 
         switch row {
         case 0:
             // ex.1) start 4:30 -> 5:00 - 4:30 = 0:30, ex.2) start 4:15 -> 5:00 - 4:15 = 0:45
             let nextTime = Time(hours: timeRange.start.hours + 1, minutes: 0)
             let interval = nextTime.totalMinutes - timeRange.start.totalMinutes
-            let numberOfIntervals = interval / minInterval
+            let numberOfIntervals = interval / timeRange.minInterval
             return CGFloat(numberOfIntervals) * heightPerIntervals
 
         case numberOfRows - 2:
             let time = Time(hours: timeRange.start.hours + row, minutes: 0)
             let interval = timeRange.end.totalMinutes - time.totalMinutes
-            let numberOfIntervals = interval / minInterval
+            let numberOfIntervals = interval / timeRange.minInterval
             return CGFloat(numberOfIntervals) * heightPerIntervals
 
         case numberOfRows - 1:
             return TimeInformationCell.preferredFont.lineHeight
 
         default:
-            let numberOfIntervals = 60 / minInterval
+            let numberOfIntervals = 60 / timeRange.minInterval
             return CGFloat(numberOfIntervals) * heightPerIntervals
         }
     }
 
     func cell(forRowAt row: Int, in timeInformationView: TimeInformationView) -> TimeInformationCell {
 
-        guard let dataSource = dataSource else {
-            print("😿SamidareViewDataSource has not been implemented😿")
-            return TimeInformationCell(timeText: "")
-        }
-
-        let timeRange = dataSource.timeRange(in: samidareView)
+        let timeRange = samidareView.timeRange
         let numberOfRows = timeInformationView.numberOfRows
-        let width = delegate?.widthForTimeColumn(in: samidareView) ?? 50
-
+        let width = widthForTimeColumn
         let timeText: String
 
         switch row {

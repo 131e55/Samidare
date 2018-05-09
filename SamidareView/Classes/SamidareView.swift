@@ -53,6 +53,13 @@ open class SamidareView: UIView {
     internal let defaultWidthForColumn: CGFloat = 44
     internal let defaultHeightPerInterval: CGFloat = 10
 
+    // Cache of DataSource and Delegate
+    private(set) var timeRange: TimeRange = TimeRange(start: Time(hours: 0, minutes: 0), end: Time(hours: 24, minutes: 0))
+    private(set) var numberOfColumns: Int = 0
+    private(set) var widthForEventColumn: CGFloat = 44
+    private(set) var heightPerMinInterval: CGFloat = 10
+
+
     public override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
@@ -115,6 +122,14 @@ open class SamidareView: UIView {
 
     public func reload() {
 
+        guard let dataSource = dataSource else { return }
+
+        numberOfColumns = dataSource.numberOfColumns(in: self)
+        timeRange = dataSource.timeRange(in: self)
+
+        heightPerMinInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
+        widthForEventColumn = delegate?.widthForEventColumn(in: self) ?? defaultWidthForColumn
+
         endEditingOfEventTime()
         layoutContentView()
         reloadStackView()
@@ -122,27 +137,18 @@ open class SamidareView: UIView {
 
     private func layoutContentView() {
 
-        guard let dataSource = dataSource else { return }
-
-        let numberOfColumns = dataSource.numberOfColumns(in: self)
-        let numberOfIntervals = dataSource.timeRange(in: self).numberOfIntervals
-        let widthForColumn = delegate?.widthForEventColumn(in: self) ?? defaultWidthForColumn
-        let heightPerInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
-
-        contentViewWidthConstraint.constant = CGFloat(numberOfColumns) * widthForColumn
-        contentViewHeightConstraint.constant = CGFloat(numberOfIntervals) * heightPerInterval
+        let numberOfIntervals = timeRange.numberOfIntervals
+        contentViewWidthConstraint.constant = CGFloat(numberOfColumns) * widthForEventColumn
+        contentViewHeightConstraint.constant = CGFloat(numberOfIntervals) * heightPerMinInterval
     }
 
     private func reloadStackView() {
 
         guard let dataSource = dataSource else { return }
 
-        let timeRange = dataSource.timeRange(in: self)
-        let heightPerInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
-
         eventStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        for column in 0 ..< dataSource.numberOfColumns(in: self) {
+        for column in 0 ..< numberOfColumns {
 
             let columnView = UIView()
             eventStackView.addArrangedSubview(columnView)
@@ -159,13 +165,13 @@ open class SamidareView: UIView {
                 let topInterval = (event.start.totalMinutes - timeRange.start.totalMinutes) / timeRange.minInterval
                 let topConstraint = eventView.topAnchor.constraint(equalTo: columnView.topAnchor)
                 topConstraint.identifier = "EventViewTopConstraint"
-                topConstraint.constant = CGFloat(topInterval) * heightPerInterval
+                topConstraint.constant = CGFloat(topInterval) * heightPerMinInterval
                 topConstraint.isActive = true
 
                 let numberOfIntervals = max((event.end.totalMinutes - event.start.totalMinutes) / timeRange.minInterval, 1)
                 let heightConstraint = eventView.heightAnchor.constraint(equalToConstant: 0)
                 heightConstraint.identifier = "EventViewHeightConstraint"
-                heightConstraint.constant = CGFloat(numberOfIntervals) * heightPerInterval
+                heightConstraint.constant = CGFloat(numberOfIntervals) * heightPerMinInterval
                 heightConstraint.isActive = true
 
                 let tapGesture = UITapGestureRecognizer(target: self, action: #selector(eventViewDidTap))
@@ -187,9 +193,6 @@ extension SamidareView {
     /// Translate to Time from y in contentView. Returned Time is rounded to nearest interval.
     private func translateToTime(fromYInContentView y: CGFloat) -> Time {
 
-        guard let dataSource = dataSource else { fatalError() }
-
-        let timeRange = dataSource.timeRange(in: self)
         let startMinutes = timeRange.start.totalMinutes
         let endMinutes = timeRange.end.totalMinutes
         let minInterval = timeRange.minInterval
@@ -217,13 +220,10 @@ extension SamidareView {
     /// Translate to y in contentView from Time
     private func translateToYInContentView(from time: Time) -> CGFloat {
 
-        guard let dataSource = dataSource else { fatalError() }
-        let timeRange = dataSource.timeRange(in: self)
         let startMinutes = timeRange.start.totalMinutes
         let minInterval = timeRange.minInterval
-        let heightPerInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
 
-        return CGFloat((time.totalMinutes - startMinutes) / minInterval) * heightPerInterval
+        return CGFloat((time.totalMinutes - startMinutes) / minInterval) * heightPerMinInterval
     }
 
     // MARK: - SamidareView Gesture Handlers
@@ -393,8 +393,6 @@ extension SamidareView {
     /// for moving by PanGesture on EditingEventView or LongPressGesture on EventView
     private func updateEditingViewFrame(type: TimeEditingType = .both) {
 
-        guard let dataSource = dataSource else { fatalError() }
-        let timeRange = dataSource.timeRange(in: self)
         guard let editingView = editingView else { fatalError() }
         guard let topConstraint = editingViewTopConstraint else { fatalError() }
         guard let heightConstraint = editingViewHeightConstraint else { fatalError() }
@@ -404,7 +402,6 @@ extension SamidareView {
 
         lastEditingType = type
 
-        let heightPerMinInterval = delegate?.heightPerMinInterval(in: self) ?? defaultHeightPerInterval
         let locationInContentView = recognizer.location(in: contentView)
         let editingViewHeight = editingView.bounds.height
 
