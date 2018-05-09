@@ -82,24 +82,28 @@ open class SamidareView: UIView {
         scrollView.isDirectionalLockEnabled = true
         addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
         self.scrollView = scrollView
 
         let contentView = UIView()
         contentView.backgroundColor = .clear
         scrollView.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         contentViewWidthConstraint = contentView.widthAnchor.constraint(equalToConstant: 0)
-        contentViewWidthConstraint.isActive = true
         contentViewHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: 0)
-        contentViewHeightConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentViewWidthConstraint,
+            contentViewHeightConstraint
+        ])
         self.contentView = contentView
 
         let stackView = UIStackView()
@@ -109,10 +113,12 @@ open class SamidareView: UIView {
         stackView.spacing = 2
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
         self.eventStackView = stackView
 
         // for LongPress EventView
@@ -148,6 +154,8 @@ open class SamidareView: UIView {
 
         eventStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
+        let timeRangeStartTotalMinutes = timeRange.start.totalMinutes
+
         for column in 0 ..< numberOfColumns {
 
             let columnView = UIView()
@@ -158,21 +166,22 @@ open class SamidareView: UIView {
                 let eventView = delegate?.eventView(in: self, inColumn: column, for: event) ?? EventView(event: event)
                 columnView.addSubview(eventView)
 
-                eventView.translatesAutoresizingMaskIntoConstraints = false
-                eventView.leadingAnchor.constraint(equalTo: columnView.leadingAnchor).isActive = true
-                eventView.trailingAnchor.constraint(equalTo: columnView.trailingAnchor).isActive = true
-
-                let topInterval = (event.start.totalMinutes - timeRange.start.totalMinutes) / timeRange.minInterval
+                let topInterval = (event.start.totalMinutes - timeRangeStartTotalMinutes) / timeRange.minInterval
                 let topConstraint = eventView.topAnchor.constraint(equalTo: columnView.topAnchor)
                 topConstraint.identifier = "EventViewTopConstraint"
                 topConstraint.constant = CGFloat(topInterval) * heightPerMinInterval
-                topConstraint.isActive = true
-
                 let numberOfIntervals = max((event.end.totalMinutes - event.start.totalMinutes) / timeRange.minInterval, 1)
                 let heightConstraint = eventView.heightAnchor.constraint(equalToConstant: 0)
                 heightConstraint.identifier = "EventViewHeightConstraint"
                 heightConstraint.constant = CGFloat(numberOfIntervals) * heightPerMinInterval
-                heightConstraint.isActive = true
+
+                eventView.translatesAutoresizingMaskIntoConstraints = false
+                NSLayoutConstraint.activate([
+                    eventView.leadingAnchor.constraint(equalTo: columnView.leadingAnchor),
+                    eventView.trailingAnchor.constraint(equalTo: columnView.trailingAnchor),
+                    topConstraint,
+                    heightConstraint
+                ])
 
                 let tapGesture = UITapGestureRecognizer(target: self, action: #selector(eventViewDidTap))
                 eventView.addGestureRecognizer(tapGesture)
@@ -322,8 +331,10 @@ extension SamidareView {
         let topMarkArea = EventView.createMarkAreaView(color: eventView.themeColor, isTop: true)
         contentView.addSubview(topMarkArea)
         topMarkArea.translatesAutoresizingMaskIntoConstraints = false
-        topMarkArea.centerYAnchor.constraint(equalTo: editingView!.topAnchor).isActive = true
-        topMarkArea.trailingAnchor.constraint(equalTo: editingView!.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            topMarkArea.centerYAnchor.constraint(equalTo: editingView!.topAnchor),
+            topMarkArea.trailingAnchor.constraint(equalTo: editingView!.trailingAnchor)
+        ])
         editingViewTopMarkArea = topMarkArea
         let topPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
         topMarkArea.addGestureRecognizer(topPanGesture)
@@ -334,8 +345,10 @@ extension SamidareView {
         let bottomMarkArea = EventView.createMarkAreaView(color: eventView.themeColor, isTop: false)
         contentView.addSubview(bottomMarkArea)
         bottomMarkArea.translatesAutoresizingMaskIntoConstraints = false
-        bottomMarkArea.centerYAnchor.constraint(equalTo: editingView!.bottomAnchor).isActive = true
-        bottomMarkArea.leadingAnchor.constraint(equalTo: editingView!.leadingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            bottomMarkArea.centerYAnchor.constraint(equalTo: editingView!.bottomAnchor),
+            bottomMarkArea.leadingAnchor.constraint(equalTo: editingView!.leadingAnchor)
+        ])
         editingViewBottomMarkArea = bottomMarkArea
         let bottomPanGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanningToEditTime))
         bottomMarkArea.addGestureRecognizer(bottomPanGesture)

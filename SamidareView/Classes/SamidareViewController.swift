@@ -55,10 +55,12 @@ open class SamidareViewController: UIViewController {
         samidareView.scrollView.delegate = self
         view.addSubview(samidareView)
         samidareView.translatesAutoresizingMaskIntoConstraints = false
-        samidareView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        samidareView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        samidareView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        samidareView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            samidareView.topAnchor.constraint(equalTo: view.topAnchor),
+            samidareView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            samidareView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            samidareView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
         self.samidareView = samidareView
 
         let timeView = TimeInformationView()
@@ -67,10 +69,12 @@ open class SamidareViewController: UIViewController {
         timeView.isUserInteractionEnabled = false
         view.addSubview(timeView)
         timeView.translatesAutoresizingMaskIntoConstraints = false
-        timeView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        timeView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        timeView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        timeView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            timeView.topAnchor.constraint(equalTo: view.topAnchor),
+            timeView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            timeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            timeView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
         timeView.scrollView.contentInset.top = TimeInformationCell.preferredFont.lineHeight / 2
         timeView.scrollView.contentInset.bottom = TimeInformationCell.preferredFont.lineHeight / 2
         self.timeInformationView = timeView

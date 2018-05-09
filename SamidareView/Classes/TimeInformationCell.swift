@@ -26,11 +26,12 @@ class TimeInformationCell: UIView {
         let view = Bundle(for: myType).loadNibNamed("\(myType)", owner: self, options: nil)!.first as! UIView
         addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
-
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: topAnchor),
+            view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
         timeViewWidthConstraint.constant = timeViewWidth
 
         timeLabel.font = myType.preferredFont

@@ -43,23 +43,27 @@ class TimeInformationView: UIView {
         scrollView.isScrollEnabled = false
         addSubview(scrollView)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
         self.scrollView = scrollView
 
         let contentView = UIView()
         contentView.backgroundColor = .clear
         scrollView.addSubview(contentView)
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
-        contentView.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         contentViewHeightConstraint = contentView.heightAnchor.constraint(equalToConstant: 0)
-        contentViewHeightConstraint.isActive = true
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.widthAnchor.constraint(equalTo: widthAnchor),
+            contentViewHeightConstraint
+        ])
         self.contentView = contentView
 
         let stackView = UIStackView()
@@ -69,10 +73,12 @@ class TimeInformationView: UIView {
         stackView.spacing = 0
         contentView.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        ])
         self.stackView = stackView
     }
 

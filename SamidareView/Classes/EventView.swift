@@ -82,10 +82,12 @@ open class EventView: UIView {
         let view = Bundle(for: type(of: self)).loadNibNamed("EventView", owner: self, options: nil)!.first as! UIView
         addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        view.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        view.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        view.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: topAnchor),
+            view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: trailingAnchor)
+        ])
 
         backgroundView.backgroundColor = themeColor
         backgroundView.layer.cornerRadius = cornerRadius
@@ -190,21 +192,24 @@ extension EventView {
 
         let markArea = UIView()
         markArea.translatesAutoresizingMaskIntoConstraints = false
-        markArea.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        markArea.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        NSLayoutConstraint.activate([
+            markArea.widthAnchor.constraint(equalToConstant: 40),
+            markArea.heightAnchor.constraint(equalToConstant: 40)
+        ])
 
         let markView = UIView()
         markView.backgroundColor = color
         markArea.addSubview(markView)
         markView.translatesAutoresizingMaskIntoConstraints = false
-        markView.centerYAnchor.constraint(equalTo: markArea.centerYAnchor).isActive = true
-        markView.widthAnchor.constraint(equalToConstant: 12).isActive = true
-        markView.heightAnchor.constraint(equalToConstant: 12).isActive = true
-        if isTop {
-            markView.trailingAnchor.constraint(equalTo: markArea.trailingAnchor, constant: -4).isActive = true
-        } else {
-            markView.leadingAnchor.constraint(equalTo: markArea.leadingAnchor, constant: 4).isActive = true
-        }
+        let leadingOrTrainingConstraint = isTop
+            ? markView.trailingAnchor.constraint(equalTo: markArea.trailingAnchor, constant: -4)
+            : markView.leadingAnchor.constraint(equalTo: markArea.leadingAnchor, constant: 4)
+        NSLayoutConstraint.activate([
+            markView.widthAnchor.constraint(equalToConstant: 12),
+            markView.heightAnchor.constraint(equalToConstant: 12),
+            markView.centerYAnchor.constraint(equalTo: markArea.centerYAnchor),
+            leadingOrTrainingConstraint
+        ])
         markView.layer.cornerRadius = 6
         markView.layer.borderColor = UIColor.white.cgColor
         markView.layer.borderWidth = 1
