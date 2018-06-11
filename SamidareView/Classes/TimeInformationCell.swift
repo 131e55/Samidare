@@ -9,6 +9,7 @@ import UIKit
 
 class TimeInformationCell: UIView {
 
+    static var nib: UINib!
     static let preferredFont = UIFont.systemFont(ofSize: 12)
 
     @IBOutlet private(set) weak var timeView: UIView!
@@ -23,7 +24,8 @@ class TimeInformationCell: UIView {
         super.init(frame: .zero)
 
         let myType = type(of: self)
-        let view = Bundle(for: myType).loadNibNamed("\(myType)", owner: self, options: nil)!.first as! UIView
+        if myType.nib == nil { myType.nib = UINib(nibName: "\(myType)", bundle: Bundle(for: myType)) }
+        let view = myType.nib.instantiate(withOwner: self, options: nil).first as! UIView
         addSubview(view)
         view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -39,5 +41,4 @@ class TimeInformationCell: UIView {
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-
 }
