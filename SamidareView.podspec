@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'SamidareView'
-  s.version          = '0.1.13'
+  s.version          = '0.1.14'
   s.summary          = 'A short description of SamidareView.'
 
 # This description is used to generate tags and improve search results.
@@ -31,7 +31,7 @@ TODO: Add long description of the pod here.
   s.ios.deployment_target = '10.0'
 
   s.source_files = 'SamidareView/Classes/**/*'
-  
+
   # s.resource_bundles = {
   #   'SamidareView' => ['SamidareView/Assets/*.png']
   # }
