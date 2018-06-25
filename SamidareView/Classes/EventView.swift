@@ -23,13 +23,17 @@ open class EventView: UIView {
     public var isBorderStyle: Bool = false {
         didSet {
             if isBorderStyle {
+                backgroundView.layer.borderWidth = 1
                 backgroundView.layer.borderColor = themeColor.cgColor
                 backgroundView.backgroundColor = borderFillColor
+                backgroundViewInEditing.layer.borderWidth = 1
                 backgroundViewInEditing.layer.borderColor = themeColor.withAlphaComponent(0.85).cgColor
                 backgroundViewInEditing.backgroundColor = borderFillColor.withAlphaComponent(0.85)
             } else {
+                backgroundView.layer.borderWidth = 0
                 backgroundView.layer.borderColor = nil
                 backgroundView.backgroundColor = themeColor
+                backgroundViewInEditing.layer.borderWidth = 0
                 backgroundViewInEditing.layer.borderColor = nil
                 backgroundViewInEditing.backgroundColor = themeColor.withAlphaComponent(0.85)
             }
