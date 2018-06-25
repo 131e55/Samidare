@@ -19,6 +19,12 @@ open class EventView: UIView {
             endTimeView.backgroundColor = themeColor.withAlphaComponent(0.85)
         }
     }
+    public var borderColor: UIColor = .clear {
+        didSet {
+            backgroundView.layer.borderColor = borderColor.cgColor
+            backgroundViewInEditing.layer.borderColor = borderColor.withAlphaComponent(0.85).cgColor
+        }
+    }
     public var textColor: UIColor = .black {
         didSet {
             titleLabel.textColor = textColor
