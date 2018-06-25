@@ -19,12 +19,32 @@ open class EventView: UIView {
             endTimeView.backgroundColor = themeColor.withAlphaComponent(0.85)
         }
     }
-    public var borderColor: UIColor = .clear {
+
+    public var isBorderStyle: Bool = false {
         didSet {
-            backgroundView.layer.borderColor = borderColor.cgColor
-            backgroundViewInEditing.layer.borderColor = borderColor.withAlphaComponent(0.85).cgColor
+            if isBorderStyle {
+                backgroundView.layer.borderColor = themeColor.cgColor
+                backgroundView.backgroundColor = borderFillColor
+                backgroundViewInEditing.layer.borderColor = themeColor.withAlphaComponent(0.85).cgColor
+                backgroundViewInEditing.backgroundColor = borderFillColor.withAlphaComponent(0.85)
+            } else {
+                backgroundView.layer.borderColor = nil
+                backgroundView.backgroundColor = themeColor
+                backgroundViewInEditing.layer.borderColor = nil
+                backgroundViewInEditing.backgroundColor = themeColor.withAlphaComponent(0.85)
+            }
         }
     }
+
+    public var borderFillColor: UIColor = .white {
+        didSet {
+            if isBorderStyle {
+                backgroundView.backgroundColor = borderFillColor
+                backgroundViewInEditing.backgroundColor = borderFillColor.withAlphaComponent(0.85)
+            }
+        }
+    }
+
     public var textColor: UIColor = .black {
         didSet {
             titleLabel.textColor = textColor
