@@ -1,9 +1,6 @@
 # SamidareView
 
-[![CI Status](http://img.shields.io/travis/Keisuke Kawamura/SamidareView.svg?style=flat)](https://travis-ci.org/Keisuke Kawamura/SamidareView)
-[![Version](https://img.shields.io/cocoapods/v/SamidareView.svg?style=flat)](http://cocoapods.org/pods/SamidareView)
-[![License](https://img.shields.io/cocoapods/l/SamidareView.svg?style=flat)](http://cocoapods.org/pods/SamidareView)
-[![Platform](https://img.shields.io/cocoapods/p/SamidareView.svg?style=flat)](http://cocoapods.org/pods/SamidareView)
+さみだれびゅー
 
 ## Example
 
@@ -22,7 +19,7 @@ pod 'SamidareView'
 
 ## Author
 
-Keisuke Kawamura, 131e550807@gmail.com
+Keisuke Kawamura, [@131e55](https://twitter.com/131e55)
 
 ## License
 
