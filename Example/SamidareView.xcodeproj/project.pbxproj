@@ -129,7 +129,6 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				B36EA9F3C08A05F8138E245B /* [CP] Embed Pods Frameworks */,
-				D084DEF08A6B725A3AD3DB54 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -223,21 +222,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D084DEF08A6B725A3AD3DB54 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
