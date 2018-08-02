@@ -501,10 +501,9 @@ extension SamidareView {
         alignEditingViewFrameToNearestInterval()
 
         let oldEvent = editingView.event
-        let newEvent = Event(id: oldEvent.id,
-                             title: oldEvent.title,
-                             start: editingView.startTimeInEditing,
-                             end: editingView.endTimeInEditing)
+        var newEvent = oldEvent
+        newEvent.start = editingView.startTimeInEditing
+        newEvent.end = editingView.endTimeInEditing
 
         let y = translateToYInContentView(from: newEvent.start)
         let height = translateToYInContentView(from: newEvent.end) - y
