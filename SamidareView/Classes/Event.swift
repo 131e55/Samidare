@@ -9,14 +9,15 @@ import Foundation
 
 public struct Event {
 
-    public var id: Int? = nil
-    public var title: String? = nil
+    public var id: Int?
+    public var title: String?
     public var start: Time
     public var end: Time
-    public var icon: UIImage? = nil
-    public var isEditable: Bool = true
+    public var icon: UIImage?
+    public var isEditable: Bool
+    public var source: Any?
 
-    public init(id: Int? = nil, title: String? = nil, start: Time, end: Time, icon: UIImage? = nil, isEditable: Bool = true) {
+    public init(id: Int? = nil, title: String? = nil, start: Time, end: Time, icon: UIImage? = nil, isEditable: Bool = true, source: Any? = nil) {
 
         self.id = id
         self.title = title
@@ -24,5 +25,6 @@ public struct Event {
         self.end = end
         self.icon = icon
         self.isEditable = isEditable
+        self.source = source
     }
 }
