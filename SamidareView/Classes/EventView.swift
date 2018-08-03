@@ -56,11 +56,19 @@ open class EventView: UIView {
             endTimeLabel.textColor = textColor
         }
     }
+
     public var iconHeight: CGFloat = 20 {
         didSet {
             iconImageViewHeightConstraint.constant = iconHeight
         }
     }
+
+    public var iconTintColor: UIColor? = nil {
+        didSet {
+            iconImageView.tintColor = iconTintColor
+        }
+    }
+
     public var cornerRadius: CGFloat = 4 {
         didSet {
             backgroundView.layer.cornerRadius = cornerRadius
@@ -103,7 +111,6 @@ open class EventView: UIView {
     public init(event: Event, isTimeViewsRightSide: Bool = false) {
 
         self.event = event
-
         super.init(frame: .zero)
 
         backgroundColor = .clear
