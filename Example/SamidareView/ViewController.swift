@@ -86,6 +86,7 @@ extension ViewController: SamidareViewDelegate {
         view.themeColor = [.red, .green, .blue, .cyan, .magenta, .yellow][column % 6]
         view.textColor = [.white, .black, .white, .black, .white, .black][column % 6]
         view.cornerRadius = 4
+        view.iconTintColor = view.textColor
 
         return view
     }
