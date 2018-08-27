@@ -1,0 +1,16 @@
+PODS:
+  - Samidare (0.1.0)
+
+DEPENDENCIES:
+  - Samidare (from `../`)
+
+EXTERNAL SOURCES:
+  Samidare:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Samidare: f6c1ae13be09683e5309225944aecad27fbeb7aa
+
+PODFILE CHECKSUM: acc5f162b68b0faa5eeef678554fc79f62fc3e05
+
+COCOAPODS: 1.5.3

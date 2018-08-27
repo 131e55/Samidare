@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'Samidare_Example' do
+  pod 'Samidare', :path => '../'
+
+  target 'Samidare_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
