@@ -24,36 +24,28 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="twJ-mf-6Y7">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N9q-6s-IG1" customClass="SamidareView" customModule="Samidare">
                                 <rect key="frame" x="0.0" y="85.5" width="375" height="581.5"/>
-                                <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <segue destination="306-Dk-kaL" kind="embed" id="l8o-e1-m2m"/>
-                                </connections>
-                            </containerView>
+                                <color key="backgroundColor" red="0.70588235290000001" green="0.88235294119999996" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="trailing" secondItem="N9q-6s-IG1" secondAttribute="trailing" id="1r9-8z-Dh1"/>
                             <constraint firstItem="QJO-dq-mqC" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="60y-6N-UzO"/>
-                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="bottom" secondItem="twJ-mf-6Y7" secondAttribute="bottom" id="WFc-d5-FVy"/>
                             <constraint firstItem="QJO-dq-mqC" firstAttribute="top" secondItem="eUi-Tk-UgG" secondAttribute="top" constant="16" id="ayK-HZ-Ic4"/>
-                            <constraint firstItem="twJ-mf-6Y7" firstAttribute="top" secondItem="QJO-dq-mqC" secondAttribute="bottom" constant="16" id="bdW-bt-F3v"/>
-                            <constraint firstItem="twJ-mf-6Y7" firstAttribute="leading" secondItem="eUi-Tk-UgG" secondAttribute="leading" id="pgz-mH-Ke5"/>
-                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="trailing" secondItem="twJ-mf-6Y7" secondAttribute="trailing" id="uDF-g4-Xyu"/>
+                            <constraint firstItem="N9q-6s-IG1" firstAttribute="top" secondItem="QJO-dq-mqC" secondAttribute="bottom" constant="16" id="iJ6-T0-eZl"/>
+                            <constraint firstItem="N9q-6s-IG1" firstAttribute="leading" secondItem="eUi-Tk-UgG" secondAttribute="leading" id="xAd-bL-cx4"/>
+                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="bottom" secondItem="N9q-6s-IG1" secondAttribute="bottom" id="ybs-2X-met"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="eUi-Tk-UgG"/>
                     </view>
+                    <connections>
+                        <outlet property="samidareView" destination="N9q-6s-IG1" id="WvC-tP-C3K"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-        </scene>
-        <!--Samidare View Controller-->
-        <scene sceneID="28K-ZO-iZO">
-            <objects>
-                <viewController id="306-Dk-kaL" customClass="SamidareViewController" customModule="Samidare" sceneMemberID="viewController"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="rba-RO-X9z" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1470" y="26"/>
         </scene>
     </scenes>
 </document>
