@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Samidare
 //
-//  Created by Keisuke Kawamura on 08/27/2018.
+//  Created by Keisuke Kawamura on 09/20/2018.
 //  Copyright (c) 2018 Keisuke Kawamura. All rights reserved.
 //
 

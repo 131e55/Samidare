@@ -1,5 +1,5 @@
 PODS:
-  - Samidare (0.1.0)
+  - Samidare (0.2)
 
 DEPENDENCIES:
   - Samidare (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Samidare: f6c1ae13be09683e5309225944aecad27fbeb7aa
+  Samidare: fbd4751de57e788b0f4211240efd493b654c836a
 
-PODFILE CHECKSUM: acc5f162b68b0faa5eeef678554fc79f62fc3e05
+PODFILE CHECKSUM: e0913b762ea73d9e0b8d4b1a431c6298b8f81bf6
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0.beta.1
