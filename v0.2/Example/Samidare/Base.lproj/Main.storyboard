@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -13,18 +14,46 @@
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="Samidare_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
-                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samidare Sample" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QJO-dq-mqC">
+                                <rect key="frame" x="82.5" y="36" width="210.5" height="33.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="twJ-mf-6Y7">
+                                <rect key="frame" x="0.0" y="85.5" width="375" height="581.5"/>
+                                <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <segue destination="306-Dk-kaL" kind="embed" id="l8o-e1-m2m"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="QJO-dq-mqC" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="60y-6N-UzO"/>
+                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="bottom" secondItem="twJ-mf-6Y7" secondAttribute="bottom" id="WFc-d5-FVy"/>
+                            <constraint firstItem="QJO-dq-mqC" firstAttribute="top" secondItem="eUi-Tk-UgG" secondAttribute="top" constant="16" id="ayK-HZ-Ic4"/>
+                            <constraint firstItem="twJ-mf-6Y7" firstAttribute="top" secondItem="QJO-dq-mqC" secondAttribute="bottom" constant="16" id="bdW-bt-F3v"/>
+                            <constraint firstItem="twJ-mf-6Y7" firstAttribute="leading" secondItem="eUi-Tk-UgG" secondAttribute="leading" id="pgz-mH-Ke5"/>
+                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="trailing" secondItem="twJ-mf-6Y7" secondAttribute="trailing" id="uDF-g4-Xyu"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="eUi-Tk-UgG"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+        </scene>
+        <!--Samidare View Controller-->
+        <scene sceneID="28K-ZO-iZO">
+            <objects>
+                <viewController id="306-Dk-kaL" customClass="SamidareViewController" customModule="Samidare" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="rba-RO-X9z" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1470" y="26"/>
         </scene>
     </scenes>
 </document>

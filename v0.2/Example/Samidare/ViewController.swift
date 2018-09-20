@@ -7,11 +7,14 @@
 //
 
 import UIKit
+import Samidare
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        print(children)
         // Do any additional setup after loading the view, typically from a nib.
     }
 
