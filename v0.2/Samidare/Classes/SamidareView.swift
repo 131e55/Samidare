@@ -10,10 +10,18 @@ import UIKit
 
 open class SamidareView: UIView {
 
-    public weak var dataSource: SamidareViewDataSource?
-
+    public weak var dataSource: SamidareViewDataSource? {
+        didSet {
+            print("dataSource not nil")
+            needsReloadData = true
+            setNeedsLayout()
+        }
+    }
+    private let dataSourceCache = SamidareViewDataSourceCache()
     private let eventScrollView = UIScrollView()
-    private let timeScrollView = UIScrollView()
+    private let timeScrollView = TimeScrollView()
+
+    private var needsReloadData = true
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,6 +34,7 @@ open class SamidareView: UIView {
     }
 
     private func setup() {
+        print("SamidareView setup")
         eventScrollView.frame = bounds
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(eventScrollView)
@@ -38,7 +47,39 @@ open class SamidareView: UIView {
         timeScrollView.backgroundColor = UIColor.green.withAlphaComponent(0.3)
     }
 
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+
+        reloadDataIfNeeded()
+        print("SamidareView layoutSubviews", needsReloadData)
+
+        
+    }
+
     public func reloadData() {
+        print("SamidareView reloadData")
+
+        dataSourceCache.clear()
+        guard let dataSource = dataSource else {
+            fatalError("SamidareViewDataSource not implemented")
+        }
+        dataSourceCache.store(
+            timeRange: dataSource.timeRange(in: self),
+            heightPerMinInterval: dataSource.heightPerMinInterval(in: self),
+            widthOfTimeColumn: dataSource.widthOfTimeColumn(in: self)
+        )
+
+        needsReloadData = false
+        setNeedsLayout()
+    }
+
+    func reloadDataIfNeeded() {
+        if needsReloadData {
+            reloadData()
+        }
+    }
+
+    private func layoutScrollView() {
 
     }
 }
