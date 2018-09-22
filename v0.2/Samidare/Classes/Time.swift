@@ -33,7 +33,6 @@ public struct Time {
     }
 
     public var formattedString: String {
-        CGSize.zero
         return String(format: "%02d:%02d", arguments: [hours, minutes])
     }
 

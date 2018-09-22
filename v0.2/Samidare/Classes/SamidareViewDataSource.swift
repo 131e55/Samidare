@@ -30,25 +30,6 @@ extension SamidareViewDataSource {
         return 44
     }
     public func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
-        return 8
-    }
-}
-
-internal class SamidareViewDataSourceCache {
-
-    var timeRange: TimeRange?
-    var heightPerMinInterval: CGFloat?
-    var widthOfTimeColumn: CGFloat?
-
-    func clear() {
-        timeRange = nil
-        heightPerMinInterval = nil
-        widthOfTimeColumn = nil
-    }
-
-    func store(timeRange: TimeRange, heightPerMinInterval: CGFloat, widthOfTimeColumn: CGFloat) {
-        self.timeRange = timeRange
-        self.heightPerMinInterval = heightPerMinInterval
-        self.widthOfTimeColumn = widthOfTimeColumn
+        return 16
     }
 }

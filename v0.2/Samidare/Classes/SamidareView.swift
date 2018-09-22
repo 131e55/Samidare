@@ -18,8 +18,10 @@ open class SamidareView: UIView {
         }
     }
     private let dataSourceCache = SamidareViewDataSourceCache()
-    private let eventScrollView = UIScrollView()
     private let timeScrollView = TimeScrollView()
+//    private let frozenEventScrollView = UIScrollView()
+    private let eventScrollView = UIScrollView()
+
 
     private var needsReloadData = true
 
@@ -41,6 +43,7 @@ open class SamidareView: UIView {
 
         timeScrollView.frame = bounds
         timeScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        timeScrollView.isUserInteractionEnabled = false
         addSubview(timeScrollView)
 
         eventScrollView.backgroundColor = UIColor.red.withAlphaComponent(0.3)
@@ -53,7 +56,12 @@ open class SamidareView: UIView {
         reloadDataIfNeeded()
         print("SamidareView layoutSubviews", needsReloadData)
 
-        
+        guard let dataSource = dataSourceCache.cachedData else { return }
+
+        let contentHeight = CGFloat(dataSource.timeRange.numberOfIntervals) * dataSource.heightPerMinInterval
+        eventScrollView.contentSize.height = contentHeight
+        print(dataSource.timeRange.numberOfIntervals, "*", dataSource.heightPerMinInterval)
+        print(eventScrollView.contentSize)
     }
 
     public func reloadData() {
