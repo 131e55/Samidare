@@ -17,7 +17,7 @@ open class SamidareView: UIView {
             setNeedsLayout()
         }
     }
-    private let dataSourceCache = SamidareViewDataSourceCache()
+    private let layoutDataStore = LayoutDataStore()
     private let timeScrollView = TimeScrollView()
 //    private let frozenEventScrollView = UIScrollView()
     private let eventScrollView = UIScrollView()
@@ -62,9 +62,9 @@ open class SamidareView: UIView {
 
     public func reloadData() {
         print("SamidareView reloadData")
-        dataSourceCache.clear()
+        layoutDataStore.clear()
         guard let dataSource = dataSource else { return }
-        dataSourceCache.store(dataSource: dataSource, for: self)
+        layoutDataStore.store(dataSource: dataSource, for: self)
         needsReloadData = false
         setNeedsLayout()
     }
@@ -76,14 +76,14 @@ open class SamidareView: UIView {
     }
 
     private func layoutEventScrollViewContentSize() {
-        guard let dataSourceCache = dataSourceCache.cachedData else { return }
+        guard let layoutDataStore = layoutDataStore.cachedData else { return }
 
-        let contentHeight = CGFloat(dataSourceCache.timeRange.numberOfIntervals)
-                            * dataSourceCache.heightPerMinInterval
-        eventScrollView.contentSize = CGSize(width: dataSourceCache.totalWidthOfEventColumns,
+        let contentHeight = CGFloat(layoutDataStore.timeRange.numberOfIntervals)
+                            * layoutDataStore.heightPerMinInterval
+        eventScrollView.contentSize = CGSize(width: layoutDataStore.totalWidthOfEventColumns,
                                              height: contentHeight)
 
-        print(dataSourceCache.timeRange.numberOfIntervals, "*", dataSourceCache.heightPerMinInterval)
+        print(layoutDataStore.timeRange.numberOfIntervals, "*", layoutDataStore.heightPerMinInterval)
         print(eventScrollView.contentSize)
     }
 

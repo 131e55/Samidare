@@ -1,5 +1,5 @@
 //
-//  SamidareViewDataSourceCache.swift
+//  LayoutDataStore.swift
 //  Samidare
 //
 //  Created by Keisuke Kawamura on 2018/09/22.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-internal class SamidareViewDataSourceCache {
+internal class LayoutDataStore {
 
-    struct Data {
+    struct LayoutData {
         let timeRange: TimeRange
         let heightPerMinInterval: CGFloat
         let widthOfEventColumn: [IndexPath: CGFloat]
@@ -18,7 +18,7 @@ internal class SamidareViewDataSourceCache {
         let widthOfTimeColumn: CGFloat
     }
 
-    var cachedData: Data?
+    var cachedData: LayoutData?
 
     func clear() {
         cachedData = nil
@@ -37,10 +37,12 @@ internal class SamidareViewDataSourceCache {
             }
         }
 
-        cachedData = Data(timeRange: dataSource.timeRange(in: samidareView),
-                          heightPerMinInterval: dataSource.heightPerMinInterval(in: samidareView),
-                          widthOfEventColumn: widthOfEventColumn,
-                          totalWidthOfEventColumns: totalWidthOfEventColumns,
-                          widthOfTimeColumn: dataSource.widthOfTimeColumn(in: samidareView))
+        cachedData = LayoutData(
+            timeRange: dataSource.timeRange(in: samidareView),
+            heightPerMinInterval: dataSource.heightPerMinInterval(in: samidareView),
+            widthOfEventColumn: widthOfEventColumn,
+            totalWidthOfEventColumns: totalWidthOfEventColumns,
+            widthOfTimeColumn: dataSource.widthOfTimeColumn(in: samidareView)
+        )
     }
 }
