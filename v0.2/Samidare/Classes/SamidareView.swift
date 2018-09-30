@@ -8,20 +8,27 @@
 
 import UIKit
 
-open class SamidareView: UIView {
+public class SamidareView: UIView {
 
     public weak var dataSource: SamidareViewDataSource? {
         didSet {
-            print("dataSource not nil")
             needsReloadData = true
             setNeedsLayout()
         }
     }
     private let layoutDataStore = LayoutDataStore()
+    private let survivorManager = SurvivorManager()
+    private let eventScrollView = EventScrollView()
     private let timeScrollView = TimeScrollView()
-//    private let frozenEventScrollView = UIScrollView()
-    private let eventScrollView = UIScrollView()
 
+    public var expansionRateOfSurvivorArea: CGFloat {
+        get {
+            return survivorManager.expansionRateOfSurvivorArea
+        }
+        set {
+            survivorManager.expansionRateOfSurvivorArea = newValue
+        }
+    }
 
     private var needsReloadData = true
 
@@ -58,6 +65,7 @@ open class SamidareView: UIView {
         print("SamidareView layoutSubviews", needsReloadData)
 
         layoutEventScrollViewContentSize()
+        survivorManager.resetSurvivorArea(of: eventScrollView)
     }
 
     public func reloadData() {
@@ -65,6 +73,7 @@ open class SamidareView: UIView {
         layoutDataStore.clear()
         guard let dataSource = dataSource else { return }
         layoutDataStore.store(dataSource: dataSource, for: self)
+        survivorManager.setup(layoutData: layoutDataStore.cachedData!)
         needsReloadData = false
         setNeedsLayout()
     }
@@ -77,12 +86,10 @@ open class SamidareView: UIView {
 
     private func layoutEventScrollViewContentSize() {
         guard let layoutDataStore = layoutDataStore.cachedData else { return }
-
         let contentHeight = CGFloat(layoutDataStore.timeRange.numberOfIntervals)
                             * layoutDataStore.heightPerMinInterval
         eventScrollView.contentSize = CGSize(width: layoutDataStore.totalWidthOfEventColumns,
                                              height: contentHeight)
-
         print(layoutDataStore.timeRange.numberOfIntervals, "*", layoutDataStore.heightPerMinInterval)
         print(eventScrollView.contentSize)
     }
@@ -98,8 +105,7 @@ open class SamidareView: UIView {
 extension SamidareView: UIScrollViewDelegate {
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let contentX = scrollView.contentOffset.x
-        let visibleX = scrollView.bounds.width
-        print()
+        survivorManager.resetSurvivorArea(of: scrollView)
+        survivorManager.judge()
     }
 }
