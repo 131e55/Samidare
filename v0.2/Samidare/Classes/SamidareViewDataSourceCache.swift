@@ -6,11 +6,15 @@
 //  Copyright (c) 2018 Keisuke Kawamura. All rights reserved.
 //
 
+import Foundation
+
 internal class SamidareViewDataSourceCache {
 
     struct Data {
         let timeRange: TimeRange
         let heightPerMinInterval: CGFloat
+        let widthOfEventColumn: [IndexPath: CGFloat]
+        let totalWidthOfEventColumns: CGFloat
         let widthOfTimeColumn: CGFloat
     }
 
@@ -20,9 +24,15 @@ internal class SamidareViewDataSourceCache {
         cachedData = nil
     }
 
-    func store(timeRange: TimeRange, heightPerMinInterval: CGFloat, widthOfTimeColumn: CGFloat) {
+    func store(timeRange: TimeRange,
+               heightPerMinInterval: CGFloat,
+               widthOfEventColumn: [IndexPath: CGFloat],
+               totalWidthOfEventColumns: CGFloat,
+               widthOfTimeColumn: CGFloat) {
         cachedData = Data(timeRange: timeRange,
                           heightPerMinInterval: heightPerMinInterval,
+                          widthOfEventColumn: widthOfEventColumn,
+                          totalWidthOfEventColumns: totalWidthOfEventColumns,
                           widthOfTimeColumn: widthOfTimeColumn)
     }
 }

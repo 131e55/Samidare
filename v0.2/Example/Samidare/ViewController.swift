@@ -33,10 +33,13 @@ extension ViewController: SamidareViewDataSource {
         let cells = events.map({ event -> Cell in
             let cell = Cell()
             cell.configure(event: event)
+            cell.backgroundColor = .red
             return cell
         })
         return cells
     }
+
+
 }
 
 final class SampleData {

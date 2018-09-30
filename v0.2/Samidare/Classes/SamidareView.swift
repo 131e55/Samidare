@@ -56,12 +56,7 @@ open class SamidareView: UIView {
         reloadDataIfNeeded()
         print("SamidareView layoutSubviews", needsReloadData)
 
-        guard let dataSource = dataSourceCache.cachedData else { return }
-
-        let contentHeight = CGFloat(dataSource.timeRange.numberOfIntervals) * dataSource.heightPerMinInterval
-        eventScrollView.contentSize.height = contentHeight
-        print(dataSource.timeRange.numberOfIntervals, "*", dataSource.heightPerMinInterval)
-        print(eventScrollView.contentSize)
+        layoutEventScrollView()
     }
 
     public func reloadData() {
@@ -71,9 +66,23 @@ open class SamidareView: UIView {
         guard let dataSource = dataSource else {
             fatalError("SamidareViewDataSource not implemented")
         }
+
+        var totalWidthOfEventColumns: CGFloat = 0
+        var widthOfEventColumn: [IndexPath: CGFloat] = [:]
+        for section in 0 ..< dataSource.numberOfSections(in: self) {
+            for column in 0 ..< dataSource.numberOfColumns(inSection: section, in: self) {
+                let indexPath = IndexPath(column: column, section: section)
+                let width = dataSource.widthOfEventColumn(at: indexPath, in: self)
+                widthOfEventColumn[indexPath] = width
+                totalWidthOfEventColumns += width
+            }
+        }
+
         dataSourceCache.store(
             timeRange: dataSource.timeRange(in: self),
             heightPerMinInterval: dataSource.heightPerMinInterval(in: self),
+            widthOfEventColumn: widthOfEventColumn,
+            totalWidthOfEventColumns: totalWidthOfEventColumns,
             widthOfTimeColumn: dataSource.widthOfTimeColumn(in: self)
         )
 
@@ -87,7 +96,15 @@ open class SamidareView: UIView {
         }
     }
 
-    private func layoutScrollView() {
+    private func layoutEventScrollView() {
+        guard let dataSource = dataSourceCache.cachedData else { return }
 
+        let contentHeight = CGFloat(dataSource.timeRange.numberOfIntervals) * dataSource.heightPerMinInterval
+        eventScrollView.contentSize = CGSize(width: dataSource.totalWidthOfEventColumns,
+                                             height: contentHeight)
+        print(dataSource.timeRange.numberOfIntervals, "*", dataSource.heightPerMinInterval)
+        print(eventScrollView.contentSize)
+
+        
     }
 }
