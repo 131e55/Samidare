@@ -25,7 +25,7 @@ extension ViewController: SamidareViewDataSource {
     }
 
     func numberOfColumns(inSection: Int, in samidareView: SamidareView) -> Int {
-        return 25
+        return 100
     }
 
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell] {

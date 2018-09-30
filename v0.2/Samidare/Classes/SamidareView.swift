@@ -27,18 +27,19 @@ open class SamidareView: UIView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        initialize()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setup()
+        initialize()
     }
 
-    private func setup() {
-        print("SamidareView setup")
+    private func initialize() {
+        print("SamidareView initialize")
         eventScrollView.frame = bounds
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        eventScrollView.delegate = self
         addSubview(eventScrollView)
 
         timeScrollView.frame = bounds
@@ -56,36 +57,14 @@ open class SamidareView: UIView {
         reloadDataIfNeeded()
         print("SamidareView layoutSubviews", needsReloadData)
 
-        layoutEventScrollView()
+        layoutEventScrollViewContentSize()
     }
 
     public func reloadData() {
         print("SamidareView reloadData")
-
         dataSourceCache.clear()
-        guard let dataSource = dataSource else {
-            fatalError("SamidareViewDataSource not implemented")
-        }
-
-        var totalWidthOfEventColumns: CGFloat = 0
-        var widthOfEventColumn: [IndexPath: CGFloat] = [:]
-        for section in 0 ..< dataSource.numberOfSections(in: self) {
-            for column in 0 ..< dataSource.numberOfColumns(inSection: section, in: self) {
-                let indexPath = IndexPath(column: column, section: section)
-                let width = dataSource.widthOfEventColumn(at: indexPath, in: self)
-                widthOfEventColumn[indexPath] = width
-                totalWidthOfEventColumns += width
-            }
-        }
-
-        dataSourceCache.store(
-            timeRange: dataSource.timeRange(in: self),
-            heightPerMinInterval: dataSource.heightPerMinInterval(in: self),
-            widthOfEventColumn: widthOfEventColumn,
-            totalWidthOfEventColumns: totalWidthOfEventColumns,
-            widthOfTimeColumn: dataSource.widthOfTimeColumn(in: self)
-        )
-
+        guard let dataSource = dataSource else { return }
+        dataSourceCache.store(dataSource: dataSource, for: self)
         needsReloadData = false
         setNeedsLayout()
     }
@@ -96,15 +75,31 @@ open class SamidareView: UIView {
         }
     }
 
-    private func layoutEventScrollView() {
-        guard let dataSource = dataSourceCache.cachedData else { return }
+    private func layoutEventScrollViewContentSize() {
+        guard let dataSourceCache = dataSourceCache.cachedData else { return }
 
-        let contentHeight = CGFloat(dataSource.timeRange.numberOfIntervals) * dataSource.heightPerMinInterval
-        eventScrollView.contentSize = CGSize(width: dataSource.totalWidthOfEventColumns,
+        let contentHeight = CGFloat(dataSourceCache.timeRange.numberOfIntervals)
+                            * dataSourceCache.heightPerMinInterval
+        eventScrollView.contentSize = CGSize(width: dataSourceCache.totalWidthOfEventColumns,
                                              height: contentHeight)
-        print(dataSource.timeRange.numberOfIntervals, "*", dataSource.heightPerMinInterval)
-        print(eventScrollView.contentSize)
 
-        
+        print(dataSourceCache.timeRange.numberOfIntervals, "*", dataSourceCache.heightPerMinInterval)
+        print(eventScrollView.contentSize)
+    }
+
+    private func layoutEventScrollView() {
+        guard let dataSource = dataSource else { return }
+
+
+    }
+
+}
+
+extension SamidareView: UIScrollViewDelegate {
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentX = scrollView.contentOffset.x
+        let visibleX = scrollView.bounds.width
+        print()
     }
 }

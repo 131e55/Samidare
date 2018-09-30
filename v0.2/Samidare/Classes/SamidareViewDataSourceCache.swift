@@ -24,15 +24,23 @@ internal class SamidareViewDataSourceCache {
         cachedData = nil
     }
 
-    func store(timeRange: TimeRange,
-               heightPerMinInterval: CGFloat,
-               widthOfEventColumn: [IndexPath: CGFloat],
-               totalWidthOfEventColumns: CGFloat,
-               widthOfTimeColumn: CGFloat) {
-        cachedData = Data(timeRange: timeRange,
-                          heightPerMinInterval: heightPerMinInterval,
+    func store(dataSource: SamidareViewDataSource, for samidareView: SamidareView) {
+
+        var totalWidthOfEventColumns: CGFloat = 0
+        var widthOfEventColumn: [IndexPath: CGFloat] = [:]
+        for section in 0 ..< dataSource.numberOfSections(in: samidareView) {
+            for column in 0 ..< dataSource.numberOfColumns(inSection: section, in: samidareView) {
+                let indexPath = IndexPath(column: column, section: section)
+                let width = dataSource.widthOfEventColumn(at: indexPath, in: samidareView)
+                widthOfEventColumn[indexPath] = width
+                totalWidthOfEventColumns += width
+            }
+        }
+
+        cachedData = Data(timeRange: dataSource.timeRange(in: samidareView),
+                          heightPerMinInterval: dataSource.heightPerMinInterval(in: samidareView),
                           widthOfEventColumn: widthOfEventColumn,
                           totalWidthOfEventColumns: totalWidthOfEventColumns,
-                          widthOfTimeColumn: widthOfTimeColumn)
+                          widthOfTimeColumn: dataSource.widthOfTimeColumn(in: samidareView))
     }
 }
