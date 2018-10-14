@@ -13,6 +13,8 @@ final class ViewController: UIViewController {
 
     @IBOutlet private weak var samidareView: SamidareView!
 
+    let sampleData = SampleData.events(sections: 4, columns: 50)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         samidareView.dataSource = self
@@ -21,32 +23,43 @@ final class ViewController: UIViewController {
 
 extension ViewController: SamidareViewDataSource {
     func numberOfSections(in samidareView: SamidareView) -> Int {
-        return 2
+        return 4
     }
 
-    func numberOfColumns(inSection: Int, in samidareView: SamidareView) -> Int {
-        return 100
+    func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int {
+        return 50
     }
 
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell] {
-        let events = SampleData.events[indexPath] ?? []
+        let events = sampleData[indexPath] ?? []
         let cells = events.map({ event -> Cell in
-            let cell = Cell()
+            let cell = samidareView.dequeueCell(withReuseIdentifier: "", for: indexPath)
             cell.configure(event: event)
             cell.backgroundColor = .red
             return cell
         })
         return cells
     }
-
-
 }
 
 final class SampleData {
-    static let events: [IndexPath: [Event]] = [
-        IndexPath(column: 0, section: 0): [
-            Event(start: Time(hours: 1, minutes: 30), end: Time(hours: 7, minutes: 45), isEditable: true),
-            Event(start: Time(hours: 9, minutes: 0), end: Time(hours: 15, minutes: 35), isEditable: true)
-        ]
-    ]
+
+    static func events(sections: Int, columns: Int) -> [IndexPath: [Event]] {
+        var events: [IndexPath: [Event]] = [:]
+        var hours = 1
+        for section in 0 ..< sections {
+            for column in 0 ..< columns {
+                let indexPath = IndexPath(column: column, section: section)
+                events[indexPath] = [
+                    Event(start: Time(hours: hours, minutes: 0), end: Time(hours: hours + 4, minutes: 0), isEditable: true),
+                    Event(start: Time(hours: hours + 6, minutes: 0), end: Time(hours: hours + 10, minutes: 0), isEditable: true)
+                ]
+                hours += 1
+                if hours > 24 {
+                    hours = 1
+                }
+            }
+        }
+        return events
+    }
 }

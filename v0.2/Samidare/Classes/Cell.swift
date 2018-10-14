@@ -11,6 +11,7 @@ import UIKit
 open class Cell: UIView {
 
     private(set) var event: Event!
+    internal var indexPath: IndexPath!
 
     open func configure(event: Event) {
         self.event = event

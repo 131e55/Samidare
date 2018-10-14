@@ -41,15 +41,15 @@ public struct Time {
         initialize(hours: hours, minutes: minutes)
     }
 
-    public init(date: Date, calendar: Calendar = Calendar(identifier: .gregorian)) {
+    public init(from date: Date, calendar: Calendar = Calendar(identifier: .gregorian)) {
         let hours = calendar.component(.hour, from: date)
         let minutes = calendar.component(.minute, from: date)
         self.init(hours: hours, minutes: minutes)
     }
 
-    private mutating func initialize(hours h: Int, minutes m: Int) {
-        hours = h
-        minutes = m
+    private mutating func initialize(hours: Int, minutes: Int) {
+        self.hours = hours
+        self.minutes = minutes
     }
 }
 

@@ -6,15 +6,15 @@
 //  Copyright (c) 2018 Keisuke Kawamura. All rights reserved.
 //
 
-import Foundation
-
+import UIKit
 
 public protocol SamidareViewDataSource: class {
     func timeRange(in samidareView: SamidareView) -> TimeRange
     func numberOfSections(in samidareView: SamidareView) -> Int
-    func numberOfColumns(inSection: Int, in samidareView: SamidareView) -> Int
+    func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int
+    func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell]
-    func widthOfEventColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
+    func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
     func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat
 }
@@ -23,13 +23,16 @@ extension SamidareViewDataSource {
     public func timeRange(in samidareView: SamidareView) -> TimeRange {
         return TimeRange(start: .zero, end: Time(hours: 24, minutes: 0), minInterval: 15)
     }
-    public func widthOfEventColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
+    public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
+        return 0
+    }
+    public func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
         return 44
     }
     public func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat {
         return 44
     }
     public func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
-        return 16
+        return 8
     }
 }
