@@ -18,6 +18,7 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         samidareView.dataSource = self
+        samidareView.register(UINib(nibName: "CustomCell", bundle: .main), forCellReuseIndentifier: "CustomCell")
     }
 }
 
@@ -33,7 +34,7 @@ extension ViewController: SamidareViewDataSource {
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell] {
         let events = sampleData[indexPath] ?? []
         let cells = events.map({ event -> Cell in
-            let cell = samidareView.dequeueCell(withReuseIdentifier: "", for: indexPath)
+            let cell = samidareView.dequeueCell(withReuseIdentifier: "CustomCell")
             cell.configure(event: event)
             cell.backgroundColor = .red
             return cell

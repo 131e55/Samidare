@@ -12,12 +12,13 @@ public class SamidareView: UIView {
 
     public weak var dataSource: SamidareViewDataSource? {
         didSet {
-            needsReloadData = true
+            mustCallReloadData = true
             setNeedsLayout()
         }
     }
     private let layoutDataStore = LayoutDataStore()
     private let survivorManager = SurvivorManager()
+    private let reusableCellQueue = ReusableCellQueue()
     private let eventScrollView = EventScrollView()
     private let timeScrollView = TimeScrollView()
 
@@ -26,7 +27,7 @@ public class SamidareView: UIView {
         set { survivorManager.expansionRateOfSurvivorArea = newValue }
     }
 
-    private var needsReloadData = true
+    private var mustCallReloadData = true
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,12 +64,12 @@ public class SamidareView: UIView {
         survivorManager.setup(layoutData: layoutData)
         eventScrollView.setup(layoutData: layoutData)
 
-        needsReloadData = false
+        mustCallReloadData = false
         setNeedsLayout()
     }
 
     func reloadDataIfNeeded() {
-        if needsReloadData {
+        if mustCallReloadData {
             reloadData()
         }
     }
@@ -111,9 +112,15 @@ public class SamidareView: UIView {
         survivorManager.resetSurvivorIndexPaths(survivorManager.judgeResult.survivors)
     }
 
-    public func dequeueCell<T: Cell>(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> T {
-        let cell = Cell()
-        return cell as! T
+    public func register(_ nib: UINib, forCellReuseIndentifier identifier: String) {
+        reusableCellQueue.register(nib, forCellReuseIdentifier: identifier)
+    }
+
+    public func dequeueCell<T: Cell>(withReuseIdentifier identifier: String) -> T {
+        if let cell = reusableCellQueue.dequeue(withReuseIdentifier: identifier) {
+            return cell as! T
+        }
+        return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
 }
 

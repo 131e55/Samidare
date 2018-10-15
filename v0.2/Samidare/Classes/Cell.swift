@@ -11,7 +11,10 @@ import UIKit
 open class Cell: UIView {
 
     private(set) var event: Event!
+
     internal var indexPath: IndexPath!
+
+    public internal(set) var reuseIdentifier: String?
 
     open func configure(event: Event) {
         self.event = event
