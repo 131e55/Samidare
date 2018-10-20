@@ -23,6 +23,10 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: SamidareViewDataSource {
+    func timeRange(in samidareView: SamidareView) -> TimeRange {
+        return TimeRange(start: Time(hours: 0, minutes: 30), end: Time(hours: 25, minutes: 45))
+    }
+
     func numberOfSections(in samidareView: SamidareView) -> Int {
         return 4
     }
@@ -31,12 +35,11 @@ extension ViewController: SamidareViewDataSource {
         return 50
     }
 
-    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell] {
+    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell] {
         let events = sampleData[indexPath] ?? []
-        let cells = events.map({ event -> Cell in
+        let cells = events.map({ event -> EventCell in
             let cell = samidareView.dequeueCell(withReuseIdentifier: "CustomCell")
             cell.configure(event: event)
-            cell.backgroundColor = .red
             return cell
         })
         return cells

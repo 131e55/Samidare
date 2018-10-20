@@ -16,7 +16,7 @@ public class EventScrollView: UIScrollView {
 
     private var layoutData: LayoutDataStore.LayoutData!
 
-    private(set) var addedCells: [IndexPath: [Cell]] = [:]
+    private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 
     var didSetup: Bool {
         return layoutData != nil
@@ -36,11 +36,16 @@ public class EventScrollView: UIScrollView {
 
     }
 
-    func setup(layoutData: LayoutDataStore.LayoutData) {
+    internal func setup(layoutData: LayoutDataStore.LayoutData) {
         self.layoutData = layoutData
+
+        let totalSpacing = layoutData.columnSpacing * CGFloat(layoutData.widthOfColumn.keys.count - 1)
+        let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
+        let contentHeight = CGFloat(layoutData.timeRange.numberOfIntervals) * layoutData.heightPerMinInterval
+        contentSize = CGSize(width: contentWidth, height: contentHeight)
     }
 
-    internal func insertCells(_ cells: [Cell], at indexPath: IndexPath) {
+    internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {
         guard let x = layoutData.xPositionOfColumn[indexPath],
             let width = layoutData.widthOfColumn[indexPath] else { return }
         let minInterval = layoutData.timeRange.minInterval
@@ -65,7 +70,7 @@ public class EventScrollView: UIScrollView {
         }
     }
 
-    internal func removeCells(at indexPath: IndexPath) -> [Cell]? {
+    internal func removeCells(at indexPath: IndexPath) -> [EventCell]? {
         let addedCellsAtIndexPath = addedCells.removeValue(forKey: indexPath)
         if let cells = addedCellsAtIndexPath {
             cells.forEach {

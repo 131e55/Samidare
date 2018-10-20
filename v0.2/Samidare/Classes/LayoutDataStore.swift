@@ -18,6 +18,7 @@ final internal class LayoutDataStore {
         let widthOfColumn: [IndexPath: CGFloat]
         let totalWidthOfColumns: CGFloat
         let widthOfTimeColumn: CGFloat
+        let columnSpacing: CGFloat
     }
 
     var cachedData: LayoutData?
@@ -27,19 +28,22 @@ final internal class LayoutDataStore {
     }
 
     func store(dataSource: SamidareViewDataSource, for samidareView: SamidareView) {
-
         var indexPaths: [IndexPath] = []
         var xPositionOfColumn: [IndexPath: CGFloat] = [:]
         var widthOfColumn: [IndexPath: CGFloat] = [:]
         var totalWidthOfColumns: CGFloat = 0
+        let columnSpacing = dataSource.columnSpacing(in: samidareView)
+        var totalSpacing: CGFloat = 0
+
         for section in 0 ..< dataSource.numberOfSections(in: samidareView) {
             for column in 0 ..< dataSource.numberOfColumns(in: section, in: samidareView) {
                 let indexPath = IndexPath(column: column, section: section)
                 let width = dataSource.widthOfColumn(at: indexPath, in: samidareView)
                 indexPaths.append(indexPath)
-                xPositionOfColumn[indexPath] = totalWidthOfColumns
+                xPositionOfColumn[indexPath] = totalWidthOfColumns + totalSpacing
                 widthOfColumn[indexPath] = width
                 totalWidthOfColumns += width
+                totalSpacing += columnSpacing
             }
         }
 
@@ -50,7 +54,8 @@ final internal class LayoutDataStore {
             xPositionOfColumn: xPositionOfColumn,
             widthOfColumn: widthOfColumn,
             totalWidthOfColumns: totalWidthOfColumns,
-            widthOfTimeColumn: dataSource.widthOfTimeColumn(in: samidareView)
+            widthOfTimeColumn: dataSource.widthOfTimeColumn(in: samidareView),
+            columnSpacing: columnSpacing
         )
     }
 }

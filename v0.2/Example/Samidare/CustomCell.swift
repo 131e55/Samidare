@@ -9,7 +9,7 @@
 import UIKit
 import Samidare
 
-final class CustomCell: Cell {
+final class CustomCell: EventCell {
 
     override func configure(event: Event) {
         super.configure(event: event)

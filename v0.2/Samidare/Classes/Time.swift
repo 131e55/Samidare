@@ -12,12 +12,14 @@ public struct Time {
 
     public static var zero: Time { return Time(hours: 0, minutes: 0) }
 
+    /// Number of hours. (Range: 0 ... n)
     public var hours: Int = 0 {
         didSet {
             hours = max(hours, 0)
         }
     }
 
+    /// Number of minutes. (Range: 0 ... 59)
     public var minutes: Int = 0 {
         didSet {
             let additionalHours = minutes / 60
@@ -34,6 +36,17 @@ public struct Time {
 
     public var formattedString: String {
         return String(format: "%02d:%02d", arguments: [hours, minutes])
+    }
+
+    public var floored: Time {
+        return Time(hours: hours, minutes: 0)
+    }
+
+    public var ceiled: Time {
+        if minutes == 0 {
+            return self
+        }
+        return Time(hours: hours + 1, minutes: 0)
     }
 
     public init(hours: Int, minutes: Int) {

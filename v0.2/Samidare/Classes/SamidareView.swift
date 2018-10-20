@@ -21,6 +21,8 @@ public class SamidareView: UIView {
     private let reusableCellQueue = ReusableCellQueue()
     private let eventScrollView = EventScrollView()
     private let timeScrollView = TimeScrollView()
+    private let frozenBackgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private var frozenBackgroundViewWidthConstraint: NSLayoutConstraint!
 
     public var expansionRateOfSurvivorArea: CGFloat {
         get { return survivorManager.expansionRateOfSurvivorArea }
@@ -41,16 +43,32 @@ public class SamidareView: UIView {
 
     private func initialize() {
         dprint("SamidareView initialize")
+
+        let inset: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
         eventScrollView.frame = bounds
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        eventScrollView.autoresizesSubviews = false
+        eventScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
         eventScrollView.delegate = self
         addSubview(eventScrollView)
 
+        frozenBackgroundView.isUserInteractionEnabled = false
+        frozenBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(frozenBackgroundView)
+        frozenBackgroundViewWidthConstraint = frozenBackgroundView.widthAnchor.constraint(equalToConstant: 0)
+        NSLayoutConstraint.activate([
+            frozenBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenBackgroundView.topAnchor.constraint(equalTo: topAnchor),
+            frozenBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            frozenBackgroundViewWidthConstraint
+        ])
+
         timeScrollView.frame = bounds
         timeScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        timeScrollView.autoresizesSubviews = false
         timeScrollView.isUserInteractionEnabled = false
+        timeScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
         addSubview(timeScrollView)
-        timeScrollView.isHidden = true
     }
 
     public func reloadData() {
@@ -60,9 +78,14 @@ public class SamidareView: UIView {
         layoutDataStore.store(dataSource: dataSource, for: self)
         let layoutData = layoutDataStore.cachedData!
 
-        resetScrollViewContentSize()
-        survivorManager.setup(layoutData: layoutData)
+        // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
+        eventScrollView.contentInset.left = layoutData.widthOfTimeColumn
+        eventScrollView.scrollIndicatorInsets.left = eventScrollView.contentInset.left
         eventScrollView.setup(layoutData: layoutData)
+        survivorManager.setup(layoutData: layoutData)
+        timeScrollView.setup(layoutData: layoutData)
+
+        frozenBackgroundViewWidthConstraint.constant = layoutData.widthOfTimeColumn
 
         mustCallReloadData = false
         setNeedsLayout()
@@ -74,22 +97,16 @@ public class SamidareView: UIView {
         }
     }
 
-    private func resetScrollViewContentSize() {
-        guard let layoutData = layoutDataStore.cachedData else { return }
-
-        let contentHeight = CGFloat(layoutData.timeRange.numberOfIntervals) * layoutData.heightPerMinInterval
-        eventScrollView.contentSize = CGSize(width: layoutData.totalWidthOfColumns, height: contentHeight)
-
-        dprint(layoutData.timeRange.numberOfIntervals, "*", layoutData.heightPerMinInterval)
-        dprint(eventScrollView.contentSize)
-    }
-
     open override func layoutSubviews() {
         super.layoutSubviews()
 
         reloadDataIfNeeded()
         survivorManager.resetSurvivorArea(of: eventScrollView)
         layoutScrollView()
+        timeScrollView.contentOffset.y = eventScrollView.contentOffset.y
+
+        dprint(eventScrollView.contentInset)
+        dprint(eventScrollView.contentOffset)
     }
 
     private func layoutScrollView() {
@@ -101,7 +118,7 @@ public class SamidareView: UIView {
         for indexPath in insertIndexPaths {
             let cells = dataSource.cells(at: indexPath, in: self)
             if !cells.isEmpty {
-                dprint("insert cells at", indexPath)
+                dprint("insert cells at", indexPath, eventScrollView.didSetup)
                 eventScrollView.insertCells(cells, at: indexPath)
             }
         }
@@ -120,7 +137,7 @@ public class SamidareView: UIView {
         reusableCellQueue.register(nib, forCellReuseIdentifier: identifier)
     }
 
-    public func dequeueCell<T: Cell>(withReuseIdentifier identifier: String) -> T {
+    public func dequeueCell<T: EventCell>(withReuseIdentifier identifier: String) -> T {
         if let cell = reusableCellQueue.dequeue(withReuseIdentifier: identifier) {
             return cell as! T
         }

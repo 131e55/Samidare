@@ -1,5 +1,5 @@
 //
-//  Cell.swift
+//  EventCell.swift
 //  Samidare
 //
 //  Created by Keisuke Kawamura on 2018/09/20.
@@ -8,11 +8,11 @@
 
 import UIKit
 
-open class Cell: UIView {
+open class EventCell: UIView {
 
     private(set) var event: Event!
 
-    /// Current IndexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
+    /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     internal var indexPath: IndexPath!
 
     internal(set) var reuseIdentifier: String?

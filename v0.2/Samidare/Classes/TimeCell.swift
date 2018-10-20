@@ -1,5 +1,5 @@
 //
-//  TimeSeparatorCell.swift
+//  TimeCell.swift
 //  Samidare
 //
 //  Created by Keisuke Kawamura on 2018/04/11.
@@ -8,10 +8,10 @@
 
 import UIKit
 
-class TimeSeparatorCell: UIView {
+internal class TimeCell: UIView {
 
-    static var nib: UINib!
-    static let preferredFont = UIFont.systemFont(ofSize: 12)
+    static let nib: UINib = UINib(nibName: "TimeCell", bundle: Bundle(for: TimeCell.self))
+    static let preferredFont = UIFont.systemFont(ofSize: 11)
 
     @IBOutlet private(set) weak var timeView: UIView!
     @IBOutlet private weak var timeLabel: UILabel!
@@ -24,20 +24,11 @@ class TimeSeparatorCell: UIView {
         super.init(frame: .zero)
 
         let myType = type(of: self)
-        if myType.nib == nil {
-            myType.nib = UINib(nibName: "\(myType)", bundle: Bundle(for: myType))
-        }
 
         let view = myType.nib.instantiate(withOwner: self, options: nil).first as! UIView
-        addSubview(view)
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            view.topAnchor.constraint(equalTo: topAnchor),
-//            view.bottomAnchor.constraint(equalTo: bottomAnchor),
-//            view.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            view.trailingAnchor.constraint(equalTo: trailingAnchor)
-//        ])
+        addSubview(view)
+
         timeViewWidthConstraint.constant = timeViewWidth
 
         timeLabel.font = myType.preferredFont

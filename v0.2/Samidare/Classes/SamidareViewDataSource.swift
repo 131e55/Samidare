@@ -13,10 +13,11 @@ public protocol SamidareViewDataSource: class {
     func numberOfSections(in samidareView: SamidareView) -> Int
     func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int
     func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
-    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [Cell]
+    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
     func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
     func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat
     func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat
+    func columnSpacing(in samidareView: SamidareView) -> CGFloat
 }
 
 extension SamidareViewDataSource {
@@ -30,9 +31,12 @@ extension SamidareViewDataSource {
         return 44
     }
     public func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat {
-        return 44
+        return 40
     }
     public func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
         return 8
+    }
+    public func columnSpacing(in samidareView: SamidareView) -> CGFloat {
+        return 2
     }
 }

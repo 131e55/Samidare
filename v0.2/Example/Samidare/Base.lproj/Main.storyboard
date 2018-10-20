@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
-    <device id="retina4_7" orientation="portrait">
+    <device id="retina6_1" orientation="landscape">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,26 +15,39 @@
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="Samidare_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="896" height="414"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samidare Sample" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QJO-dq-mqC">
-                                <rect key="frame" x="82.5" y="36" width="210.5" height="33.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N9q-6s-IG1" customClass="SamidareView" customModule="Samidare">
-                                <rect key="frame" x="0.0" y="85.5" width="375" height="581.5"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="O9K-lY-Ohb">
+                                <rect key="frame" x="44" y="0.0" width="808" height="44"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Samidare Sample" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QJO-dq-mqC">
+                                        <rect key="frame" x="299" y="5.5" width="210.5" height="33.5"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                        <color key="textColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="QJO-dq-mqC" firstAttribute="centerX" secondItem="O9K-lY-Ohb" secondAttribute="centerX" id="7Co-4K-Nx8"/>
+                                    <constraint firstAttribute="height" constant="44" id="Gge-dh-pZI"/>
+                                    <constraint firstItem="QJO-dq-mqC" firstAttribute="centerY" secondItem="O9K-lY-Ohb" secondAttribute="centerY" id="NTd-fZ-suC"/>
+                                </constraints>
+                            </view>
+                            <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N9q-6s-IG1" customClass="SamidareView" customModule="Samidare">
+                                <rect key="frame" x="44" y="44" width="808" height="349"/>
                                 <color key="backgroundColor" red="0.70588235290000001" green="0.88235294119999996" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="eUi-Tk-UgG" firstAttribute="trailing" secondItem="N9q-6s-IG1" secondAttribute="trailing" id="1r9-8z-Dh1"/>
-                            <constraint firstItem="QJO-dq-mqC" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="60y-6N-UzO"/>
-                            <constraint firstItem="QJO-dq-mqC" firstAttribute="top" secondItem="eUi-Tk-UgG" secondAttribute="top" constant="16" id="ayK-HZ-Ic4"/>
-                            <constraint firstItem="N9q-6s-IG1" firstAttribute="top" secondItem="QJO-dq-mqC" secondAttribute="bottom" constant="16" id="iJ6-T0-eZl"/>
+                            <constraint firstItem="O9K-lY-Ohb" firstAttribute="top" secondItem="eUi-Tk-UgG" secondAttribute="top" id="FpZ-q5-EEc"/>
+                            <constraint firstItem="eUi-Tk-UgG" firstAttribute="trailing" secondItem="O9K-lY-Ohb" secondAttribute="trailing" id="Ifo-eY-NeA"/>
+                            <constraint firstItem="N9q-6s-IG1" firstAttribute="top" secondItem="O9K-lY-Ohb" secondAttribute="bottom" id="Uqe-Lc-8P8"/>
+                            <constraint firstItem="O9K-lY-Ohb" firstAttribute="leading" secondItem="eUi-Tk-UgG" secondAttribute="leading" id="inD-wz-pCk"/>
                             <constraint firstItem="N9q-6s-IG1" firstAttribute="leading" secondItem="eUi-Tk-UgG" secondAttribute="leading" id="xAd-bL-cx4"/>
                             <constraint firstItem="eUi-Tk-UgG" firstAttribute="bottom" secondItem="N9q-6s-IG1" secondAttribute="bottom" id="ybs-2X-met"/>
                         </constraints>
@@ -46,6 +59,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.60714285714286" y="133.33333333333334"/>
         </scene>
     </scenes>
 </document>
