@@ -12,9 +12,10 @@ open class Cell: UIView {
 
     private(set) var event: Event!
 
+    /// Current IndexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     internal var indexPath: IndexPath!
 
-    public internal(set) var reuseIdentifier: String?
+    internal(set) var reuseIdentifier: String?
 
     open func configure(event: Event) {
         self.event = event

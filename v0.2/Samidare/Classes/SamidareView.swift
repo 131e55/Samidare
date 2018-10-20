@@ -101,12 +101,16 @@ public class SamidareView: UIView {
         for indexPath in insertIndexPaths {
             let cells = dataSource.cells(at: indexPath, in: self)
             if !cells.isEmpty {
+                dprint("insert cells at", indexPath)
                 eventScrollView.insertCells(cells, at: indexPath)
             }
         }
         let removeIndexPaths = survivorManager.judgeResult.difference.death
         for indexPath in removeIndexPaths {
-            eventScrollView.removeCells(at: indexPath)
+            dprint("remove cells at", indexPath)
+            for removedCell in eventScrollView.removeCells(at: indexPath) ?? [] {
+                reusableCellQueue.enqueue(removedCell)
+            }
         }
 
         survivorManager.resetSurvivorIndexPaths(survivorManager.judgeResult.survivors)

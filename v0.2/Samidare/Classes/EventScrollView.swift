@@ -65,13 +65,14 @@ public class EventScrollView: UIScrollView {
         }
     }
 
-    internal func removeCells(at indexPath: IndexPath) {
-        if let cells = addedCells[indexPath] {
+    internal func removeCells(at indexPath: IndexPath) -> [Cell]? {
+        let addedCellsAtIndexPath = addedCells.removeValue(forKey: indexPath)
+        if let cells = addedCellsAtIndexPath {
             cells.forEach {
                 $0.removeFromSuperview()
             }
+            return cells
         }
-        addedCells.removeValue(forKey: indexPath)
-        dprint("removeCell")
+        return nil
     }
 }

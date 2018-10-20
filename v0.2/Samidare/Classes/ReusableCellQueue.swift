@@ -14,7 +14,7 @@ extension SamidareView {
         typealias ReuseIdentifier = String
 
         private var nibs: [ReuseIdentifier: UINib] = [:]
-        private var cells: [ReuseIdentifier : [Cell]] = [:]
+        private var cells: [ReuseIdentifier: [Cell]] = [:]
 
         internal func register(_ nib: UINib, forCellReuseIdentifier identifier: String) {
             nibs[identifier] = nib
@@ -28,8 +28,8 @@ extension SamidareView {
         }
 
         internal func dequeue<T: Cell>(withReuseIdentifier identifier: String) -> T? {
-            if let cell = cells[identifier]?.first as? T {
-                return cell
+            if cells[identifier]?.isEmpty == false {
+                return cells[identifier]!.removeFirst() as? T
             }
             return nil
         }
@@ -38,12 +38,11 @@ extension SamidareView {
             guard let nib = nibs[identifier] else {
                 fatalError("[Samidare] Nib (identifier: \(identifier)) not registered")
             }
-            let aaa = nib.instantiate(withOwner: nil, options: nil).first
-            dprint(aaa)
             guard let cell = nib.instantiate(withOwner: nil, options: nil).first as? Cell else {
                 fatalError("[Samidare] could not create a cell from Nib (identifier: \(identifier))")
             }
             cell.reuseIdentifier = identifier
+            dprint(cell)
             return cell as! T
         }
     }
