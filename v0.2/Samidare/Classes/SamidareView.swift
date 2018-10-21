@@ -79,8 +79,10 @@ public class SamidareView: UIView {
         let layoutData = layoutDataStore.cachedData!
 
         // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
-        eventScrollView.contentInset.left = layoutData.widthOfTimeColumn
+        eventScrollView.contentInset.left = layoutData.widthOfTimeColumn + layoutData.columnSpacing
+        eventScrollView.contentInset.right = layoutData.columnSpacing
         eventScrollView.scrollIndicatorInsets.left = eventScrollView.contentInset.left
+        eventScrollView.scrollIndicatorInsets.right = eventScrollView.contentInset.right
         eventScrollView.setup(layoutData: layoutData)
         survivorManager.setup(layoutData: layoutData)
         timeScrollView.setup(layoutData: layoutData)
