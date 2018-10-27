@@ -20,4 +20,9 @@ open class EventCell: UIView {
     open func configure(event: Event) {
         self.event = event
     }
+
+    internal func snapshot() -> UIView {
+        let snapshot = snapshotView(afterScreenUpdates: true)!
+        return snapshot
+    }
 }
