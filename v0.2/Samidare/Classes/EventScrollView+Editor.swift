@@ -21,11 +21,22 @@ extension EventScrollView {
         private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
 
         private(set) var state: State = .ready
+
+        private weak var editingCell: EventCell?
+        private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
         ///
         private var location: CGPoint = .zero {
             didSet { dprint(location) }
+        }
+
+        init() {
+            NotificationCenter.default.addObserver(self, selector: #selector(eventCellWillRemoveFromSuperview),
+                                                   name: EventCell.willRemoveFromSuperviewNotification, object: nil)
+        }
+        deinit {
+            NotificationCenter.default.removeObserver(self)
         }
 
         func setup(eventScrollView: EventScrollView) {
@@ -37,10 +48,13 @@ extension EventScrollView {
 
             impactFeedbackGenerator.prepare()
 
-            let snapshot = cell.snapshot()
+            editingCell = cell
+
+            let snapshot = cell.snapshotView()
             snapshot.frame = cell.frame
             snapshot.alpha = 0.25
             scrollView.insertSubview(snapshot, belowSubview: cell)
+            snapshotView = snapshot
 
             let overlayView = EditingOverlayView()
             scrollView.addSubview(overlayView)
@@ -59,6 +73,13 @@ extension EventScrollView {
             impactFeedbackGenerator.impactOccurred()
         }
 
+        func endEditing() {
+            editingCell = nil
+            snapshotView?.removeFromSuperview()
+            editingOverlayView?.removeFromSuperview()
+            state = .ready
+        }
+
         @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
             guard let cell = sender.view as? EventCell, let event = cell.event else { return }
 
@@ -74,6 +95,14 @@ extension EventScrollView {
 
             default:
                 break
+            }
+        }
+
+        @objc private func eventCellWillRemoveFromSuperview(_ notification: Notification) {
+            guard let cell = notification.object as? EventCell else { return }
+
+            if cell == editingCell {
+                endEditing()
             }
         }
     }
