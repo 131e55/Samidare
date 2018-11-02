@@ -19,6 +19,8 @@ extension EventScrollView {
 
         private weak var eventScrollView: EventScrollView?
         private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+        private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
+        private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
 
         private(set) var state: State = .ready
 
@@ -39,15 +41,38 @@ extension EventScrollView {
             NotificationCenter.default.removeObserver(self)
         }
 
-        func setup(eventScrollView: EventScrollView) {
+        internal func setup(eventScrollView: EventScrollView) {
             self.eventScrollView = eventScrollView
         }
 
-        func beginEditing(for cell: EventCell) {
+        internal func observe(cell: EventCell) {
+            let cellRecognizers = cell.gestureRecognizers?.compactMap({ $0 as? UILongPressGestureRecognizer }) ?? []
+            guard cellRecognizers.contains(where: { recognizer -> Bool in
+                return addedLongPressGestureRecognizers.contains(recognizer)
+            }) == false else { return }
+
+            addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
+            let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(eventCellDidLongPress))
+            cell.addGestureRecognizer(recognizer)
+            addedLongPressGestureRecognizers.append(recognizer)
+        }
+
+        internal func unobserve(cell: EventCell) {
+            let cellRecognizers = cell.gestureRecognizers?.compactMap({ $0 as? UILongPressGestureRecognizer }) ?? []
+            guard let recognizer = cellRecognizers.first(where: { recognizer in
+                return addedLongPressGestureRecognizers.contains(recognizer)
+            }) else { return }
+
+            cell.removeGestureRecognizer(recognizer)
+            addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
+        }
+
+        internal func beginEditing(for cell: EventCell) {
             guard let scrollView = eventScrollView else { return }
 
             impactFeedbackGenerator.prepare()
 
+            endEditing()
             editingCell = cell
 
             let snapshot = cell.snapshotView()
@@ -73,11 +98,32 @@ extension EventScrollView {
             impactFeedbackGenerator.impactOccurred()
         }
 
-        func endEditing() {
+        internal func endEditing() {
             editingCell = nil
             snapshotView?.removeFromSuperview()
             editingOverlayView?.removeFromSuperview()
             state = .ready
+        }
+
+        @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {
+            guard let cell = sender.view as? EventCell, let event = cell.event else { return }
+
+            switch sender.state {
+            case .began:
+                if event.isEditable {
+                    beginEditing(for: cell)
+                } else {
+                    errorFeedbackGenerator.notificationOccurred(.error)
+                }
+
+            case .changed:
+                editingCellDidPan(sender)
+
+            case .ended, .cancelled:
+                break
+            default:
+                break
+            }
         }
 
         @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
@@ -104,6 +150,8 @@ extension EventScrollView {
             if cell == editingCell {
                 endEditing()
             }
+
+            unobserve(cell: cell)
         }
     }
 }

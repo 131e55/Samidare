@@ -7,7 +7,7 @@
 
 import UIKit
 
-internal class EditingOverlayView: UIView {
+internal class EditingOverlayView: TouchPassedView {
 
     private static let nib: UINib = UINib(nibName: "EditingOverlayView", bundle: Bundle(for: EditingOverlayView.self))
     private weak var widthConstraint: NSLayoutConstraint!
@@ -15,9 +15,12 @@ internal class EditingOverlayView: UIView {
     @IBOutlet private weak var cellWidthConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var timeView: UIView!
+    @IBOutlet private weak var topKnobView: UIView!
+    @IBOutlet private weak var bottomKnobView: UIView!
 
     init() {
         super.init(frame: .zero)
+        isUserInteractionEnabled = true
         translatesAutoresizingMaskIntoConstraints = false
 
         let view = type(of: self).nib.instantiate(withOwner: self, options: nil).first as! UIView
@@ -35,6 +38,13 @@ internal class EditingOverlayView: UIView {
             view.widthAnchor.constraint(equalTo: widthAnchor),
             view.heightAnchor.constraint(equalTo: heightAnchor)
         ])
+
+        topKnobView.addGestureRecognizer(
+            UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
+        )
+        bottomKnobView.addGestureRecognizer(
+            UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
+        )
     }
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
@@ -53,5 +63,21 @@ internal class EditingOverlayView: UIView {
                      + space * 2                        // top + bottom
         widthConstraint.constant = width
         heightConstraint.constant = height
+    }
+
+    @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
+        switch sender.state {
+        case .began:
+            dprint("did pan knob view")
+
+        case .changed:
+            break
+
+        case .ended, .cancelled:
+            break
+
+        default:
+            break
+        }
     }
 }

@@ -14,8 +14,6 @@ protocol EventScrollViewDelegate: UIScrollViewDelegate {
 
 public class EventScrollView: UIScrollView {
 
-    private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
-
     private var layoutData: LayoutDataStore.LayoutData!
 
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
@@ -68,9 +66,7 @@ public class EventScrollView: UIScrollView {
             cell.addGestureRecognizer(
                 UITapGestureRecognizer(target: self, action: #selector(eventCellDidTap))
             )
-            cell.addGestureRecognizer(
-                UILongPressGestureRecognizer(target: self, action: #selector(eventCellDidLongPress))
-            )
+            editor.observe(cell: cell)
 
             if addedCells[indexPath] == nil {
                 addedCells[indexPath] = [cell]
@@ -83,8 +79,12 @@ public class EventScrollView: UIScrollView {
     internal func removeCells(at indexPath: IndexPath) -> [EventCell]? {
         let addedCellsAtIndexPath = addedCells.removeValue(forKey: indexPath)
         if let cells = addedCellsAtIndexPath {
-            cells.forEach {
-                $0.removeFromSuperview()
+            for cell in cells {
+                editor.unobserve(cell: cell)
+                for recognizer in cell.gestureRecognizers ?? [] {
+                    cell.removeGestureRecognizer(recognizer)
+                }
+                cell.removeFromSuperview()
             }
             return cells
         }
@@ -102,34 +102,4 @@ extension EventScrollView {
         guard let cell = sender.view as? EventCell, let event = cell.event else { return }
         // TODO:
     }
-}
-
-//
-// MARK: - Edit
-//
-
-extension EventScrollView {
-
-    @objc private func eventCellDidLongPress(_ sender: UITapGestureRecognizer) {
-        guard let cell = sender.view as? EventCell, let event = cell.event else { return }
-
-        switch sender.state {
-        case .began:
-            if event.isEditable {
-                editor.beginEditing(for: cell)
-            } else {
-                errorFeedbackGenerator.notificationOccurred(.error)
-            }
-            break
-        case .changed:
-            editor.editingCellDidPan(sender)
-
-        case .ended, .cancelled:
-            break
-        default:
-            break
-        }
-    }
-
-
 }
