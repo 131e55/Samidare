@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 extension EventScrollView {
 
     internal class Editor {
@@ -28,10 +27,19 @@ extension EventScrollView {
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
-        ///
-        private var location: CGPoint = .zero {
-            didSet { dprint(location) }
+        /// First touch location in referencing EventScrollView.
+        /// It's reset each time any gesture recognized.
+        private var firstTouchLocation: CGPoint!
+        /// Last touch location in referencing EventScrollView.
+        private var lastTouchLocation: CGPoint! {
+            didSet {
+                didChangeLastTouchLocation?(lastTouchLocation)
+                dprint(lastTouchLocation)
+            }
         }
+
+        /// Tells change of last touch location in referencing EventScrollView.
+        internal var didChangeLastTouchLocation: ((CGPoint) -> Void)?
 
         init() {
             NotificationCenter.default.addObserver(self, selector: #selector(eventCellWillRemoveFromSuperview),
@@ -128,16 +136,18 @@ extension EventScrollView {
 
         @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
             guard let cell = sender.view as? EventCell, let event = cell.event else { return }
+            let locationInEventSrollView = sender.location(in: eventScrollView)
 
             switch sender.state {
             case .began:
-                location = sender.location(in: eventScrollView)
+                firstTouchLocation = locationInEventSrollView
+                lastTouchLocation = locationInEventSrollView
 
             case .changed:
-                location = sender.location(in: eventScrollView)
+                lastTouchLocation = locationInEventSrollView
 
             case .ended, .cancelled:
-                break
+                lastTouchLocation = locationInEventSrollView
 
             default:
                 break

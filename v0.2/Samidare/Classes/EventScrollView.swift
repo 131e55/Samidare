@@ -18,7 +18,8 @@ public class EventScrollView: UIScrollView {
 
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 
-    private var editor: Editor = Editor()
+    private let editor: Editor = Editor()
+    private let autoScroller: AutoScroller = AutoScroller()
 
     internal var didSetup: Bool {
         return layoutData != nil
@@ -36,6 +37,11 @@ public class EventScrollView: UIScrollView {
 
     private func initialize() {
         editor.setup(eventScrollView: self)
+        editor.didChangeLastTouchLocation = { [weak self] location in
+            guard let self = self else { return }
+            self.autoScroller.autoScrollIfNeeded(location: location)
+        }
+        autoScroller.setup(eventScrollView: self)
     }
 
     internal func setup(layoutData: LayoutDataStore.LayoutData) {
