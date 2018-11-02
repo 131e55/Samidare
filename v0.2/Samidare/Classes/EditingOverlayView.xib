@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -52,7 +52,7 @@
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="9"/>
+                                    <integer key="value" value="10"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                                     <integer key="value" value="1"/>
@@ -79,7 +79,7 @@
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="9"/>
+                                    <integer key="value" value="10"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                                     <integer key="value" value="1"/>
@@ -98,11 +98,71 @@
                         <constraint firstAttribute="bottom" secondItem="Ypr-kA-Xd5" secondAttribute="bottom" id="siV-Eq-kgG"/>
                     </constraints>
                 </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hpj-mY-ged">
+                    <rect key="frame" x="48" y="86" width="44" height="20"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8F-qQ-oTW">
+                            <rect key="frame" x="16" y="4" width="12" height="12"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="12" id="9MB-0n-YgQ"/>
+                                <constraint firstAttribute="height" constant="12" id="Dd4-EG-YC1"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="6"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                    <integer key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="ic0-69-B76"/>
+                        <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerY" secondItem="Hpj-mY-ged" secondAttribute="centerY" id="nRe-KU-x3r"/>
+                        <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerX" secondItem="Hpj-mY-ged" secondAttribute="centerX" id="uR0-Cu-4tj"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Njg-GR-Jwk">
+                    <rect key="frame" x="48" y="150" width="44" height="20"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aVw-s7-aZJ">
+                            <rect key="frame" x="16" y="4" width="12" height="12"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="12" id="bsv-CC-b3X"/>
+                                <constraint firstAttribute="width" constant="12" id="nye-ke-zXL"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                    <integer key="value" value="6"/>
+                                </userDefinedRuntimeAttribute>
+                                <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                    <integer key="value" value="1"/>
+                                </userDefinedRuntimeAttribute>
+                            </userDefinedRuntimeAttributes>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="Bp9-5j-mUX"/>
+                        <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerX" secondItem="Njg-GR-Jwk" secondAttribute="centerX" id="Lcn-vs-QX9"/>
+                        <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerY" secondItem="Njg-GR-Jwk" secondAttribute="centerY" id="mlh-M5-EgZ"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.40000000000000002" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
             <constraints>
+                <constraint firstItem="Njg-GR-Jwk" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="90l-ly-f8l"/>
                 <constraint firstItem="R2q-Gl-me1" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="centerY" id="FVY-86-UlF"/>
+                <constraint firstItem="Hpj-mY-ged" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Isd-1B-8FL"/>
                 <constraint firstItem="YCx-HK-hiL" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Kuu-Wf-OdX"/>
+                <constraint firstItem="Njg-GR-Jwk" firstAttribute="width" secondItem="YCx-HK-hiL" secondAttribute="width" id="LJl-QR-hGk"/>
+                <constraint firstItem="Hpj-mY-ged" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="top" id="LRv-d2-L9a"/>
+                <constraint firstItem="Hpj-mY-ged" firstAttribute="width" secondItem="YCx-HK-hiL" secondAttribute="width" id="SSM-nn-h8X"/>
+                <constraint firstItem="Njg-GR-Jwk" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="bottom" id="dq3-t5-dgG"/>
                 <constraint firstItem="YCx-HK-hiL" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kQz-Tk-9S4"/>
                 <constraint firstItem="R2q-Gl-me1" firstAttribute="height" secondItem="YCx-HK-hiL" secondAttribute="height" constant="20" id="lbm-jL-vPt"/>
                 <constraint firstItem="R2q-Gl-me1" firstAttribute="leading" secondItem="YCx-HK-hiL" secondAttribute="trailing" constant="8" id="mdp-ln-DNu"/>
