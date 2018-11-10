@@ -31,15 +31,10 @@ extension EventScrollView {
         /// It's reset each time any gesture recognized.
         private var firstTouchLocation: CGPoint!
         /// Last touch location in referencing EventScrollView.
-        private var lastTouchLocation: CGPoint! {
-            didSet {
-                didChangeLastTouchLocation?(lastTouchLocation)
-                dprint(lastTouchLocation)
-            }
-        }
+        private var lastTouchLocation: CGPoint!
 
-        /// Tells change of last touch location in referencing EventScrollView.
-        internal var didChangeLastTouchLocation: ((CGPoint) -> Void)?
+        /// Tells editing has begun.
+        internal var didBeginEditingHandler: (() -> Void)?
 
         init() {
             NotificationCenter.default.addObserver(self, selector: #selector(eventCellWillRemoveFromSuperview),
@@ -104,6 +99,7 @@ extension EventScrollView {
 
             state = .editing
             impactFeedbackGenerator.impactOccurred()
+            didBeginEditingHandler?()
         }
 
         internal func endEditing() {
@@ -124,30 +120,26 @@ extension EventScrollView {
                     errorFeedbackGenerator.notificationOccurred(.error)
                 }
 
-            case .changed:
-                editingCellDidPan(sender)
-
-            case .ended, .cancelled:
-                break
             default:
-                break
+                editingCellDidPan(sender)
             }
         }
 
         @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
+            guard let scrollView = eventScrollView else { return }
             guard let cell = sender.view as? EventCell, let event = cell.event else { return }
-            let locationInEventSrollView = sender.location(in: eventScrollView)
+            let locationInContentSize = sender.location(in: scrollView)
 
             switch sender.state {
             case .began:
-                firstTouchLocation = locationInEventSrollView
-                lastTouchLocation = locationInEventSrollView
+                firstTouchLocation = locationInContentSize
+                lastTouchLocation = locationInContentSize
 
             case .changed:
-                lastTouchLocation = locationInEventSrollView
+                lastTouchLocation = locationInContentSize
 
             case .ended, .cancelled:
-                lastTouchLocation = locationInEventSrollView
+                lastTouchLocation = locationInContentSize
 
             default:
                 break

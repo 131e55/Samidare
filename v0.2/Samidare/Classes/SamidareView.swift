@@ -42,8 +42,6 @@ public class SamidareView: UIView {
     }
 
     private func initialize() {
-        dprint("SamidareView initialize")
-
         let inset: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
         eventScrollView.frame = bounds
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -106,27 +104,20 @@ public class SamidareView: UIView {
         survivorManager.resetSurvivorArea(of: eventScrollView)
         layoutScrollView()
         timeScrollView.contentOffset.y = eventScrollView.contentOffset.y
-
-        dprint(eventScrollView.contentInset)
-        dprint(eventScrollView.contentOffset)
     }
 
     private func layoutScrollView() {
         guard let dataSource = dataSource else { return }
 
-        dprint(survivorManager.judgeResult.difference.birth)
-
         let insertIndexPaths = Array(survivorManager.judgeResult.difference.birth).sorted()
         for indexPath in insertIndexPaths {
             let cells = dataSource.cells(at: indexPath, in: self)
             if !cells.isEmpty {
-                dprint("insert cells at", indexPath, eventScrollView.didSetup)
                 eventScrollView.insertCells(cells, at: indexPath)
             }
         }
         let removeIndexPaths = survivorManager.judgeResult.difference.death
         for indexPath in removeIndexPaths {
-            dprint("remove cells at", indexPath)
             for removedCell in eventScrollView.removeCells(at: indexPath) ?? [] {
                 reusableCellQueue.enqueue(removedCell)
             }

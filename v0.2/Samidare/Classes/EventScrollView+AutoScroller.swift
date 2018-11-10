@@ -9,41 +9,71 @@ import UIKit
 
 extension EventScrollView {
 
-    internal class AutoScroller {
+    internal class AutoScroller: NSObject, UIGestureRecognizerDelegate {
 
         private struct ScrollingStrength {
             var top: CGFloat
             var left: CGFloat
             var bottom: CGFloat
             var right: CGFloat
+            var isAllZero: Bool {
+                return top + left + bottom + right == 0
+            }
         }
 
         private weak var eventScrollView: EventScrollView?
 
         /// Threshold for determine whether should scroll.
-        private let threshold: CGFloat = 0.1
+        private let threshold: CGFloat = 0.15
         /// Minimum speed of automatic scrolling [point per frame].
-        private let minSpeed: CGFloat = 50
+        private let minSpeed: CGFloat = 10
         /// Maximum speed of automatic scrolling [point per frame].
         private let maxSpeed: CGFloat = 500
 
-        private var location: CGPoint!
+        /// Touch location in referencing EventScrollView's bounds.
+        private var touchLocation: CGPoint = .zero
         private var displayLink: CADisplayLink?
         private var displayLinkLastTimeStamp: CFTimeInterval!
 
-        internal func setup(eventScrollView: EventScrollView) {
-            self.eventScrollView = eventScrollView
+        internal var isEnabled: Bool = false {
+            didSet {
+                if !isEnabled {
+                    invalidateDisplayLink()
+                }
+            }
         }
 
-        /// - Parameter location: location in referencing EventScrollView.
-        private func shouldAutoScroll(location: CGPoint) -> (should: Bool, strength: ScrollingStrength) {
+        internal func setup(eventScrollView: EventScrollView) {
+            self.eventScrollView = eventScrollView
+
+            let recognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+            recognizer.delegate = self
+            eventScrollView.addGestureRecognizer(recognizer)
+        }
+
+        @objc private func didPan(_ sender: UIGestureRecognizer) {
+            guard let scrollView = eventScrollView else { return }
+
+            switch sender.state {
+            case .began, .changed:
+                let locationInContentSize = sender.location(in: scrollView)
+                touchLocation = CGPoint(x: locationInContentSize.x - scrollView.contentOffset.x,
+                                        y: locationInContentSize.y - scrollView.contentOffset.y)
+                autoScrollIfNeeded()
+
+            default:
+                isEnabled = false
+            }
+        }
+
+        /// - Parameter location: location in referencing EventScrollView's bounds
+        private func scrollingStrength(location: CGPoint) -> ScrollingStrength {
             var strength = ScrollingStrength(top: 0, left: 0, bottom: 0, right: 0)
-            guard let eventScrollView = eventScrollView else { return (false, strength) }
+            guard let eventScrollView = eventScrollView else { return strength }
             let width = eventScrollView.bounds.width
             let height = eventScrollView.bounds.height
             let xRate = max(location.x / width, 0)
             let yRate = max(location.y / height, 0)
-
             if yRate <= threshold {
                 strength.top = min(1 - yRate / threshold, 1)
             }
@@ -54,21 +84,19 @@ extension EventScrollView {
                 strength.bottom = min((yRate - (1 - threshold)) * 10, 1)
             }
             if xRate >= 1 - threshold {
-                strength.right = min((xRate / (1 - threshold)) * 10, 1)
+                strength.right = min((xRate - (1 - threshold)) * 10, 1)
             }
-            let should = strength.top + strength.left + strength.bottom + strength.right > 0
-            return (should, strength)
+            return strength
         }
 
-        /// - Parameter location: location in referencing EventScrollView.
-        internal func autoScrollIfNeeded(location: CGPoint) {
-            self.location = location
-            if shouldAutoScroll(location: location).should {
+        private func autoScrollIfNeeded() {
+            if !scrollingStrength(location: touchLocation).isAllZero {
                 if displayLink == nil {
                     displayLink = CADisplayLink(target: self, selector: #selector(handleDisplayLink))
                     displayLink!.add(to: .main, forMode: RunLoop.Mode.default)
                 }
-            } else {
+            }
+            else {
                 invalidateDisplayLink()
             }
         }
@@ -81,46 +109,70 @@ extension EventScrollView {
 
         @objc private func handleDisplayLink(_ displayLink: CADisplayLink) {
             guard let scrollView = eventScrollView else { return }
-            let shouldScroll = shouldAutoScroll(location: location)
-            guard shouldScroll.should else { invalidateDisplayLink(); return }
 
-            if let lastTime = displayLinkLastTimeStamp {
-
-                let deltaTime = displayLink.timestamp - lastTime
-                let minContentOffsetY = -scrollView.contentInset.top
-                //            let minContentOffsetX = -scrollView.contentInset.left
-                let maxContentOffsetY = scrollView.contentSize.height - scrollView.bounds.height + scrollView.contentInset.bottom
-                //            let maxContentOffsetX = scrollView.contentSize.width - scrollView.bounds.width + scrollView.contentInset.right
-
-                if shouldScroll.strength.top > 0 {
-                    let strength = shouldScroll.strength.top
-                    let velocity = -1 * ((maxSpeed - minSpeed) * strength + minSpeed) * CGFloat(deltaTime)
-                    scrollView.contentOffset.y += velocity
-                    scrollView.contentOffset.y = max(scrollView.contentOffset.y, minContentOffsetY)
-                } else if shouldScroll.strength.bottom > 0 {
-                    let strength = shouldScroll.strength.bottom
-                    let velocity = ((maxSpeed - minSpeed) * strength + minSpeed) * CGFloat(deltaTime)
-                    scrollView.contentOffset.y += velocity
-                    scrollView.contentOffset.y = min(scrollView.contentOffset.y, maxContentOffsetY)
-                }
-                // Not support yet
-                //            if shouldScroll.strength.left > 0 {
-                //                let strength = shouldScroll.strength.left
-                //                let velocity = -1 * ((maxSpeed - minSpeed) * strength + minSpeed) * CGFloat(deltaTime)
-                //                scrollView.contentOffset.x += velocity
-                //                scrollView.contentOffset.x = max(scrollView.contentOffset.x, minContentOffsetX)
-                //            } else if shouldScroll.strength.right > 0 {
-                //                let strength = shouldScroll.strength.right
-                //                let velocity = ((maxSpeed - minSpeed) * strength + minSpeed) * CGFloat(deltaTime)
-                //                scrollView.contentOffset.x += velocity
-                //                scrollView.contentOffset.x = min(scrollView.contentOffset.x, maxContentOffsetX)
-                //            }
-
-//                updateEditingViewFrame(type: lastEditingType!)
+            let scrollingStrength = self.scrollingStrength(location: touchLocation)
+            if scrollingStrength.isAllZero {
+                invalidateDisplayLink()
             }
+            else {
+                if let lastTime = displayLinkLastTimeStamp {
+                    let deltaTime = displayLink.timestamp - lastTime
+                    let minContentOffsetY = -scrollView.contentInset.top
+                    let minContentOffsetX = -scrollView.contentInset.left
+                    let maxContentOffsetY = scrollView.contentSize.height
+                                            - scrollView.bounds.height
+                                            + scrollView.contentInset.bottom
+                    let maxContentOffsetX = scrollView.contentSize.width
+                                            - scrollView.bounds.width
+                                            + scrollView.contentInset.right
 
-            displayLinkLastTimeStamp = displayLink.timestamp
+                    var newContentOffset = scrollView.contentOffset
+
+                    // Top or Bottom
+                    if scrollingStrength.top > 0 {
+                        let velocity = -1 * ((maxSpeed - minSpeed) * scrollingStrength.top + minSpeed)
+                                       * CGFloat(deltaTime)
+                        newContentOffset.y += velocity
+                        newContentOffset.y = max(newContentOffset.y, minContentOffsetY)
+                    }
+                    else if scrollingStrength.bottom > 0 {
+                        let velocity = ((maxSpeed - minSpeed) * scrollingStrength.bottom + minSpeed)
+                                       * CGFloat(deltaTime)
+                        newContentOffset.y += velocity
+                        newContentOffset.y = min(newContentOffset.y, maxContentOffsetY)
+                    }
+                    // Left or Right
+                    if scrollingStrength.left > 0 {
+                        let velocity = -1 * ((maxSpeed - minSpeed) * scrollingStrength.left + minSpeed)
+                                       * CGFloat(deltaTime)
+                        newContentOffset.x += velocity
+                        newContentOffset.x = max(newContentOffset.x, minContentOffsetX)
+                    }
+                    else if scrollingStrength.right > 0 {
+                        let velocity = ((maxSpeed - minSpeed) * scrollingStrength.right + minSpeed)
+                                       * CGFloat(deltaTime)
+                        newContentOffset.x += velocity
+                        newContentOffset.x = min(newContentOffset.x, maxContentOffsetX)
+                    }
+
+                    scrollView.contentOffset = newContentOffset
+
+    //                updateEditingViewFrame(type: lastEditingType!)
+                }
+
+                displayLinkLastTimeStamp = displayLink.timestamp
+            }
+        }
+
+        // MARK: - UIGestureRecognizerDelegate
+
+        internal func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            return isEnabled
+        }
+
+        internal func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+            return true
         }
     }
 }
-

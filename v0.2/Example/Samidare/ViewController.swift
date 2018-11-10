@@ -24,7 +24,7 @@ final class ViewController: UIViewController {
 
 extension ViewController: SamidareViewDataSource {
     func timeRange(in samidareView: SamidareView) -> TimeRange {
-        return TimeRange(start: Time(hours: 0, minutes: 30), end: Time(hours: 25, minutes: 45))
+        return TimeRange(start: Time(hours: 0, minutes: 30), end: Time(hours: 72, minutes: 0))
     }
 
     func numberOfSections(in samidareView: SamidareView) -> Int {

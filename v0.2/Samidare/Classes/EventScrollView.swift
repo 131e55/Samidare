@@ -37,9 +37,9 @@ public class EventScrollView: UIScrollView {
 
     private func initialize() {
         editor.setup(eventScrollView: self)
-        editor.didChangeLastTouchLocation = { [weak self] location in
+        editor.didBeginEditingHandler = { [weak self] in
             guard let self = self else { return }
-            self.autoScroller.autoScrollIfNeeded(location: location)
+            self.autoScroller.isEnabled = true
         }
         autoScroller.setup(eventScrollView: self)
     }
