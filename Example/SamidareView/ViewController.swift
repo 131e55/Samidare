@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import SamidareView
+import Samidare
 
 class ViewController: UIViewController {
 

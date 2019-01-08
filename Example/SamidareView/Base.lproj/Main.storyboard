@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -28,7 +28,7 @@
                                 </connections>
                             </containerView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SamidareView Sample" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OEC-XK-bax">
-                                <rect key="frame" x="102.5" y="40" width="169.5" height="21"/>
+                                <rect key="frame" x="103" y="40" width="169.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -51,10 +51,10 @@
         <!--Samidare View Controller-->
         <scene sceneID="lf9-3j-uMa">
             <objects>
-                <viewController id="wIw-Mt-qLr" customClass="SamidareViewController" customModule="SamidareView" sceneMemberID="viewController"/>
+                <viewController id="wIw-Mt-qLr" customClass="SamidareViewController" customModule="Samidare" sceneMemberID="viewController"/>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eLX-o2-iAz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="916" y="133"/>
+            <point key="canvasLocation" x="1207" y="133"/>
         </scene>
     </scenes>
 </document>

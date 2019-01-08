@@ -7,8 +7,8 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'SamidareView'
-  s.version          = '0.1.20'
+  s.name             = 'Samidare'
+  s.version          = '0.1.21'
   s.summary          = 'A short description of SamidareView.'
 
 # This description is used to generate tags and improve search results.
