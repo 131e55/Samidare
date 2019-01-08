@@ -212,16 +212,16 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SamidareView/SamidareView.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Samidare/Samidare.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SamidareView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Samidare.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

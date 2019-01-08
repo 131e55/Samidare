@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'SamidareView'
+  s.name             = 'Samidare'
   s.version          = '0.1.20'
   s.summary          = 'A short description of SamidareView.'
 

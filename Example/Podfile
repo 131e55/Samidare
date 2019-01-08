@@ -1,5 +1,5 @@
 use_frameworks!
 
 target 'SamidareView_Example' do
-  pod 'SamidareView', :path => '../'
+  pod 'Samidare', :path => '../'
 end
