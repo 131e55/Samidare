@@ -97,6 +97,11 @@ open class SamidareViewController: UIViewController {
         samidareView.scrollView.contentInset = inset
         samidareView.scrollView.scrollIndicatorInsets.left = widthForTimeColumn + additionalInsetLeft
     }
+
+    /// Wrapper samidareView.scrollView.setContentOffset
+    public func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {
+        samidareView.scrollView.setContentOffset(contentOffset, animated: animated)
+    }
 }
 
 extension SamidareViewController: TimeInformationViewLayoutDelegate {
