@@ -98,6 +98,16 @@ open class SamidareViewController: UIViewController {
         samidareView.scrollView.scrollIndicatorInsets.left = widthForTimeColumn + additionalInsetLeft
     }
 
+    /// Wrapper samidareView.scrollView.contentInset
+    public func getContentInset() -> UIEdgeInsets {
+        return samidareView.scrollView.contentInset
+    }
+
+    /// Wrapper samidareView.scrollView.contentOffset
+    public func getContentOffset() -> CGPoint {
+        return samidareView.scrollView.contentOffset
+    }
+
     /// Wrapper samidareView.scrollView.setContentOffset
     public func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {
         samidareView.scrollView.setContentOffset(contentOffset, animated: animated)
