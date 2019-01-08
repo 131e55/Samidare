@@ -14,9 +14,21 @@ internal class EditingOverlayView: TouchPassedView {
     private weak var heightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellWidthConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellHeightConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var cellOverlayView: UIView!
     @IBOutlet private weak var timeView: UIView!
     @IBOutlet private weak var topKnobView: UIView!
     @IBOutlet private weak var bottomKnobView: UIView!
+
+    /// First touch location in referencing EventScrollView.
+    /// It's reset each time any gesture recognized.
+    private var firstTouchLocation: CGPoint!
+    /// Last touch location in referencing EventScrollView.
+    private var lastTouchLocation: CGPoint!
+
+    /// Tells panning top-bottom knobs.
+    internal var didPanCellHandler: (() -> Void)?
+    /// Tells panning top-bottom knobs.
+    internal var didPanKnobHandler: (() -> Void)?
 
     init() {
         super.init(frame: .zero)
@@ -39,6 +51,9 @@ internal class EditingOverlayView: TouchPassedView {
             view.heightAnchor.constraint(equalTo: heightAnchor)
         ])
 
+        cellOverlayView.addGestureRecognizer(
+            UIPanGestureRecognizer(target: self, action: #selector(didPanCellOverlayView))
+        )
         topKnobView.addGestureRecognizer(
             UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
         )
@@ -65,13 +80,42 @@ internal class EditingOverlayView: TouchPassedView {
         heightConstraint.constant = height
     }
 
-    @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
+    @objc private func didPanCellOverlayView(_ sender: UIPanGestureRecognizer) {
+        let location = sender.location(in: self)
+
         switch sender.state {
         case .began:
-            dprint("did pan knob view")
+            dprint("cell area pan", location)
 
         case .changed:
+            dprint("cell area pan", location)
+
+        case .ended, .cancelled:
             break
+
+        default:
+            break
+        }
+    }
+
+    @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
+        let location = sender.location(in: self)
+
+        switch sender.state {
+        case .began:
+            firstTouchLocation = location
+            lastTouchLocation = location
+            dprint("did pan knob view", location)
+
+        case .changed:
+            lastTouchLocation = location
+            let length = firstTouchLocation.y - lastTouchLocation.y
+            dprint("did pan knob view", location, length)
+            updateEditingCellStatus(frame:
+                CGRect(x: 0,
+                       y: 0,
+                       width: cellWidthConstraint.constant,
+                       height: cellHeightConstraint.constant + length))
 
         case .ended, .cancelled:
             break

@@ -13,6 +13,7 @@
             <connections>
                 <outlet property="bottomKnobView" destination="Njg-GR-Jwk" id="P5g-z8-Tjm"/>
                 <outlet property="cellHeightConstraint" destination="xBj-tq-Y8a" id="OAr-h0-7cF"/>
+                <outlet property="cellOverlayView" destination="YCx-HK-hiL" id="GdO-YY-pJD"/>
                 <outlet property="cellWidthConstraint" destination="hfH-2U-npR" id="5ki-sD-zeT"/>
                 <outlet property="timeView" destination="R2q-Gl-me1" id="ug2-HX-UCG"/>
                 <outlet property="topKnobView" destination="Hpj-mY-ged" id="gGX-wF-i8j"/>
@@ -23,7 +24,7 @@
             <rect key="frame" x="0.0" y="0.0" width="140" height="256"/>
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
             <subviews>
-                <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YCx-HK-hiL" userLabel="Cell Rect">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YCx-HK-hiL" userLabel="Cell Rect">
                     <rect key="frame" x="48" y="96" width="44" height="64"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
