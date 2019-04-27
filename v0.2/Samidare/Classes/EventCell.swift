@@ -18,7 +18,7 @@ open class EventCell: UIView {
     /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     internal var indexPath: IndexPath!
 
-    internal(set) var reuseIdentifier: String?
+    internal var reuseIdentifier: String?
 
     deinit {
         dprint("deinit")
