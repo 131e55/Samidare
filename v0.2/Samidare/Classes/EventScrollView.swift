@@ -35,14 +35,7 @@ public class EventScrollView: UIScrollView {
         initialize()
     }
 
-    private func initialize() {
-        editor.setup(eventScrollView: self)
-        editor.didBeginEditingHandler = { [weak self] in
-            guard let self = self else { return }
-            self.autoScroller.isEnabled = true
-        }
-        autoScroller.setup(eventScrollView: self)
-    }
+    private func initialize() {}
 
     internal func setup(layoutData: LayoutDataStore.LayoutData) {
         self.layoutData = layoutData
@@ -51,6 +44,14 @@ public class EventScrollView: UIScrollView {
         let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
         let contentHeight = CGFloat(layoutData.timeRange.numberOfIntervals) * layoutData.heightPerMinInterval
         contentSize = CGSize(width: contentWidth, height: contentHeight)
+
+        editor.setup(eventScrollView: self, editingUnitInPanning: layoutData.heightPerMinInterval)
+        editor.didBeginEditingHandler = { [weak self] in
+            guard let self = self else { return }
+            self.autoScroller.isEnabled = true
+        }
+
+        autoScroller.setup(eventScrollView: self)
     }
 
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {

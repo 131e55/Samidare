@@ -16,14 +16,28 @@ extension EventScrollView {
             case editing
         }
 
+        private enum Edge {
+            case top
+            case bottom
+            case both
+        }
+
         private weak var eventScrollView: EventScrollView?
-        private let impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+        private var editingUnitInPanning: CGFloat = 1 {
+            didSet {
+                if editingUnitInPanning < 1 { editingUnitInPanning = 1 }
+            }
+        }
+        private let heavyImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
+        private let medeiumImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
         private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
         private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
 
         private(set) var state: State = .ready
 
         private weak var editingCell: EventCell?
+        /// Cell frame of each edit. `each edit` is defined `top knob panning`, `bottom knob panning`, `cell panning`.
+        private var cellFrameOfEachEdit: CGRect?
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
@@ -44,8 +58,14 @@ extension EventScrollView {
             NotificationCenter.default.removeObserver(self)
         }
 
-        internal func setup(eventScrollView: EventScrollView) {
+        /// Setup Editor
+        ///
+        /// - Parameters:
+        ///   - eventScrollView: EventScrollView to apply Editor function.
+        ///   - editingUnitInPanning: Panning length to regard as editing unit.
+        internal func setup(eventScrollView: EventScrollView, editingUnitInPanning: CGFloat) {
             self.eventScrollView = eventScrollView
+            self.editingUnitInPanning = editingUnitInPanning
         }
 
         internal func observe(cell: EventCell) {
@@ -73,10 +93,12 @@ extension EventScrollView {
         internal func beginEditing(for cell: EventCell) {
             guard let scrollView = eventScrollView else { return }
 
-            impactFeedbackGenerator.prepare()
+            heavyImpactFeedbackGenerator.prepare()
+            medeiumImpactFeedbackGenerator.prepare()
 
             endEditing()
             editingCell = cell
+            cellFrameOfEachEdit = cell.frame
 
             let snapshot = cell.snapshotView()
             snapshot.frame = cell.frame
@@ -84,13 +106,20 @@ extension EventScrollView {
             scrollView.insertSubview(snapshot, belowSubview: cell)
             snapshotView = snapshot
 
-            let overlayView = EditingOverlayView()
+            let overlayView = EditingOverlayView(cell: cell)
+            overlayView.willPanKnobHandler = { [weak self] knob in
+                guard let self = self, let cell = self.editingCell else { return }
+                self.cellFrameOfEachEdit = cell.frame
+            }
+            overlayView.didPanKnobHandler = { [weak self] knob, length in
+                guard let self = self else { return }
+                self.edit(edge: knob == .top ? .top : .bottom, panningLength: length)
+            }
+            overlayView.didEndPanningKnobHandler = { [weak self] knob in
+                guard let self = self, let cell = self.editingCell else { return }
+                self.cellFrameOfEachEdit = cell.frame
+            }
             scrollView.addSubview(overlayView)
-            NSLayoutConstraint.activate([
-                overlayView.centerXAnchor.constraint(equalTo: cell.centerXAnchor),
-                overlayView.centerYAnchor.constraint(equalTo: cell.centerYAnchor)
-            ])
-            overlayView.updateEditingCellStatus(frame: cell.frame)
             editingOverlayView = overlayView
 
 //            cell.addGestureRecognizer(
@@ -98,7 +127,7 @@ extension EventScrollView {
 //            )
 
             state = .editing
-            impactFeedbackGenerator.impactOccurred()
+            heavyImpactFeedbackGenerator.impactOccurred()
             didBeginEditingHandler?()
         }
 
@@ -107,6 +136,31 @@ extension EventScrollView {
             snapshotView?.removeFromSuperview()
             editingOverlayView?.removeFromSuperview()
             state = .ready
+        }
+
+        private func edit(edge: Edge, panningLength: CGFloat) {
+            guard let cell = editingCell else { return }
+            let height = heightMustBeEdited(panningLength: panningLength)
+            guard var frame = cellFrameOfEachEdit else { return }
+
+            switch edge {
+            case .top:
+                // if the height is negative, the frame will be expanded to top-side.
+                // if the height is positive, the frame will be contracted to bottom-side.
+                frame.origin.y += height
+                frame.size.height -= height
+            case .bottom:
+                // if the height is positive, the frame will be expanded to bottom-side.
+                // if the height is negative, the frame will be contracted to top-side.
+                frame.size.height += height
+            case .both:
+                break
+            }
+
+            if cell.frame != frame {
+                cell.frame = frame
+                medeiumImpactFeedbackGenerator.impactOccurred()
+            }
         }
 
         @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {
@@ -154,6 +208,11 @@ extension EventScrollView {
             }
 
             unobserve(cell: cell)
+        }
+
+        private func heightMustBeEdited(panningLength: CGFloat) -> CGFloat {
+            let numberOfUnits = Int(panningLength / editingUnitInPanning)
+            return editingUnitInPanning * CGFloat(numberOfUnits)
         }
     }
 }

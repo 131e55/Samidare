@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -28,8 +28,8 @@
                     <rect key="frame" x="48" y="96" width="44" height="64"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="44" id="hfH-2U-npR"/>
-                        <constraint firstAttribute="height" constant="64" id="xBj-tq-Y8a"/>
+                        <constraint firstAttribute="width" priority="250" constant="44" id="hfH-2U-npR"/>
+                        <constraint firstAttribute="height" priority="250" constant="64" id="xBj-tq-Y8a"/>
                     </constraints>
                 </view>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2q-Gl-me1" userLabel="Time View">
@@ -102,10 +102,10 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hpj-mY-ged">
-                    <rect key="frame" x="48" y="86" width="44" height="20"/>
+                    <rect key="frame" x="48" y="84" width="44" height="24"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8F-qQ-oTW">
-                            <rect key="frame" x="16" y="4" width="12" height="12"/>
+                            <rect key="frame" x="16" y="6" width="12" height="12"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="12" id="9MB-0n-YgQ"/>
@@ -121,18 +121,18 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" red="1" green="0.57647058819999997" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="ic0-69-B76"/>
+                        <constraint firstAttribute="height" constant="24" id="ic0-69-B76"/>
                         <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerY" secondItem="Hpj-mY-ged" secondAttribute="centerY" id="nRe-KU-x3r"/>
                         <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerX" secondItem="Hpj-mY-ged" secondAttribute="centerX" id="uR0-Cu-4tj"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Njg-GR-Jwk">
-                    <rect key="frame" x="48" y="150" width="44" height="20"/>
+                    <rect key="frame" x="48" y="148" width="44" height="24"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aVw-s7-aZJ">
-                            <rect key="frame" x="16" y="4" width="12" height="12"/>
+                            <rect key="frame" x="16" y="6" width="12" height="12"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="12" id="bsv-CC-b3X"/>
@@ -148,9 +148,9 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="backgroundColor" red="1" green="0.57647058819999997" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="Bp9-5j-mUX"/>
+                        <constraint firstAttribute="height" constant="24" id="Bp9-5j-mUX"/>
                         <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerX" secondItem="Njg-GR-Jwk" secondAttribute="centerX" id="Lcn-vs-QX9"/>
                         <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerY" secondItem="Njg-GR-Jwk" secondAttribute="centerY" id="mlh-M5-EgZ"/>
                     </constraints>
