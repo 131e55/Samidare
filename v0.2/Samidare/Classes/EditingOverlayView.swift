@@ -19,6 +19,10 @@ internal class EditingOverlayView: TouchPassedView {
     @IBOutlet private weak var cellHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellOverlayView: UIView!
     @IBOutlet private weak var timeView: UIView!
+    @IBOutlet private weak var startTimeView: UIView!
+    @IBOutlet private weak var startTimeLabel: UILabel!
+    @IBOutlet private weak var endTimeView: UIView!
+    @IBOutlet private weak var endTimeLabel: UILabel!
     @IBOutlet private weak var topKnobView: UIView!
     @IBOutlet private weak var bottomKnobView: UIView!
 
@@ -47,8 +51,6 @@ internal class EditingOverlayView: TouchPassedView {
         isUserInteractionEnabled = true
         translatesAutoresizingMaskIntoConstraints = false
 
-        backgroundColor = UIColor.purple.withAlphaComponent(0.25)
-
         let view = type(of: self).nib.instantiate(withOwner: self, options: nil).first as! UIView
         view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
@@ -69,6 +71,9 @@ internal class EditingOverlayView: TouchPassedView {
         bottomKnobView.addGestureRecognizer(
             UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
         )
+
+        startTimeLabel.text = cell.event.start.formattedString
+        endTimeLabel.text = cell.event.end.formattedString
     }
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
@@ -125,6 +130,15 @@ internal class EditingOverlayView: TouchPassedView {
 
         switch sender.state {
         case .began:
+            // top and bottom may overlap, so bring touched knob and timeView to front
+            if knob == .top {
+                topKnobView.superview!.insertSubview(topKnobView, aboveSubview: bottomKnobView)
+                startTimeView.superview!.insertSubview(startTimeView, aboveSubview: endTimeView)
+            } else {
+                bottomKnobView.superview!.insertSubview(bottomKnobView, aboveSubview: topKnobView)
+                endTimeView.superview!.insertSubview(endTimeView, aboveSubview: startTimeView)
+            }
+
             firstTouchLocation = location
             lastTouchLocation = location
             willPanKnobHandler?(knob)

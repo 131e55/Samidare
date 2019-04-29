@@ -15,17 +15,21 @@
                 <outlet property="cellHeightConstraint" destination="xBj-tq-Y8a" id="OAr-h0-7cF"/>
                 <outlet property="cellOverlayView" destination="YCx-HK-hiL" id="GdO-YY-pJD"/>
                 <outlet property="cellWidthConstraint" destination="hfH-2U-npR" id="5ki-sD-zeT"/>
+                <outlet property="endTimeLabel" destination="J13-xv-Jdo" id="tfg-j3-p8A"/>
+                <outlet property="endTimeView" destination="Ypr-kA-Xd5" id="qor-rO-Hhv"/>
+                <outlet property="startTimeLabel" destination="EvQ-bc-zaE" id="CeZ-6j-m3f"/>
+                <outlet property="startTimeView" destination="qoB-57-VWs" id="FLt-CJ-hB1"/>
                 <outlet property="timeView" destination="R2q-Gl-me1" id="ug2-HX-UCG"/>
                 <outlet property="topKnobView" destination="Hpj-mY-ged" id="gGX-wF-i8j"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="TouchPassedView" customModule="Samidare" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="140" height="256"/>
+            <rect key="frame" x="0.0" y="0.0" width="164" height="256"/>
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YCx-HK-hiL" userLabel="Cell Rect">
-                    <rect key="frame" x="48" y="96" width="44" height="64"/>
+                    <rect key="frame" x="60" y="96" width="44" height="64"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="width" priority="250" constant="44" id="hfH-2U-npR"/>
@@ -33,13 +37,13 @@
                     </constraints>
                 </view>
                 <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2q-Gl-me1" userLabel="Time View">
-                    <rect key="frame" x="100" y="86" width="44" height="84"/>
+                    <rect key="frame" x="112" y="86" width="44" height="84"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qoB-57-VWs" userLabel="Start Time View">
                             <rect key="frame" x="0.0" y="0.0" width="44" height="20"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="11" translatesAutoresizingMaskIntoConstraints="NO" id="EvQ-bc-zaE">
-                                    <rect key="frame" x="2" y="0.0" width="40" height="20"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="EvQ-bc-zaE">
+                                    <rect key="frame" x="4" y="0.0" width="36" height="20"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -47,11 +51,11 @@
                             </subviews>
                             <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
-                                <constraint firstItem="EvQ-bc-zaE" firstAttribute="leading" secondItem="qoB-57-VWs" secondAttribute="leading" constant="2" id="2PL-bl-zqm"/>
+                                <constraint firstItem="EvQ-bc-zaE" firstAttribute="leading" secondItem="qoB-57-VWs" secondAttribute="leading" constant="4" id="2PL-bl-zqm"/>
                                 <constraint firstAttribute="height" constant="20" id="CYU-0L-n0N"/>
                                 <constraint firstItem="EvQ-bc-zaE" firstAttribute="top" secondItem="qoB-57-VWs" secondAttribute="top" id="I6N-nk-jqL"/>
                                 <constraint firstAttribute="bottom" secondItem="EvQ-bc-zaE" secondAttribute="bottom" id="UY8-c5-hFr"/>
-                                <constraint firstAttribute="trailing" secondItem="EvQ-bc-zaE" secondAttribute="trailing" constant="2" id="kqX-5Z-YYq"/>
+                                <constraint firstAttribute="trailing" secondItem="EvQ-bc-zaE" secondAttribute="trailing" constant="4" id="kqX-5Z-YYq"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -65,8 +69,8 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ypr-kA-Xd5" userLabel="End Time View">
                             <rect key="frame" x="0.0" y="64" width="44" height="20"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="11" translatesAutoresizingMaskIntoConstraints="NO" id="J13-xv-Jdo">
-                                    <rect key="frame" x="2" y="0.0" width="40" height="20"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="J13-xv-Jdo">
+                                    <rect key="frame" x="4" y="0.0" width="36" height="20"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -76,8 +80,8 @@
                             <constraints>
                                 <constraint firstItem="J13-xv-Jdo" firstAttribute="top" secondItem="Ypr-kA-Xd5" secondAttribute="top" id="7qu-Ab-cob"/>
                                 <constraint firstAttribute="bottom" secondItem="J13-xv-Jdo" secondAttribute="bottom" id="9mM-oS-hAl"/>
-                                <constraint firstItem="J13-xv-Jdo" firstAttribute="leading" secondItem="Ypr-kA-Xd5" secondAttribute="leading" constant="2" id="c9z-l5-g0c"/>
-                                <constraint firstAttribute="trailing" secondItem="J13-xv-Jdo" secondAttribute="trailing" constant="2" id="iVH-4U-MNM"/>
+                                <constraint firstItem="J13-xv-Jdo" firstAttribute="leading" secondItem="Ypr-kA-Xd5" secondAttribute="leading" constant="4" id="c9z-l5-g0c"/>
+                                <constraint firstAttribute="trailing" secondItem="J13-xv-Jdo" secondAttribute="trailing" constant="4" id="iVH-4U-MNM"/>
                                 <constraint firstAttribute="height" constant="20" id="tP7-WF-VtA"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
@@ -102,18 +106,18 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hpj-mY-ged">
-                    <rect key="frame" x="48" y="84" width="44" height="24"/>
+                    <rect key="frame" x="60" y="76" width="44" height="40"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8F-qQ-oTW">
-                            <rect key="frame" x="16" y="6" width="12" height="12"/>
+                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R8F-qQ-oTW">
+                            <rect key="frame" x="30" y="15" width="10" height="10"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="12" id="9MB-0n-YgQ"/>
-                                <constraint firstAttribute="height" constant="12" id="Dd4-EG-YC1"/>
+                                <constraint firstAttribute="width" constant="10" id="9MB-0n-YgQ"/>
+                                <constraint firstAttribute="height" constant="10" id="Dd4-EG-YC1"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="6"/>
+                                    <integer key="value" value="5"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                                     <integer key="value" value="1"/>
@@ -121,26 +125,26 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" red="1" green="0.57647058819999997" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="24" id="ic0-69-B76"/>
+                        <constraint firstAttribute="height" constant="40" id="ic0-69-B76"/>
+                        <constraint firstAttribute="trailing" secondItem="R8F-qQ-oTW" secondAttribute="trailing" constant="4" id="ma7-2H-gU3"/>
                         <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerY" secondItem="Hpj-mY-ged" secondAttribute="centerY" id="nRe-KU-x3r"/>
-                        <constraint firstItem="R8F-qQ-oTW" firstAttribute="centerX" secondItem="Hpj-mY-ged" secondAttribute="centerX" id="uR0-Cu-4tj"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Njg-GR-Jwk">
-                    <rect key="frame" x="48" y="148" width="44" height="24"/>
+                    <rect key="frame" x="60" y="140" width="44" height="40"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aVw-s7-aZJ">
-                            <rect key="frame" x="16" y="6" width="12" height="12"/>
+                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aVw-s7-aZJ">
+                            <rect key="frame" x="4" y="15" width="10" height="10"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="12" id="bsv-CC-b3X"/>
-                                <constraint firstAttribute="width" constant="12" id="nye-ke-zXL"/>
+                                <constraint firstAttribute="height" constant="10" id="bsv-CC-b3X"/>
+                                <constraint firstAttribute="width" constant="10" id="nye-ke-zXL"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                    <integer key="value" value="6"/>
+                                    <integer key="value" value="5"/>
                                 </userDefinedRuntimeAttribute>
                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
                                     <integer key="value" value="1"/>
@@ -148,10 +152,10 @@
                             </userDefinedRuntimeAttributes>
                         </view>
                     </subviews>
-                    <color key="backgroundColor" red="1" green="0.57647058819999997" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="24" id="Bp9-5j-mUX"/>
-                        <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerX" secondItem="Njg-GR-Jwk" secondAttribute="centerX" id="Lcn-vs-QX9"/>
+                        <constraint firstItem="aVw-s7-aZJ" firstAttribute="leading" secondItem="Njg-GR-Jwk" secondAttribute="leading" constant="4" id="0Tw-BX-c8W"/>
+                        <constraint firstAttribute="height" constant="40" id="Bp9-5j-mUX"/>
                         <constraint firstItem="aVw-s7-aZJ" firstAttribute="centerY" secondItem="Njg-GR-Jwk" secondAttribute="centerY" id="mlh-M5-EgZ"/>
                     </constraints>
                 </view>
@@ -173,7 +177,7 @@
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="137.59999999999999" y="153.82308845577214"/>
+            <point key="canvasLocation" x="156.80000000000001" y="153.82308845577214"/>
         </view>
     </objects>
 </document>

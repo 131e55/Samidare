@@ -29,7 +29,7 @@ extension EventScrollView {
             }
         }
         private let heavyImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
-        private let medeiumImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        private let lightImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
         private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
 
@@ -94,11 +94,10 @@ extension EventScrollView {
             guard let scrollView = eventScrollView else { return }
 
             heavyImpactFeedbackGenerator.prepare()
-            medeiumImpactFeedbackGenerator.prepare()
+            lightImpactFeedbackGenerator.prepare()
 
             endEditing()
             editingCell = cell
-            cellFrameOfEachEdit = cell.frame
 
             let snapshot = cell.snapshotView()
             snapshot.frame = cell.frame
@@ -140,26 +139,35 @@ extension EventScrollView {
 
         private func edit(edge: Edge, panningLength: CGFloat) {
             guard let cell = editingCell else { return }
-            let height = heightMustBeEdited(panningLength: panningLength)
             guard var frame = cellFrameOfEachEdit else { return }
+            var deltaHeight = heightMustBeEdited(panningLength: panningLength)
+            let deltaHeightSign = deltaHeight != 0 ? deltaHeight / abs(deltaHeight) : 1
 
             switch edge {
             case .top:
+                dprint(deltaHeight, frame.size.height - deltaHeight, editingUnitInPanning)
                 // if the height is negative, the frame will be expanded to top-side.
                 // if the height is positive, the frame will be contracted to bottom-side.
-                frame.origin.y += height
-                frame.size.height -= height
+                if frame.size.height - deltaHeight < editingUnitInPanning {
+                    deltaHeight = deltaHeightSign * (frame.size.height - editingUnitInPanning)
+                    dprint(deltaHeight)
+                }
+                frame.origin.y += deltaHeight
+                frame.size.height -= deltaHeight
             case .bottom:
                 // if the height is positive, the frame will be expanded to bottom-side.
                 // if the height is negative, the frame will be contracted to top-side.
-                frame.size.height += height
+                if frame.size.height + deltaHeight < editingUnitInPanning {
+                    deltaHeight = deltaHeightSign * (frame.size.height - editingUnitInPanning)
+                }
+                frame.size.height += deltaHeight
             case .both:
                 break
             }
 
             if cell.frame != frame {
                 cell.frame = frame
-                medeiumImpactFeedbackGenerator.impactOccurred()
+                lightImpactFeedbackGenerator.impactOccurred()
             }
         }
 

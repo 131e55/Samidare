@@ -42,7 +42,6 @@ extension SamidareView {
                 fatalError("[Samidare] could not create a cell from Nib (identifier: \(identifier))")
             }
             cell.reuseIdentifier = identifier
-            dprint(cell)
             return cell as! T
         }
     }
