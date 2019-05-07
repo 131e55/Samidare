@@ -194,16 +194,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Samidare/Samidare.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Samidare.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

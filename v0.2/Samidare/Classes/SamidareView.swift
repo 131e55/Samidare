@@ -28,6 +28,11 @@ public class SamidareView: UIView {
         get { return survivorManager.expansionRateOfSurvivorArea }
         set { survivorManager.expansionRateOfSurvivorArea = newValue }
     }
+    
+    // TODO:
+    public var didBeginEditingEventHandler: (() -> Void)?
+    // TODO:
+    public var didEditEventHandler: (() -> Void)?
 
     private var mustCallReloadData = true
 

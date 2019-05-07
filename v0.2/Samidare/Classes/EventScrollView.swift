@@ -14,7 +14,7 @@ protocol EventScrollViewDelegate: UIScrollViewDelegate {
 
 public class EventScrollView: UIScrollView {
 
-    private var layoutData: LayoutDataStore.LayoutData!
+    private(set) var layoutData: LayoutDataStore.LayoutData!
 
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 

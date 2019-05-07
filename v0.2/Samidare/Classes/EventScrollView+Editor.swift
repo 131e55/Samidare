@@ -49,6 +49,8 @@ extension EventScrollView {
 
         /// Tells editing has begun.
         internal var didBeginEditingHandler: (() -> Void)?
+        
+        internal var didEditHandler: (() -> Void)?
 
         init() {
             NotificationCenter.default.addObserver(self, selector: #selector(eventCellWillRemoveFromSuperview),
@@ -138,35 +140,44 @@ extension EventScrollView {
         }
 
         private func edit(edge: Edge, panningLength: CGFloat) {
+            guard let layoutData = eventScrollView?.layoutData else { return }
             guard let cell = editingCell else { return }
-            guard var frame = cellFrameOfEachEdit else { return }
+            guard var newFrame = cellFrameOfEachEdit else { return }
             var deltaHeight = heightMustBeEdited(panningLength: panningLength)
             let deltaHeightSign = deltaHeight != 0 ? deltaHeight / abs(deltaHeight) : 1
 
             switch edge {
             case .top:
-                dprint(deltaHeight, frame.size.height - deltaHeight, editingUnitInPanning)
+                dprint(deltaHeight, newFrame.size.height - deltaHeight, editingUnitInPanning)
                 // if the height is negative, the frame will be expanded to top-side.
                 // if the height is positive, the frame will be contracted to bottom-side.
-                if frame.size.height - deltaHeight < editingUnitInPanning {
-                    deltaHeight = deltaHeightSign * (frame.size.height - editingUnitInPanning)
+                if newFrame.size.height - deltaHeight < editingUnitInPanning {
+                    deltaHeight = deltaHeightSign * (newFrame.size.height - editingUnitInPanning)
                     dprint(deltaHeight)
                 }
-                frame.origin.y += deltaHeight
-                frame.size.height -= deltaHeight
+                newFrame.origin.y += deltaHeight
+                newFrame.size.height -= deltaHeight
             case .bottom:
                 // if the height is positive, the frame will be expanded to bottom-side.
                 // if the height is negative, the frame will be contracted to top-side.
-                if frame.size.height + deltaHeight < editingUnitInPanning {
-                    deltaHeight = deltaHeightSign * (frame.size.height - editingUnitInPanning)
+                if newFrame.size.height + deltaHeight < editingUnitInPanning {
+                    deltaHeight = deltaHeightSign * (newFrame.size.height - editingUnitInPanning)
                 }
-                frame.size.height += deltaHeight
+                newFrame.size.height += deltaHeight
             case .both:
                 break
             }
 
-            if cell.frame != frame {
-                cell.frame = frame
+            if cell.frame != newFrame {
+                //
+                // Calc new Event start time
+                //
+                let deltaInterval = (newFrame.minY - cell.frame.minY) / layoutData.heightPerMinInterval
+                // positive: delay the start time.
+                // negative: 
+                let deltaStartMinutes = Int(deltaInterval * CGFloat(layoutData.timeRange.minInterval))
+                dprint(deltaStartMinutes)
+                cell.frame = newFrame
                 lightImpactFeedbackGenerator.impactOccurred()
             }
         }
