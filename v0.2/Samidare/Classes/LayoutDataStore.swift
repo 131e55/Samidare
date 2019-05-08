@@ -19,6 +19,13 @@ final internal class LayoutDataStore {
         let totalWidthOfColumns: CGFloat
         let widthOfTimeColumn: CGFloat
         let columnSpacing: CGFloat
+        
+        /// Translate height to minutes by LayoutData.
+        func minutes(from height: CGFloat) -> Int {
+            let numberOfIntervals = Int(height / heightPerMinInterval)
+            let minutes = numberOfIntervals * timeRange.minInterval
+            return minutes
+        }
     }
 
     var cachedData: LayoutData?

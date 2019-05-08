@@ -53,6 +53,11 @@ public struct Time {
         // to call didSet
         initialize(hours: hours, minutes: minutes)
     }
+    
+    public init(minutes: Int) {
+        // to call didSet
+        initialize(hours: 0, minutes: minutes)
+    }
 
     public init(from date: Date, calendar: Calendar = Calendar(identifier: .gregorian)) {
         let hours = calendar.component(.hour, from: date)

@@ -35,9 +35,13 @@ extension EventScrollView {
 
         private(set) var state: State = .ready
 
+        /// Current editing EventCell.
         private weak var editingCell: EventCell?
-        /// Cell frame of each edit. `each edit` is defined `top knob panning`, `bottom knob panning`, `cell panning`.
-        private var cellFrameOfEachEdit: CGRect?
+        /// Copy of editingCell.event at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
+        private var eventAtBeginEditing: Event?
+        /// Copy of editingCell.frame at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
+        private var cellFrameAtBeginEditing: CGRect?
+        
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
@@ -110,7 +114,8 @@ extension EventScrollView {
             let overlayView = EditingOverlayView(cell: cell)
             overlayView.willPanKnobHandler = { [weak self] knob in
                 guard let self = self, let cell = self.editingCell else { return }
-                self.cellFrameOfEachEdit = cell.frame
+                self.eventAtBeginEditing = cell.event
+                self.cellFrameAtBeginEditing = cell.frame
             }
             overlayView.didPanKnobHandler = { [weak self] knob, length in
                 guard let self = self else { return }
@@ -118,7 +123,8 @@ extension EventScrollView {
             }
             overlayView.didEndPanningKnobHandler = { [weak self] knob in
                 guard let self = self, let cell = self.editingCell else { return }
-                self.cellFrameOfEachEdit = cell.frame
+                self.eventAtBeginEditing = cell.event
+                self.cellFrameAtBeginEditing = cell.frame
             }
             scrollView.addSubview(overlayView)
             editingOverlayView = overlayView
@@ -141,19 +147,20 @@ extension EventScrollView {
 
         private func edit(edge: Edge, panningLength: CGFloat) {
             guard let layoutData = eventScrollView?.layoutData else { return }
-            guard let cell = editingCell else { return }
-            guard var newFrame = cellFrameOfEachEdit else { return }
-            var deltaHeight = heightMustBeEdited(panningLength: panningLength)
+            guard let cell = editingCell,
+                let eventAtBeginEditing = eventAtBeginEditing,
+                let cellFrameAtBeginEditing = cellFrameAtBeginEditing,
+                var newFrame = self.cellFrameAtBeginEditing
+                else { return }
+            var deltaHeight = panningLength//heightMustBeEdited(panningLength: panningLength)
             let deltaHeightSign = deltaHeight != 0 ? deltaHeight / abs(deltaHeight) : 1
 
             switch edge {
             case .top:
-                dprint(deltaHeight, newFrame.size.height - deltaHeight, editingUnitInPanning)
                 // if the height is negative, the frame will be expanded to top-side.
                 // if the height is positive, the frame will be contracted to bottom-side.
                 if newFrame.size.height - deltaHeight < editingUnitInPanning {
                     deltaHeight = deltaHeightSign * (newFrame.size.height - editingUnitInPanning)
-                    dprint(deltaHeight)
                 }
                 newFrame.origin.y += deltaHeight
                 newFrame.size.height -= deltaHeight
@@ -167,18 +174,27 @@ extension EventScrollView {
             case .both:
                 break
             }
+            cell.frame = newFrame
+            
+            //
+            // Calc new Event start time
+            //
+            // positive: start time will be late.
+            // negative: start time will be early.
+            let deltaStartMinutes = layoutData.minutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
+            let totalMinutes = layoutData.minutes(from: newFrame.height)
+            let newStartMinutes = eventAtBeginEditing.start.totalMinutes + deltaStartMinutes
+            let newStartTime = Time(minutes: newStartMinutes)
+            let newEndTime = Time(minutes: newStartMinutes + totalMinutes)
 
-            if cell.frame != newFrame {
-                //
-                // Calc new Event start time
-                //
-                let deltaInterval = (newFrame.minY - cell.frame.minY) / layoutData.heightPerMinInterval
-                // positive: delay the start time.
-                // negative: 
-                let deltaStartMinutes = Int(deltaInterval * CGFloat(layoutData.timeRange.minInterval))
-                dprint(deltaStartMinutes)
-                cell.frame = newFrame
+            if cell.event.start != newStartTime || cell.event.end != newEndTime {
+                var newEvent = cell.event!
+                newEvent.start = newStartTime
+                newEvent.end = newEndTime
+                cell.configure(event: newEvent)
+
                 lightImpactFeedbackGenerator.impactOccurred()
+                didEditHandler?()
             }
         }
 

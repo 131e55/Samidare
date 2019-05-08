@@ -72,11 +72,17 @@ internal class EditingOverlayView: TouchPassedView {
             UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
         )
 
-        startTimeLabel.text = cell.event.start.formattedString
-        endTimeLabel.text = cell.event.end.formattedString
+        NotificationCenter.default.addObserver(self, selector: #selector(eventCellDidSetEvent),
+                                               name: EventCell.didSetEventNotification, object: nil)
+        
+        updateTimeLabels()
     }
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
 
@@ -103,6 +109,12 @@ internal class EditingOverlayView: TouchPassedView {
             cellOverlayView.widthAnchor.constraint(equalTo: editingCell.widthAnchor),
             cellOverlayView.heightAnchor.constraint(equalTo: editingCell.heightAnchor)
         ])
+    }
+    
+    private func updateTimeLabels() {
+        guard let cell = editingCell else { return }
+        startTimeLabel.text = cell.event.start.formattedString
+        endTimeLabel.text = cell.event.end.formattedString
     }
 
     @objc private func didPanCellOverlayView(_ sender: UIPanGestureRecognizer) {
@@ -151,6 +163,11 @@ internal class EditingOverlayView: TouchPassedView {
         default:
             didEndPanningKnobHandler?(knob)
         }
+    }
+    
+    @objc private func eventCellDidSetEvent(_ notification: Notification) {
+        guard let eventCell = notification.object as? EventCell, eventCell == editingCell else { return }
+        updateTimeLabels()
     }
 }
 

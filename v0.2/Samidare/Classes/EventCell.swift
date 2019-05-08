@@ -10,10 +10,14 @@ import UIKit
 
 open class EventCell: UIView {
 
-    internal static let willRemoveFromSuperviewNotification
-                        = Notification.Name("EventCellWillRemoveFromSuperviewNotification")
+    internal static let willRemoveFromSuperviewNotification = Notification.Name("EventCellWillRemoveFromSuperviewNotification")
+    internal static let didSetEventNotification = Notification.Name("EventCellDidSetEventNotification")
 
-    private(set) var event: Event!
+    private(set) var event: Event! {
+        didSet {
+            NotificationCenter.default.post(name: EventCell.didSetEventNotification, object: self)
+        }
+    }
 
     /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     internal var indexPath: IndexPath!
