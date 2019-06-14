@@ -124,6 +124,7 @@ extension EventScrollView {
             overlayView.didEndPanningKnobHandler = { [weak self] knob in
                 guard let self = self, let cell = self.editingCell else { return }
                 self.eventAtBeginEditing = cell.event
+                self.snapCellFrame()
                 self.cellFrameAtBeginEditing = cell.frame
             }
             scrollView.addSubview(overlayView)
@@ -181,8 +182,8 @@ extension EventScrollView {
             //
             // positive: start time will be late.
             // negative: start time will be early.
-            let deltaStartMinutes = layoutData.minutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
-            let totalMinutes = layoutData.minutes(from: newFrame.height)
+            let deltaStartMinutes = layoutData.roundedMinutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
+            let totalMinutes = layoutData.roundedMinutes(from: newFrame.height)
             let newStartMinutes = eventAtBeginEditing.start.totalMinutes + deltaStartMinutes
             let newStartTime = Time(minutes: newStartMinutes)
             let newEndTime = Time(minutes: newStartMinutes + totalMinutes)
@@ -196,6 +197,19 @@ extension EventScrollView {
                 lightImpactFeedbackGenerator.impactOccurred()
                 didEditHandler?()
             }
+        }
+        
+        private func snapCellFrame() {
+            guard let layoutData = eventScrollView?.layoutData,
+                let cell = editingCell
+                else { return }
+            let y = layoutData.frameMinY(from: cell.event.start)
+            let height = layoutData.height(from: cell.event.start ... cell.event.end)
+            let snappedFrame = CGRect(x: cell.frame.minX,
+                                      y: y,
+                                      width: cell.frame.width,
+                                      height: height)
+            cell.frame = snappedFrame
         }
 
         @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {

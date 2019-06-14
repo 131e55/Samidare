@@ -21,10 +21,24 @@ final internal class LayoutDataStore {
         let columnSpacing: CGFloat
         
         /// Translate height to minutes by LayoutData.
-        func minutes(from height: CGFloat) -> Int {
-            let numberOfIntervals = Int(height / heightPerMinInterval)
+        func roundedMinutes(from height: CGFloat) -> Int {
+            let numberOfIntervals = Int(round(height / heightPerMinInterval))
             let minutes = numberOfIntervals * timeRange.minInterval
             return minutes
+        }
+        
+        /// Translate time to frame.minY by LayoutData.
+        func frameMinY(from time: Time) -> CGFloat {
+            let numberOfIntervals = (time.totalMinutes - timeRange.start.totalMinutes) / timeRange.minInterval
+            let y = CGFloat(numberOfIntervals) * heightPerMinInterval
+            return y
+        }
+        
+        /// Translate time range to height by LayoutData.
+        func height(from times: ClosedRange<Time>) -> CGFloat {
+            let numberOfIntervals = max((times.upperBound.totalMinutes - times.lowerBound.totalMinutes) / timeRange.minInterval, 1)
+            let height = CGFloat(numberOfIntervals) * heightPerMinInterval
+            return height
         }
     }
 

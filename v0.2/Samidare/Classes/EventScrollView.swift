@@ -57,15 +57,11 @@ public class EventScrollView: UIScrollView {
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {
         guard let x = layoutData.xPositionOfColumn[indexPath],
             let width = layoutData.widthOfColumn[indexPath] else { return }
-        let minInterval = layoutData.timeRange.minInterval
-        let heightPerMinInterval = layoutData.heightPerMinInterval
 
         for cell in cells {
             guard let event = cell.event else { continue }
-            var numberOfIntervals = (event.start.totalMinutes - layoutData.timeRange.start.totalMinutes) / minInterval
-            let y = CGFloat(numberOfIntervals) * heightPerMinInterval
-            numberOfIntervals = max((event.end.totalMinutes - event.start.totalMinutes) / minInterval, 1)
-            let height = CGFloat(numberOfIntervals) * heightPerMinInterval
+            let y = layoutData.frameMinY(from: event.start)
+            let height = layoutData.height(from: event.start ... event.end)
             cell.frame = CGRect(x: x, y: y, width: width, height: height)
             cell.indexPath = indexPath
             addSubview(cell)

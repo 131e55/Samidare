@@ -34,6 +34,10 @@ extension ViewController: SamidareViewDataSource {
     func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int {
         return 50
     }
+    
+    func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
+        return 16
+    }
 
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell] {
         let events = sampleData[indexPath] ?? []
