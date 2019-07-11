@@ -21,7 +21,13 @@ public protocol SamidareViewDataSource: class {
 }
 
 extension SamidareViewDataSource {
-    public func timeRange(in samidareView: SamidareView) -> TimeRange {
+    public func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
+        var components = Calendar.current.dateComponents(in: .current, from: Date())
+        components.hour = 0
+        components.minute = 0
+        components.second = 0
+        components.nanosecond = 0
+        let start = Calendar.current.date(from: components)!
         return TimeRange(start: .zero, end: Time(hours: 24, minutes: 0), minInterval: 15)
     }
     public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
