@@ -112,16 +112,16 @@ extension EventScrollView {
             snapshotView = snapshot
 
             let overlayView = EditingOverlayView(cell: cell)
-            overlayView.willPanKnobHandler = { [weak self] knob in
+            overlayView.willPanHandler = { [weak self] _ in
                 guard let self = self, let cell = self.editingCell else { return }
                 self.eventAtBeginEditing = cell.event
                 self.cellFrameAtBeginEditing = cell.frame
             }
-            overlayView.didPanKnobHandler = { [weak self] knob, length in
+            overlayView.didPanKnobHandler = { [weak self] panningPoint, length in
                 guard let self = self else { return }
-                self.edit(edge: knob == .top ? .top : .bottom, panningLength: length)
+                self.edit(edge: panningPoint == .topKnob ? .top : .bottom, panningLength: length)
             }
-            overlayView.didEndPanningKnobHandler = { [weak self] knob in
+            overlayView.didEndPanningHandler = { [weak self] _ in
                 guard let self = self, let cell = self.editingCell else { return }
                 self.eventAtBeginEditing = cell.event
                 self.snapCellFrame()

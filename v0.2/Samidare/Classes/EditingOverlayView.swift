@@ -27,26 +27,55 @@ internal class EditingOverlayView: TouchPassedView {
     @IBOutlet private weak var bottomKnobView: UIView!
 
     private var editingCell: EventCell!
+    
+    private var cellPanGestureRecognizer: UIPanGestureRecognizer!
+    private var topKnobPanGestureRecognizer: UIPanGestureRecognizer!
+    private var bottomKnobPanGestureRecognizer: UIPanGestureRecognizer!
 
     /// First touch location in referencing EventScrollView.
     /// It's reset each time any gesture recognized.
     private var firstTouchLocation: CGPoint!
     /// Last touch location in referencing EventScrollView.
     private var lastTouchLocation: CGPoint!
+    
+    /// Current PanningPoint (cell or topKnob or bottomKnob)
+    private var currentPanningPoint: PanningPoint? {
+        didSet {
+            switch currentPanningPoint {
+            case .none:
+                cellPanGestureRecognizer.isEnabled = true
+                topKnobPanGestureRecognizer.isEnabled = true
+                bottomKnobPanGestureRecognizer.isEnabled = true
+            case .some(.cell):
+                topKnobPanGestureRecognizer.isEnabled = false
+                bottomKnobPanGestureRecognizer.isEnabled = false
+            case .some(.topKnob):
+                cellPanGestureRecognizer.isEnabled = false
+                bottomKnobPanGestureRecognizer.isEnabled = false
+            case .some(.bottomKnob):
+                cellPanGestureRecognizer.isEnabled = false
+                topKnobPanGestureRecognizer.isEnabled = false
+            }
+        }
+    }
 
-    /// TODO:
-    internal var didPanCellHandler: (() -> Void)?
-    /// Tells begin panning top-bottom knobs.
-    internal var willPanKnobHandler: ((_ knob: Knob) -> Void)?
-    /// Tells panned top-bottom knobs.
-    internal var didPanKnobHandler: ((_ knob: Knob, _ length: CGFloat) -> Void)?
-    /// Tells end panning top-bottom knobs.
-    internal var didEndPanningKnobHandler: ((_ knob: Knob) -> Void)?
-
+    /// Tells that begin panning cell or top-bottom knobs.
+    internal var willPanHandler: ((_ panningPoint: PanningPoint) -> Void)?
+    /// Tells that cell scaled by top-bottom knobs.
+    /// If length is positive, means bottom side.
+    /// If length is negative, means top side.
+    internal var didPanKnobHandler: ((_ panningPoint: PanningPoint, _ length: CGFloat) -> Void)?
+    /// Tells that cell moved by cell panning.
+    /// If length is positive, cell.frame will be move bottom side.
+    /// If length is negative, cell.frame will be move top side.
+    internal var didPanCellHandler: ((_ panningPoint: PanningPoint, _ length: CGFloat) -> Void)?
+    /// Tells that ended panning cell or top-bottom knobs.
+    internal var didEndPanningHandler: ((_ panningPoint: PanningPoint) -> Void)?
+    
     /// - Parameter cell: Editing target EventCell
     init(cell: EventCell) {
         super.init(frame: .zero)
-
+        
         editingCell = cell
         isUserInteractionEnabled = true
         translatesAutoresizingMaskIntoConstraints = false
@@ -62,15 +91,12 @@ internal class EditingOverlayView: TouchPassedView {
             view.heightAnchor.constraint(equalTo: heightAnchor)
         ])
 
-        cellOverlayView.addGestureRecognizer(
-            UIPanGestureRecognizer(target: self, action: #selector(didPanCellOverlayView))
-        )
-        topKnobView.addGestureRecognizer(
-            UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
-        )
-        bottomKnobView.addGestureRecognizer(
-            UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
-        )
+        cellPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanCellOverlayView))
+        cellOverlayView.addGestureRecognizer(cellPanGestureRecognizer)
+        topKnobPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
+        topKnobView.addGestureRecognizer(topKnobPanGestureRecognizer)
+        bottomKnobPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanKnobView))
+        bottomKnobView.addGestureRecognizer(bottomKnobPanGestureRecognizer)
 
         NotificationCenter.default.addObserver(self, selector: #selector(eventCellDidSetEvent),
                                                name: EventCell.didSetEventNotification, object: nil)
@@ -137,31 +163,35 @@ internal class EditingOverlayView: TouchPassedView {
 
     @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
         guard sender.view == topKnobView || sender.view == bottomKnobView else { fatalError() }
+        let panningPoint: PanningPoint = sender.view == topKnobView ? .topKnob : .bottomKnob
+        guard currentPanningPoint == nil || currentPanningPoint == panningPoint
+            else { fatalError("Restrict (cell, top, bottom)PanGestureRecognizer.isEnabled") }
         let location = sender.location(in: nil)
-        let knob: Knob = sender.view == topKnobView ? .top : .bottom
 
         switch sender.state {
         case .began:
+            currentPanningPoint = panningPoint
             // top and bottom may overlap, so bring touched knob and timeView to front
-            if knob == .top {
+            if panningPoint == .topKnob {
                 topKnobView.superview!.insertSubview(topKnobView, aboveSubview: bottomKnobView)
                 startTimeView.superview!.insertSubview(startTimeView, aboveSubview: endTimeView)
-            } else {
+            } else if panningPoint == .bottomKnob {
                 bottomKnobView.superview!.insertSubview(bottomKnobView, aboveSubview: topKnobView)
                 endTimeView.superview!.insertSubview(endTimeView, aboveSubview: startTimeView)
             }
 
             firstTouchLocation = location
             lastTouchLocation = location
-            willPanKnobHandler?(knob)
+            willPanHandler?(panningPoint)
 
         case .changed:
             lastTouchLocation = location
             let length = lastTouchLocation.y - firstTouchLocation.y
-            didPanKnobHandler?(knob, length)
+            didPanKnobHandler?(panningPoint, length)
 
         default:
-            didEndPanningKnobHandler?(knob)
+            currentPanningPoint = nil
+            didEndPanningHandler?(panningPoint)
         }
     }
     
@@ -172,8 +202,9 @@ internal class EditingOverlayView: TouchPassedView {
 }
 
 extension EditingOverlayView {
-    enum Knob {
-        case top
-        case bottom
+    enum PanningPoint {
+        case cell
+        case topKnob
+        case bottomKnob
     }
 }
