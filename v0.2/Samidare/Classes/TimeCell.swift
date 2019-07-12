@@ -11,7 +11,7 @@ import UIKit
 internal class TimeCell: UIView {
 
     static let nib: UINib = UINib(nibName: "TimeCell", bundle: Bundle(for: TimeCell.self))
-    static let preferredFont = UIFont.systemFont(ofSize: 11)
+    static let preferredFont = UIFont.systemFont(ofSize: 10)
 
     @IBOutlet private(set) weak var timeView: UIView!
     @IBOutlet private weak var timeLabel: UILabel!
@@ -19,7 +19,7 @@ internal class TimeCell: UIView {
     @IBOutlet private weak var separatorHeightConstraint: NSLayoutConstraint! {
         didSet { separatorHeightConstraint.constant = 1 / UIScreen.main.scale }
     }
-
+    
     public init(timeText: String, timeViewWidth: CGFloat = 50) {
         super.init(frame: .zero)
 

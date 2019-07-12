@@ -139,8 +139,8 @@ internal class EditingOverlayView: TouchPassedView {
     
     private func updateTimeLabels() {
         guard let cell = editingCell else { return }
-        startTimeLabel.text = cell.event.start.formattedString
-        endTimeLabel.text = cell.event.end.formattedString
+        startTimeLabel.text = ""//cell.event.start.formattedString
+        endTimeLabel.text = ""//cell.event.end.formattedString
     }
 
     @objc private func didPanCellOverlayView(_ sender: UIPanGestureRecognizer) {

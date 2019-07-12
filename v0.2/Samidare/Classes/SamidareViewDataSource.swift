@@ -9,7 +9,8 @@
 import UIKit
 
 public protocol SamidareViewDataSource: class {
-    func timeRange(in samidareView: SamidareView) -> TimeRange
+    func timeRange(in samidareView: SamidareView) -> ClosedRange<Date>
+    func unit(in samidareView: SamidareView) -> LayoutUnit
     func numberOfSections(in samidareView: SamidareView) -> Int
     func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int
     func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
@@ -22,14 +23,17 @@ public protocol SamidareViewDataSource: class {
 
 extension SamidareViewDataSource {
     public func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
-        var components = Calendar.current.dateComponents(in: .current, from: Date())
-        components.hour = 0
-        components.minute = 0
-        components.second = 0
-        components.nanosecond = 0
-        let start = Calendar.current.date(from: components)!
-        return TimeRange(start: .zero, end: Time(hours: 24, minutes: 0), minInterval: 15)
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: Date())
+        let start = calendar.date(from: components)!
+        let end = calendar.date(byAdding: .day, value: 1, to: start)!
+        return start ... end
     }
+    
+    public func unit(in samidareView: SamidareView) -> LayoutUnit {
+        return LayoutUnit(displayMinute: 15, displayHeight: 8, editingMinute: 10)
+    }
+    
     public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
         return 0
     }

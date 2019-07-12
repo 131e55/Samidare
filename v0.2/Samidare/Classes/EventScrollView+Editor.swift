@@ -182,34 +182,35 @@ extension EventScrollView {
             //
             // positive: start time will be late.
             // negative: start time will be early.
-            let deltaStartMinutes = layoutData.roundedMinutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
-            let totalMinutes = layoutData.roundedMinutes(from: newFrame.height)
-            let newStartMinutes = eventAtBeginEditing.start.totalMinutes + deltaStartMinutes
-            let newStartTime = Time(minutes: newStartMinutes)
-            let newEndTime = Time(minutes: newStartMinutes + totalMinutes)
-
-            if cell.event.start != newStartTime || cell.event.end != newEndTime {
-                var newEvent = cell.event!
-                newEvent.start = newStartTime
-                newEvent.end = newEndTime
-                cell.configure(event: newEvent)
-
-                lightImpactFeedbackGenerator.impactOccurred()
-                didEditHandler?()
-            }
+            // TODO:
+//            let deltaStartMinutes = layoutData.roundedMinutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
+//            let totalMinutes = layoutData.roundedMinutes(from: newFrame.height)
+//            let newStartMinutes = eventAtBeginEditing.start.totalMinutes + deltaStartMinutes
+//            let newStartTime = Time(minutes: newStartMinutes)
+//            let newEndTime = Time(minutes: newStartMinutes + totalMinutes)
+//
+//            if cell.event.start != newStartTime || cell.event.end != newEndTime {
+//                var newEvent = cell.event!
+//                newEvent.start = newStartTime
+//                newEvent.end = newEndTime
+//                cell.configure(event: newEvent)
+//
+//                lightImpactFeedbackGenerator.impactOccurred()
+//                didEditHandler?()
+//            }
         }
         
         private func snapCellFrame() {
             guard let layoutData = eventScrollView?.layoutData,
                 let cell = editingCell
                 else { return }
-            let y = layoutData.frameMinY(from: cell.event.start)
-            let height = layoutData.height(from: cell.event.start ... cell.event.end)
-            let snappedFrame = CGRect(x: cell.frame.minX,
-                                      y: y,
-                                      width: cell.frame.width,
-                                      height: height)
-            cell.frame = snappedFrame
+//            let y = layoutData.frameMinY(from: cell.event.start)
+//            let height = layoutData.height(from: cell.event.start ... cell.event.end)
+//            let snappedFrame = CGRect(x: cell.frame.minX,
+//                                      y: y,
+//                                      width: cell.frame.width,
+//                                      height: height)
+//            cell.frame = snappedFrame
         }
 
         @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {

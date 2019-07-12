@@ -8,6 +8,17 @@
 
 import Foundation
 
+public struct TimeText {
+    
+    private(set) var body: String
+    
+    init(date: Date) {
+        let components = Calendar.current.dateComponents([.hour, .minute], from: date)
+        body = String(format: "%02d:%02d", arguments: [components.hour!, components.minute!])
+    }
+}
+
+
 public struct Time {
 
     public static var zero: Time { return Time(hours: 0, minutes: 0) }

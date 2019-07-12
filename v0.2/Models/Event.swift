@@ -8,12 +8,18 @@
 import Foundation
 
 public struct Event {
-    public var start: Time
-    public var end: Time
+    public var start: Date
+    public var end: Date
+
+    public var durationInSeconds: Int {
+        return (start ... end).durationInSeconds
+    }
+
     public var isEditable: Bool
     public var source: Any?
 
-    public init(start: Time, end: Time, isEditable: Bool = true, source: Any? = nil) {
+    public init(start: Date, end: Date, isEditable: Bool = true, source: Any? = nil) {
+        guard start < end else { fatalError("🙅‍♀️ start >= end") }
         self.start = start
         self.end = end
         self.isEditable = isEditable

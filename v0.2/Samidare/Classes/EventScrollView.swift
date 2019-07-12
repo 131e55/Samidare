@@ -14,7 +14,7 @@ protocol EventScrollViewDelegate: UIScrollViewDelegate {
 
 public class EventScrollView: UIScrollView {
 
-    private(set) var layoutData: LayoutDataStore.LayoutData!
+    private(set) var layoutData: LayoutData!
 
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 
@@ -37,15 +37,20 @@ public class EventScrollView: UIScrollView {
 
     private func initialize() {}
 
-    internal func setup(layoutData: LayoutDataStore.LayoutData) {
+    internal func setup(layoutData: LayoutData) {
         self.layoutData = layoutData
 
         let totalSpacing = layoutData.columnSpacing * CGFloat(layoutData.widthOfColumn.keys.count - 1)
         let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
-        let contentHeight = CGFloat(layoutData.timeRange.numberOfIntervals) * layoutData.heightPerMinInterval
+        let ceiledNumberOfUnits = Int(ceil(
+            Float(layoutData.timeRange.roundedDurationInMinutes) / Float(layoutData.unit.displayMinute)
+        ))
+        dprint(layoutData.timeRange.durationInSeconds)
+        dprint(ceiledNumberOfUnits)
+        let contentHeight = CGFloat(ceiledNumberOfUnits) * layoutData.unit.displayHeight
         contentSize = CGSize(width: contentWidth, height: contentHeight)
-
-        editor.setup(eventScrollView: self, editingUnitInPanning: layoutData.heightPerMinInterval)
+        // FIXME:
+        editor.setup(eventScrollView: self, editingUnitInPanning: layoutData.unit.displayHeight)
         editor.didBeginEditingHandler = { [weak self] in
             guard let self = self else { return }
             self.autoScroller.isEnabled = true
@@ -57,12 +62,13 @@ public class EventScrollView: UIScrollView {
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {
         guard let x = layoutData.xPositionOfColumn[indexPath],
             let width = layoutData.widthOfColumn[indexPath] else { return }
-
+        dprint("insert cells count=", cells.count)
         for cell in cells {
             guard let event = cell.event else { continue }
             let y = layoutData.frameMinY(from: event.start)
-            let height = layoutData.height(from: event.start ... event.end)
+            let height = layoutData.height(from: event.durationInSeconds)
             cell.frame = CGRect(x: x, y: y, width: width, height: height)
+            dprint(cell.frame)
             cell.indexPath = indexPath
             addSubview(cell)
 

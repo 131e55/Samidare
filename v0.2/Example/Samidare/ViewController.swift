@@ -23,9 +23,12 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: SamidareViewDataSource {
-//    func timeRange(in samidareView: SamidareView) -> TimeRange {
-//        return TimeRange(start: Time(hours: 0, minutes: 30), end: Time(hours: 72, minutes: 0))
-//    }
+    
+    func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        return formatter.date(from: "2019/08/07 00:00")! ... formatter.date(from: "2019/08/08 02:00")!
+    }
 
     func numberOfSections(in samidareView: SamidareView) -> Int {
         return 4
@@ -53,19 +56,30 @@ extension ViewController: SamidareViewDataSource {
 final class SampleData {
 
     static func events(sections: Int, columns: Int) -> [IndexPath: [Event]] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+        let eventPatterns = [
+            [
+                Event(start: formatter.date(from: "2019/08/07 00:00")!, end: formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
+                Event(start: formatter.date(from: "2019/08/07 10:00")!, end: formatter.date(from: "2019/08/07 22:00")!, isEditable: true, source: nil),
+            ],
+            [
+                Event(start: formatter.date(from: "2019/08/07 04:30")!, end: formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
+                Event(start: formatter.date(from: "2019/08/07 08:00")!, end: formatter.date(from: "2019/08/07 18:00")!, isEditable: true, source: nil),
+            ],
+            [
+                Event(start: formatter.date(from: "2019/08/07 19:30")!, end: formatter.date(from: "2019/08/08 03:00")!, isEditable: true, source: nil),
+            ],
+            [
+                Event(start: formatter.date(from: "2019/08/06 22:30")!, end: formatter.date(from: "2019/08/07 10:20")!, isEditable: true, source: nil),
+            ]
+        ]
+        
         var events: [IndexPath: [Event]] = [:]
-        var hours = 1
         for section in 0 ..< sections {
             for column in 0 ..< columns {
                 let indexPath = IndexPath(column: column, section: section)
-                events[indexPath] = [
-                    Event(start: Time(hours: hours, minutes: 0), end: Time(hours: hours + 4, minutes: 0), isEditable: true),
-                    Event(start: Time(hours: hours + 6, minutes: 0), end: Time(hours: hours + 10, minutes: 0), isEditable: true)
-                ]
-                hours += 1
-                if hours > 24 {
-                    hours = 1
-                }
+                events[indexPath] = eventPatterns[Int.random(in: 0 ..< eventPatterns.count)]
             }
         }
         return events
