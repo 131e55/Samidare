@@ -14,7 +14,7 @@ protocol EventScrollViewDelegate: UIScrollViewDelegate {
 
 public class EventScrollView: UIScrollView {
 
-    private(set) var layoutData: LayoutDataStore.LayoutData!
+    private(set) var layoutData: LayoutData!
 
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 
@@ -37,15 +37,15 @@ public class EventScrollView: UIScrollView {
 
     private func initialize() {}
 
-    internal func setup(layoutData: LayoutDataStore.LayoutData) {
+    internal func setup(layoutData: LayoutData) {
         self.layoutData = layoutData
 
         let totalSpacing = layoutData.columnSpacing * CGFloat(layoutData.widthOfColumn.keys.count - 1)
         let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
-        let contentHeight = CGFloat(layoutData.timeRange.numberOfIntervals) * layoutData.heightPerMinInterval
+        let contentHeight = layoutData.totalHeightForTimeRange
         contentSize = CGSize(width: contentWidth, height: contentHeight)
-
-        editor.setup(eventScrollView: self, editingUnitInPanning: layoutData.heightPerMinInterval)
+        // FIXME:
+        editor.setup(eventScrollView: self)
         editor.didBeginEditingHandler = { [weak self] in
             guard let self = self else { return }
             self.autoScroller.isEnabled = true
@@ -59,9 +59,8 @@ public class EventScrollView: UIScrollView {
             let width = layoutData.widthOfColumn[indexPath] else { return }
 
         for cell in cells {
-            guard let event = cell.event else { continue }
-            let y = layoutData.frameMinY(from: event.start)
-            let height = layoutData.height(from: event.start ... event.end)
+            let y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start)
+            let height = layoutData.roundedHeight(from: cell.event.durationInSeconds)
             cell.frame = CGRect(x: x, y: y, width: width, height: height)
             cell.indexPath = indexPath
             addSubview(cell)
@@ -102,7 +101,6 @@ public class EventScrollView: UIScrollView {
 extension EventScrollView {
 
     @objc private func eventCellDidTap(_ sender: UITapGestureRecognizer) {
-        guard let cell = sender.view as? EventCell, let event = cell.event else { return }
         // TODO:
     }
 }

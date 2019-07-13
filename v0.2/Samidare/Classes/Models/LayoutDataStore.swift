@@ -9,39 +9,7 @@
 import UIKit
 
 final internal class LayoutDataStore {
-
-    struct LayoutData {
-        let timeRange: TimeRange
-        let heightPerMinInterval: CGFloat
-        let indexPaths: [IndexPath]
-        let xPositionOfColumn: [IndexPath: CGFloat]
-        let widthOfColumn: [IndexPath: CGFloat]
-        let totalWidthOfColumns: CGFloat
-        let widthOfTimeColumn: CGFloat
-        let columnSpacing: CGFloat
-        
-        /// Translate height to minutes by LayoutData.
-        func roundedMinutes(from height: CGFloat) -> Int {
-            let numberOfIntervals = Int(round(height / heightPerMinInterval))
-            let minutes = numberOfIntervals * timeRange.minInterval
-            return minutes
-        }
-        
-        /// Translate time to frame.minY by LayoutData.
-        func frameMinY(from time: Time) -> CGFloat {
-            let numberOfIntervals = (time.totalMinutes - timeRange.start.totalMinutes) / timeRange.minInterval
-            let y = CGFloat(numberOfIntervals) * heightPerMinInterval
-            return y
-        }
-        
-        /// Translate time range to height by LayoutData.
-        func height(from times: ClosedRange<Time>) -> CGFloat {
-            let numberOfIntervals = max((times.upperBound.totalMinutes - times.lowerBound.totalMinutes) / timeRange.minInterval, 1)
-            let height = CGFloat(numberOfIntervals) * heightPerMinInterval
-            return height
-        }
-    }
-
+    
     var cachedData: LayoutData?
 
     func clear() {
@@ -70,7 +38,7 @@ final internal class LayoutDataStore {
 
         cachedData = LayoutData(
             timeRange: dataSource.timeRange(in: samidareView),
-            heightPerMinInterval: dataSource.heightPerMinInterval(in: samidareView),
+            layoutUnit: dataSource.layoutUnit(in: samidareView),
             indexPaths: indexPaths,
             xPositionOfColumn: xPositionOfColumn,
             widthOfColumn: widthOfColumn,

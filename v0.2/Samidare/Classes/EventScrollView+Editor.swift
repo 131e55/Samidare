@@ -23,11 +23,6 @@ extension EventScrollView {
         }
 
         private weak var eventScrollView: EventScrollView?
-        private var editingUnitInPanning: CGFloat = 1 {
-            didSet {
-                if editingUnitInPanning < 1 { editingUnitInPanning = 1 }
-            }
-        }
         private let heavyImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .heavy)
         private let lightImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
@@ -69,9 +64,8 @@ extension EventScrollView {
         /// - Parameters:
         ///   - eventScrollView: EventScrollView to apply Editor function.
         ///   - editingUnitInPanning: Panning length to regard as editing unit.
-        internal func setup(eventScrollView: EventScrollView, editingUnitInPanning: CGFloat) {
+        internal func setup(eventScrollView: EventScrollView) {
             self.eventScrollView = eventScrollView
-            self.editingUnitInPanning = editingUnitInPanning
         }
 
         internal func observe(cell: EventCell) {
@@ -130,10 +124,6 @@ extension EventScrollView {
             scrollView.addSubview(overlayView)
             editingOverlayView = overlayView
 
-//            cell.addGestureRecognizer(
-//                UIPanGestureRecognizer(target: self, action: #selector(editingCellDidPan))
-//            )
-
             state = .editing
             heavyImpactFeedbackGenerator.impactOccurred()
             didBeginEditingHandler?()
@@ -147,31 +137,38 @@ extension EventScrollView {
         }
 
         private func edit(edge: Edge, panningLength: CGFloat) {
-            guard let layoutData = eventScrollView?.layoutData else { return }
-            guard let cell = editingCell,
+            guard let layoutData = eventScrollView?.layoutData,
+                let cell = editingCell,
                 let eventAtBeginEditing = eventAtBeginEditing,
                 let cellFrameAtBeginEditing = cellFrameAtBeginEditing,
                 var newFrame = self.cellFrameAtBeginEditing
                 else { return }
-            var deltaHeight = panningLength//heightMustBeEdited(panningLength: panningLength)
+            let heightUnit = layoutData.layoutUnit.heightUnit
+            var deltaHeight = panningLength
             let deltaHeightSign = deltaHeight != 0 ? deltaHeight / abs(deltaHeight) : 1
 
             switch edge {
             case .top:
-                // if the height is negative, the frame will be expanded to top-side.
-                // if the height is positive, the frame will be contracted to bottom-side.
-                if newFrame.size.height - deltaHeight < editingUnitInPanning {
-                    deltaHeight = deltaHeightSign * (newFrame.size.height - editingUnitInPanning)
+                // if deltaHeight is negative, the frame will be expanded to top-side.
+                // if deltaHeight is positive, the frame will be contracted to bottom-side.
+
+                // Guard minimum height
+                if newFrame.size.height - deltaHeight < heightUnit {
+                    deltaHeight = deltaHeightSign * (newFrame.size.height - heightUnit)
                 }
                 newFrame.origin.y += deltaHeight
                 newFrame.size.height -= deltaHeight
+
             case .bottom:
                 // if the height is positive, the frame will be expanded to bottom-side.
                 // if the height is negative, the frame will be contracted to top-side.
-                if newFrame.size.height + deltaHeight < editingUnitInPanning {
-                    deltaHeight = deltaHeightSign * (newFrame.size.height - editingUnitInPanning)
+
+                // Guard minimum height
+                if newFrame.size.height + deltaHeight < heightUnit {
+                    deltaHeight = deltaHeightSign * (newFrame.size.height - heightUnit)
                 }
                 newFrame.size.height += deltaHeight
+
             case .both:
                 break
             }
@@ -184,14 +181,12 @@ extension EventScrollView {
             // negative: start time will be early.
             let deltaStartMinutes = layoutData.roundedMinutes(from: (newFrame.minY - cellFrameAtBeginEditing.minY))
             let totalMinutes = layoutData.roundedMinutes(from: newFrame.height)
-            let newStartMinutes = eventAtBeginEditing.start.totalMinutes + deltaStartMinutes
-            let newStartTime = Time(minutes: newStartMinutes)
-            let newEndTime = Time(minutes: newStartMinutes + totalMinutes)
+            let newStartDate = eventAtBeginEditing.start.addingTimeInterval(TimeInterval(deltaStartMinutes * 60))
+            let newEndDate = newStartDate.addingTimeInterval(TimeInterval(totalMinutes * 60))
 
-            if cell.event.start != newStartTime || cell.event.end != newEndTime {
-                var newEvent = cell.event!
-                newEvent.start = newStartTime
-                newEvent.end = newEndTime
+            if cell.event.start != newStartDate || cell.event.end != newEndDate {
+                var newEvent = cell.event
+                newEvent.time = newStartDate ... newEndDate
                 cell.configure(event: newEvent)
 
                 lightImpactFeedbackGenerator.impactOccurred()
@@ -200,11 +195,9 @@ extension EventScrollView {
         }
         
         private func snapCellFrame() {
-            guard let layoutData = eventScrollView?.layoutData,
-                let cell = editingCell
-                else { return }
-            let y = layoutData.frameMinY(from: cell.event.start)
-            let height = layoutData.height(from: cell.event.start ... cell.event.end)
+            guard let layoutData = eventScrollView?.layoutData, let cell = editingCell else { return }
+            let y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start)
+            let height = layoutData.roundedHeight(from: cell.event.durationInSeconds)
             let snappedFrame = CGRect(x: cell.frame.minX,
                                       y: y,
                                       width: cell.frame.width,
@@ -213,7 +206,8 @@ extension EventScrollView {
         }
 
         @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {
-            guard let cell = sender.view as? EventCell, let event = cell.event else { return }
+            guard let cell = sender.view as? EventCell else { return }
+            let event = cell.event
 
             switch sender.state {
             case .began:
@@ -230,7 +224,7 @@ extension EventScrollView {
 
         @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
             guard let scrollView = eventScrollView else { return }
-            guard let cell = sender.view as? EventCell, let event = cell.event else { return }
+            guard let cell = sender.view as? EventCell else { return }
             let locationInContentSize = sender.location(in: scrollView)
 
             switch sender.state {
@@ -257,11 +251,6 @@ extension EventScrollView {
             }
 
             unobserve(cell: cell)
-        }
-
-        private func heightMustBeEdited(panningLength: CGFloat) -> CGFloat {
-            let numberOfUnits = Int(panningLength / editingUnitInPanning)
-            return editingUnitInPanning * CGFloat(numberOfUnits)
         }
     }
 }
