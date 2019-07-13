@@ -27,7 +27,7 @@ extension ViewController: SamidareViewDataSource {
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
-        return formatter.date(from: "2019/08/07 00:00")! ... formatter.date(from: "2019/08/08 02:00")!
+        return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/08 02:30")!
     }
 
     func numberOfSections(in samidareView: SamidareView) -> Int {
@@ -60,18 +60,18 @@ final class SampleData {
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
         let eventPatterns = [
             [
-                Event(start: formatter.date(from: "2019/08/07 00:00")!, end: formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
-                Event(start: formatter.date(from: "2019/08/07 10:00")!, end: formatter.date(from: "2019/08/07 22:00")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 00:00")! ... formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 10:00")! ... formatter.date(from: "2019/08/07 22:00")!, isEditable: true, source: nil),
             ],
             [
-                Event(start: formatter.date(from: "2019/08/07 04:30")!, end: formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
-                Event(start: formatter.date(from: "2019/08/07 08:00")!, end: formatter.date(from: "2019/08/07 18:00")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 04:30")! ... formatter.date(from: "2019/08/07 06:00")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 08:00")! ... formatter.date(from: "2019/08/07 18:00")!, isEditable: true, source: nil),
             ],
             [
-                Event(start: formatter.date(from: "2019/08/07 19:30")!, end: formatter.date(from: "2019/08/08 03:00")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 19:30")! ... formatter.date(from: "2019/08/08 03:00")!, isEditable: true, source: nil),
             ],
             [
-                Event(start: formatter.date(from: "2019/08/06 22:30")!, end: formatter.date(from: "2019/08/07 10:20")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/06 22:30")! ... formatter.date(from: "2019/08/07 10:20")!, isEditable: true, source: nil),
             ]
         ]
         

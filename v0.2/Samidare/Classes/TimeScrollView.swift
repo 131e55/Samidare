@@ -33,10 +33,8 @@ open class TimeScrollView: UIScrollView {
 
     internal func setup(layoutData: LayoutData) {
         self.layoutData = layoutData
-        let ceiledNumberOfUnits = Int(ceil(
-            Float(layoutData.timeRange.roundedDurationInMinutes) / Float(layoutData.unit.displayMinute)
-        ))
-        let contentHeight = CGFloat(ceiledNumberOfUnits) * layoutData.unit.displayHeight
+
+        let contentHeight = layoutData.totalHeightForTimeRange
         contentSize = CGSize(width: bounds.width, height: contentHeight)
 
         mustCallInsertCells = true
@@ -54,22 +52,22 @@ open class TimeScrollView: UIScrollView {
     private func insertCells() {
         let calendar = Calendar.current
         let timeRange = layoutData.timeRange
-        let minuteUnit = layoutData.unit.displayMinute
-        let heightUnit = layoutData.unit.displayHeight
+        let minuteUnit = layoutData.layoutUnit.minuteUnit
+        let heightUnit = layoutData.layoutUnit.heightUnit
         let start = timeRange.lowerBound
         let end = timeRange.upperBound
         let startMinute = calendar.dateComponents([.minute], from: start).minute!
         let endMinute = calendar.dateComponents([.minute], from: end).minute!
         let existStartMinute = startMinute != 0
         let existEndMinute = endMinute != 0
-        let flooredStart = calendar.date(from: calendar.dateComponents([.year, .month, .day, .hour], from: start))!
-        let ceiledStart = existStartMinute ? flooredStart.addingTimeInterval(3600) : flooredStart
-        let flooredEnd = calendar.date(from: calendar.dateComponents([.year, .month, .day, .hour], from: end))!
+        let floorStart = calendar.date(from: calendar.dateComponents([.year, .month, .day, .hour], from: start))!
+        let ceilingStart = existStartMinute ? floorStart.addingTimeInterval(3600) : floorStart
+        let floorEnd = calendar.date(from: calendar.dateComponents([.year, .month, .day, .hour], from: end))!
         // ex.) 00:00 - 02:00 => 00:00, 01:00, 02:00 => 3 rows
         // ex.) 00:30 - 02:00 => 00:30, 01:00, 02:00 => 3 rows
         // ex.) 00:30 - 02:30 => 00:30, 01:00, 02:00, 02:30 => 4 rows
         let numberOfRows = (existStartMinute ? 1 : 0)
-                           + (ceiledStart ... flooredEnd).durationInSeconds / 3600 + 1
+                           + (ceilingStart ... floorEnd).durationInSeconds / 3600 + 1
                            + (existEndMinute ? 1 : 0)
 
         var nextCellPositionY: CGFloat = 0
@@ -80,22 +78,23 @@ open class TimeScrollView: UIScrollView {
 
             switch row {
             case 0:
-                timeText = TimeText(date: timeRange.lowerBound).body
+                timeText = String.timeText(date: timeRange.lowerBound)
                 let numberOfUnits = (60 - startMinute) / minuteUnit
                 height = CGFloat(numberOfUnits) * heightUnit
 
-            case numberOfRows - 2:
-                timeText = TimeText(date: flooredEnd).body
-                let numberOfUnits = (60 - endMinute) / minuteUnit
+            case numberOfRows - 2 where existEndMinute:
+                timeText = String.timeText(date: floorEnd)
+                let numberOfUnits = endMinute / minuteUnit
                 height = CGFloat(numberOfUnits) * heightUnit
+                dprint(endMinute, height)
 
             case numberOfRows - 1:
-                timeText = TimeText(date: end).body
+                timeText = String.timeText(date: end)
                 height = TimeCell.preferredFont.lineHeight
 
             default:
-                let date = calendar.date(byAdding: .hour, value: row, to: flooredStart)!
-                timeText = TimeText(date: date).body
+                let date = calendar.date(byAdding: .hour, value: row, to: floorStart)!
+                timeText = String.timeText(date: date)
                 let numberOfUnits = 60 / minuteUnit
                 height = CGFloat(numberOfUnits) * heightUnit
             }

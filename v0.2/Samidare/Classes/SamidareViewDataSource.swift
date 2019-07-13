@@ -10,7 +10,7 @@ import UIKit
 
 public protocol SamidareViewDataSource: class {
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date>
-    func unit(in samidareView: SamidareView) -> LayoutUnit
+    func layoutUnit(in samidareView: SamidareView) -> LayoutUnit
     func numberOfSections(in samidareView: SamidareView) -> Int
     func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int
     func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
@@ -30,8 +30,8 @@ extension SamidareViewDataSource {
         return start ... end
     }
     
-    public func unit(in samidareView: SamidareView) -> LayoutUnit {
-        return LayoutUnit(displayMinute: 15, displayHeight: 8, editingMinute: 10)
+    public func layoutUnit(in samidareView: SamidareView) -> LayoutUnit {
+        return LayoutUnit(minuteUnit: 15, heightUnit: 8)
     }
     
     public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {

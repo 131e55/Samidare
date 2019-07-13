@@ -13,7 +13,7 @@ open class EventCell: UIView {
     internal static let willRemoveFromSuperviewNotification = Notification.Name("EventCellWillRemoveFromSuperviewNotification")
     internal static let didSetEventNotification = Notification.Name("EventCellDidSetEventNotification")
 
-    private(set) var event: Event! {
+    private(set) var event: Event = .init(time: Date() ... Date()) {
         didSet {
             NotificationCenter.default.post(name: EventCell.didSetEventNotification, object: self)
         }

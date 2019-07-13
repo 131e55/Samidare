@@ -15,8 +15,14 @@ extension ClosedRange where Bound == Date {
     var roundedDurationInMinutes: Int {
         let seconds = durationInSeconds
         let flooredMinutes = seconds / 60
-        let remainingSeconds = seconds - flooredMinutes * 60
-        let roundedMinutes = flooredMinutes + (remainingSeconds >= 30 ? 1 : 0)
+        let roundedMinutes = flooredMinutes + (flooredMinutes % 60 >= 30 ? 1 : 0)
         return roundedMinutes
+    }
+
+    var ceilingDurationInMinutes: Int {
+        let seconds = durationInSeconds
+        let flooredMinutes = seconds / 60
+        let ceilingMinutes = flooredMinutes + (seconds % 60 != 0 ? 0 : 1)
+        return ceilingMinutes
     }
 }

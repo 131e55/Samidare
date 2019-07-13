@@ -42,15 +42,10 @@ public class EventScrollView: UIScrollView {
 
         let totalSpacing = layoutData.columnSpacing * CGFloat(layoutData.widthOfColumn.keys.count - 1)
         let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
-        let ceiledNumberOfUnits = Int(ceil(
-            Float(layoutData.timeRange.roundedDurationInMinutes) / Float(layoutData.unit.displayMinute)
-        ))
-        dprint(layoutData.timeRange.durationInSeconds)
-        dprint(ceiledNumberOfUnits)
-        let contentHeight = CGFloat(ceiledNumberOfUnits) * layoutData.unit.displayHeight
+        let contentHeight = layoutData.totalHeightForTimeRange
         contentSize = CGSize(width: contentWidth, height: contentHeight)
         // FIXME:
-        editor.setup(eventScrollView: self, editingUnitInPanning: layoutData.unit.displayHeight)
+        editor.setup(eventScrollView: self)
         editor.didBeginEditingHandler = { [weak self] in
             guard let self = self else { return }
             self.autoScroller.isEnabled = true
@@ -62,13 +57,11 @@ public class EventScrollView: UIScrollView {
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {
         guard let x = layoutData.xPositionOfColumn[indexPath],
             let width = layoutData.widthOfColumn[indexPath] else { return }
-        dprint("insert cells count=", cells.count)
+
         for cell in cells {
-            guard let event = cell.event else { continue }
-            let y = layoutData.frameMinY(from: event.start)
-            let height = layoutData.height(from: event.durationInSeconds)
+            let y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start)
+            let height = layoutData.roundedHeight(from: cell.event.durationInSeconds)
             cell.frame = CGRect(x: x, y: y, width: width, height: height)
-            dprint(cell.frame)
             cell.indexPath = indexPath
             addSubview(cell)
 
@@ -108,7 +101,6 @@ public class EventScrollView: UIScrollView {
 extension EventScrollView {
 
     @objc private func eventCellDidTap(_ sender: UITapGestureRecognizer) {
-        guard let cell = sender.view as? EventCell, let event = cell.event else { return }
         // TODO:
     }
 }
