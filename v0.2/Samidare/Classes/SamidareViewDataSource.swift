@@ -17,7 +17,6 @@ public protocol SamidareViewDataSource: class {
     func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
     func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
     func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat
-    func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat
     func columnSpacing(in samidareView: SamidareView) -> CGFloat
 }
 
@@ -42,9 +41,6 @@ extension SamidareViewDataSource {
     }
     public func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat {
         return 40
-    }
-    public func heightPerMinInterval(in samidareView: SamidareView) -> CGFloat {
-        return 8
     }
     public func columnSpacing(in samidareView: SamidareView) -> CGFloat {
         return 2

@@ -9,7 +9,7 @@ import UIKit
 
 extension EventScrollView {
 
-    internal class Editor {
+    internal class Editor: NSObject {
 
         internal enum State {
             case ready
@@ -27,6 +27,8 @@ extension EventScrollView {
         private let lightImpactFeedbackGenerator = UIImpactFeedbackGenerator(style: .light)
         private let errorFeedbackGenerator = UINotificationFeedbackGenerator()
         private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
+        private var eventScrollViewTapGestureRecognizer: UITapGestureRecognizer?
+
 
         private(set) var state: State = .ready
 
@@ -51,7 +53,8 @@ extension EventScrollView {
         
         internal var didEditHandler: (() -> Void)?
 
-        init() {
+        override init() {
+            super.init()
             NotificationCenter.default.addObserver(self, selector: #selector(eventCellWillRemoveFromSuperview),
                                                    name: EventCell.willRemoveFromSuperviewNotification, object: nil)
         }
@@ -75,7 +78,7 @@ extension EventScrollView {
             }) == false else { return }
 
             addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
-            let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(eventCellDidLongPress))
+            let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(eventCellWasLongPressed))
             cell.addGestureRecognizer(recognizer)
             addedLongPressGestureRecognizers.append(recognizer)
         }
@@ -111,6 +114,10 @@ extension EventScrollView {
                 self.eventAtBeginEditing = cell.event
                 self.cellFrameAtBeginEditing = cell.frame
             }
+            overlayView.didPanCellHandler = { [weak self] length in
+                guard let self = self else { return }
+                self.edit(edge: .both, panningLength: length)
+            }
             overlayView.didPanKnobHandler = { [weak self] panningPoint, length in
                 guard let self = self else { return }
                 self.edit(edge: panningPoint == .topKnob ? .top : .bottom, panningLength: length)
@@ -124,15 +131,28 @@ extension EventScrollView {
             scrollView.addSubview(overlayView)
             editingOverlayView = overlayView
 
+            let recognizer = UITapGestureRecognizer(target: self, action: #selector(eventScrollViewWasTapped))
+            recognizer.delegate = self
+            scrollView.addGestureRecognizer(recognizer)
+            eventScrollViewTapGestureRecognizer = recognizer
+
             state = .editing
             heavyImpactFeedbackGenerator.impactOccurred()
             didBeginEditingHandler?()
         }
 
+        @objc private func eventScrollViewWasTapped(_ sender: UILongPressGestureRecognizer) {
+            endEditing()
+        }
+
+
         internal func endEditing() {
             editingCell = nil
             snapshotView?.removeFromSuperview()
             editingOverlayView?.removeFromSuperview()
+            if let recognizer = eventScrollViewTapGestureRecognizer {
+                eventScrollView?.removeGestureRecognizer(recognizer)
+            }
             state = .ready
         }
 
@@ -170,7 +190,7 @@ extension EventScrollView {
                 newFrame.size.height += deltaHeight
 
             case .both:
-                break
+                newFrame.origin.y += panningLength
             }
             cell.frame = newFrame
             
@@ -205,41 +225,19 @@ extension EventScrollView {
             cell.frame = snappedFrame
         }
 
-        @objc private func eventCellDidLongPress(_ sender: UILongPressGestureRecognizer) {
+        @objc private func eventCellWasLongPressed(_ sender: UILongPressGestureRecognizer) {
             guard let cell = sender.view as? EventCell else { return }
-            let event = cell.event
 
-            switch sender.state {
-            case .began:
-                if event.isEditable {
+            if sender.state == .began {
+                if cell.event.isEditable {
                     beginEditing(for: cell)
                 } else {
                     errorFeedbackGenerator.notificationOccurred(.error)
                 }
-
-            default:
-                editingCellDidPan(sender)
             }
-        }
 
-        @objc internal func editingCellDidPan(_ sender: UIGestureRecognizer) {
-            guard let scrollView = eventScrollView else { return }
-            guard let cell = sender.view as? EventCell else { return }
-            let locationInContentSize = sender.location(in: scrollView)
-
-            switch sender.state {
-            case .began:
-                firstTouchLocation = locationInContentSize
-                lastTouchLocation = locationInContentSize
-
-            case .changed:
-                lastTouchLocation = locationInContentSize
-
-            case .ended, .cancelled:
-                lastTouchLocation = locationInContentSize
-
-            default:
-                break
+            if let overlayView = editingOverlayView {
+                overlayView.simulateCellOverlayViewPanning(sender)
             }
         }
 
@@ -252,5 +250,16 @@ extension EventScrollView {
 
             unobserve(cell: cell)
         }
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+extension EventScrollView.Editor: UIGestureRecognizerDelegate {
+    internal func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                                    shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer == eventScrollViewTapGestureRecognizer {
+            return true
+        }
+        return false
     }
 }

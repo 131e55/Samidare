@@ -68,7 +68,7 @@ internal class EditingOverlayView: TouchPassedView {
     /// Tells that cell moved by cell panning.
     /// If length is positive, cell.frame will be move bottom side.
     /// If length is negative, cell.frame will be move top side.
-    internal var didPanCellHandler: ((_ panningPoint: PanningPoint, _ length: CGFloat) -> Void)?
+    internal var didPanCellHandler: ((_ length: CGFloat) -> Void)?
     /// Tells that ended panning cell or top-bottom knobs.
     internal var didEndPanningHandler: ((_ panningPoint: PanningPoint) -> Void)?
     
@@ -143,22 +143,33 @@ internal class EditingOverlayView: TouchPassedView {
         endTimeLabel.text = String.timeText(date:cell.event.end)
     }
 
-    @objc private func didPanCellOverlayView(_ sender: UIPanGestureRecognizer) {
+    @objc private func didPanCellOverlayView(_ sender: UIGestureRecognizer) {
+        let panningPoint: PanningPoint = .cell
         let location = sender.location(in: nil)
 
         switch sender.state {
         case .began:
-            dprint("cell area pan", location)
+            currentPanningPoint = panningPoint
+            firstTouchLocation = location
+            lastTouchLocation = location
+            willPanHandler?(panningPoint)
 
         case .changed:
-            dprint("cell area pan", location)
-
-        case .ended, .cancelled:
-            break
+            lastTouchLocation = location
+            let length = lastTouchLocation.y - firstTouchLocation.y
+            didPanCellHandler?(length)
 
         default:
-            break
+            currentPanningPoint = nil
+            didEndPanningHandler?(panningPoint)
         }
+    }
+
+    /// 🤔
+    /// for EventScrollView.Editor.
+    /// Editor wants to move cell by panning after detected long press cell.
+    internal func simulateCellOverlayViewPanning(_ sender: UIGestureRecognizer) {
+        didPanCellOverlayView(sender)
     }
 
     @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
