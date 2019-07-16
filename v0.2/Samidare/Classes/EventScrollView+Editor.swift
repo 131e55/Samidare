@@ -7,9 +7,9 @@
 
 import UIKit
 
-extension EventScrollView {
+internal extension EventScrollView {
 
-    internal class Editor: NSObject {
+    final class Editor: NSObject {
 
         internal enum State {
             case ready
@@ -29,7 +29,6 @@ extension EventScrollView {
         private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
         private var eventScrollViewTapGestureRecognizer: UITapGestureRecognizer?
 
-
         private(set) var state: State = .ready
 
         /// Current editing EventCell.
@@ -41,12 +40,6 @@ extension EventScrollView {
         
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
-
-        /// First touch location in referencing EventScrollView.
-        /// It's reset each time any gesture recognized.
-        private var firstTouchLocation: CGPoint!
-        /// Last touch location in referencing EventScrollView.
-        private var lastTouchLocation: CGPoint!
 
         /// Tells editing has begun.
         internal var didBeginEditingHandler: (() -> Void)?
@@ -66,7 +59,6 @@ extension EventScrollView {
         ///
         /// - Parameters:
         ///   - eventScrollView: EventScrollView to apply Editor function.
-        ///   - editingUnitInPanning: Panning length to regard as editing unit.
         internal func setup(eventScrollView: EventScrollView) {
             self.eventScrollView = eventScrollView
         }

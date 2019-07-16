@@ -19,6 +19,7 @@ public class EventScrollView: UIScrollView {
     private(set) var addedCells: [IndexPath: [EventCell]] = [:]
 
     private let editor: Editor = Editor()
+    private let creator: Creator = Creator()
     private let autoScroller: AutoScroller = AutoScroller()
 
     internal var didSetup: Bool {
@@ -44,12 +45,14 @@ public class EventScrollView: UIScrollView {
         let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
         let contentHeight = layoutData.totalHeightForTimeRange
         contentSize = CGSize(width: contentWidth, height: contentHeight)
-        // FIXME:
+
         editor.setup(eventScrollView: self)
         editor.didBeginEditingHandler = { [weak self] in
             guard let self = self else { return }
             self.autoScroller.isEnabled = true
         }
+        
+        creator.setup(eventScrollView: self)
 
         autoScroller.setup(eventScrollView: self)
     }

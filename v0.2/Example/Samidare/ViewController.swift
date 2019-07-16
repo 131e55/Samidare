@@ -27,7 +27,7 @@ extension ViewController: SamidareViewDataSource {
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
-        return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/08 02:30")!
+        return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/09 06:30")!
     }
 
     func numberOfSections(in samidareView: SamidareView) -> Int {

@@ -7,9 +7,9 @@
 
 import UIKit
 
-extension EventScrollView {
+internal extension EventScrollView {
 
-    internal class AutoScroller: NSObject, UIGestureRecognizerDelegate {
+    final class AutoScroller: NSObject, UIGestureRecognizerDelegate {
 
         private struct ScrollingStrength {
             var top: CGFloat
