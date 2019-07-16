@@ -141,11 +141,6 @@ extension EventScrollView {
             didBeginEditingHandler?()
         }
 
-        @objc private func eventScrollViewWasTapped(_ sender: UILongPressGestureRecognizer) {
-            endEditing()
-        }
-
-
         internal func endEditing() {
             editingCell = nil
             snapshotView?.removeFromSuperview()
@@ -238,6 +233,17 @@ extension EventScrollView {
 
             if let overlayView = editingOverlayView {
                 overlayView.simulateCellOverlayViewPanning(sender)
+            }
+        }
+        
+        @objc private func eventScrollViewWasTapped(_ sender: UITapGestureRecognizer) {
+            guard let scrollView = eventScrollView, let cell = editingCell
+                else { fatalError("Add gestureRecognizer in beginEditing.") }
+            // When touch point that not in cell.frame, end editing.
+            let cellFrameInScrollView = cell.convert(cell.bounds, to: scrollView)
+            let touchPointInScrollView = sender.location(in: scrollView)
+            if cellFrameInScrollView.contains(touchPointInScrollView) == false {
+                endEditing()
             }
         }
 
