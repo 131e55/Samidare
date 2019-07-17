@@ -52,7 +52,10 @@ public class EventScrollView: UIScrollView {
             self.autoScroller.isEnabled = true
         }
         
-        creator.setup(eventScrollView: self)
+        creator.setup(eventScrollView: self, willCreateEventHandler: { [weak self] in
+            guard let self = self else { return EventCell() }
+            return EventCell()
+        })
 
         autoScroller.setup(eventScrollView: self)
     }

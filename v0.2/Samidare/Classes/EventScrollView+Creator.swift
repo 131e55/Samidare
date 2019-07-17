@@ -8,10 +8,13 @@
 import UIKit
 
 internal extension EventScrollView {
+    
     final class Creator {
-
-        private weak var eventScrollView: EventScrollView?
         
+        private weak var eventScrollView: EventScrollView!
+
+        internal var willCreateEventHandler: (() -> EventCell)!
+
         /// First touch location in referencing EventScrollView.
         /// It's reset each time any gesture recognized.
         private var firstTouchLocation: CGPoint!
@@ -22,18 +25,26 @@ internal extension EventScrollView {
         ///
         /// - Parameters:
         ///   - eventScrollView: EventScrollView to apply Creator function.
-        internal func setup(eventScrollView: EventScrollView) {
+        internal func setup(eventScrollView: EventScrollView,
+                            willCreateEventHandler: @escaping () -> EventCell) {
             self.eventScrollView = eventScrollView
+            self.willCreateEventHandler = willCreateEventHandler
             let longPressGesture = UILongPressGestureRecognizer(target: self,
                                                                 action: #selector(eventScrollViewWasLongPressed))
             eventScrollView.addGestureRecognizer(longPressGesture)
         }
         
         @objc private func eventScrollViewWasLongPressed(_ sender: UILongPressGestureRecognizer) {
+            switch sender.state {
+            case .began:
+                let eventCell = willCreateEventHandler()
+            default:
+                break
+            }
             dprint("eventScrollViewWasLongPressed")
         }
     }
 }
 
-// didCreateEvent -> IndexPath, ClosedRange<Date>
+// willCreateEventHandler(IndexPath) -> EventCell
 //

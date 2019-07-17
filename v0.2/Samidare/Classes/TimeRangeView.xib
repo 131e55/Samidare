@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina5_5" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TimeRangeView" customModule="Samidare" customModuleProvider="target">
+            <connections>
+                <outlet property="endTimeLabel" destination="fDv-rW-4Ql" id="5ew-2q-DcU"/>
+                <outlet property="endTimeView" destination="Ui6-P2-NxY" id="ZUj-Xv-A7a"/>
+                <outlet property="startTimeLabel" destination="86h-7b-xbk" id="pg7-Xu-f0E"/>
+                <outlet property="startTimeView" destination="BTv-au-zoX" id="oKO-iq-whS"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view userInteractionEnabled="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qUX-iq-rQb" userLabel="Time View">
+            <rect key="frame" x="0.0" y="0.0" width="64" height="160"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-au-zoX" userLabel="Start Time View">
+                    <rect key="frame" x="0.0" y="0.0" width="64" height="20"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="86h-7b-xbk">
+                            <rect key="frame" x="4" y="0.0" width="56" height="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="86h-7b-xbk" firstAttribute="leading" secondItem="BTv-au-zoX" secondAttribute="leading" constant="4" id="LQc-gg-qFh"/>
+                        <constraint firstItem="86h-7b-xbk" firstAttribute="top" secondItem="BTv-au-zoX" secondAttribute="top" id="Pxv-fH-aYb"/>
+                        <constraint firstAttribute="height" constant="20" id="Tyd-Zb-Uve"/>
+                        <constraint firstAttribute="trailing" secondItem="86h-7b-xbk" secondAttribute="trailing" constant="4" id="fYe-kd-8fs"/>
+                        <constraint firstAttribute="bottom" secondItem="86h-7b-xbk" secondAttribute="bottom" id="l56-bd-lD9"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                            <integer key="value" value="1"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ui6-P2-NxY" userLabel="End Time View">
+                    <rect key="frame" x="0.0" y="140" width="64" height="20"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fDv-rW-4Ql">
+                            <rect key="frame" x="4" y="0.0" width="56" height="20"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="fDv-rW-4Ql" firstAttribute="leading" secondItem="Ui6-P2-NxY" secondAttribute="leading" constant="4" id="QFN-PD-dhH"/>
+                        <constraint firstAttribute="bottom" secondItem="fDv-rW-4Ql" secondAttribute="bottom" id="SYN-hB-Qsh"/>
+                        <constraint firstAttribute="trailing" secondItem="fDv-rW-4Ql" secondAttribute="trailing" constant="4" id="UNN-gz-zpH"/>
+                        <constraint firstItem="fDv-rW-4Ql" firstAttribute="top" secondItem="Ui6-P2-NxY" secondAttribute="top" id="svF-Vv-EN6"/>
+                        <constraint firstAttribute="height" constant="20" id="x7N-3M-x58"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="10"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                            <integer key="value" value="1"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="BTv-au-zoX" firstAttribute="leading" secondItem="qUX-iq-rQb" secondAttribute="leading" id="CRs-ka-h8w"/>
+                <constraint firstAttribute="trailing" secondItem="Ui6-P2-NxY" secondAttribute="trailing" id="Ffm-Lb-KdN"/>
+                <constraint firstItem="Ui6-P2-NxY" firstAttribute="leading" secondItem="qUX-iq-rQb" secondAttribute="leading" id="Mns-y9-mpU"/>
+                <constraint firstAttribute="bottom" secondItem="Ui6-P2-NxY" secondAttribute="bottom" id="ZwJ-f3-Zjd"/>
+                <constraint firstAttribute="trailing" secondItem="BTv-au-zoX" secondAttribute="trailing" id="cvJ-aK-m0W"/>
+                <constraint firstItem="BTv-au-zoX" firstAttribute="top" secondItem="qUX-iq-rQb" secondAttribute="top" id="yPm-r0-dwc"/>
+            </constraints>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+        </view>
+    </objects>
+</document>

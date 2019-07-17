@@ -18,11 +18,7 @@ internal class EditingOverlayView: TouchPassedView {
     @IBOutlet private weak var cellWidthConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellOverlayView: UIView!
-    @IBOutlet private weak var timeView: UIView!
-    @IBOutlet private weak var startTimeView: UIView!
-    @IBOutlet private weak var startTimeLabel: UILabel!
-    @IBOutlet private weak var endTimeView: UIView!
-    @IBOutlet private weak var endTimeLabel: UILabel!
+    @IBOutlet private weak var timeRangeView: TimeRangeView!
     @IBOutlet private weak var topKnobView: UIView!
     @IBOutlet private weak var bottomKnobView: UIView!
 
@@ -125,7 +121,7 @@ internal class EditingOverlayView: TouchPassedView {
         bottomConstraint = bottomAnchor.constraint(equalTo: editingCell.bottomAnchor,
                                                    constant: bottomKnobView.bounds.height / 2)
         // for support left and right sides. 8 is one-side space.
-        let additionalWidth = timeView.bounds.width * 2 + 8 * 2
+        let additionalWidth = timeRangeView.bounds.width * 2 + 8 * 2
 
         NSLayoutConstraint.activate([
             topConstraint,
@@ -139,8 +135,7 @@ internal class EditingOverlayView: TouchPassedView {
     
     private func updateTimeLabels() {
         guard let cell = editingCell else { return }
-        startTimeLabel.text = String.timeText(date:cell.event.start)
-        endTimeLabel.text = String.timeText(date:cell.event.end)
+        timeRangeView.update(timeRange: cell.event.start ... cell.event.end)
     }
 
     @objc private func didPanCellOverlayView(_ sender: UIGestureRecognizer) {
@@ -184,11 +179,11 @@ internal class EditingOverlayView: TouchPassedView {
             currentPanningPoint = panningPoint
             // top and bottom may overlap, so bring touched knob and timeView to front
             if panningPoint == .topKnob {
+                timeRangeView.bringStartViewToFront()
                 topKnobView.superview!.insertSubview(topKnobView, aboveSubview: bottomKnobView)
-                startTimeView.superview!.insertSubview(startTimeView, aboveSubview: endTimeView)
             } else if panningPoint == .bottomKnob {
+                timeRangeView.bringEndViewToFront()
                 bottomKnobView.superview!.insertSubview(bottomKnobView, aboveSubview: topKnobView)
-                endTimeView.superview!.insertSubview(endTimeView, aboveSubview: startTimeView)
             }
 
             firstTouchLocation = location
