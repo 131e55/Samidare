@@ -19,6 +19,9 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         samidareView.dataSource = self
         samidareView.register(UINib(nibName: "CustomCell", bundle: .main), forCellReuseIndentifier: "CustomCell")
+        samidareView.willCreateEventHandler = { [weak self] event, indexPath in
+            return EventCell()
+        }
     }
 }
 
@@ -26,6 +29,7 @@ extension ViewController: SamidareViewDataSource {
     
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
         return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/09 06:30")!
     }
@@ -53,6 +57,7 @@ final class SampleData {
 
     static func events(sections: Int, columns: Int) -> [IndexPath: [Event]] {
         let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
         let eventPatterns = [
             [

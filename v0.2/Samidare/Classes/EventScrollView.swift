@@ -56,13 +56,11 @@ internal class EventScrollView: UIScrollView {
             guard let self = self else { return }
             self.autoScroller.isEnabled = true
         }
-        
-        creator.setup(eventScrollView: self, willCreateEventHandler: { [weak self] in
-            guard let self = self else { return EventCell() }
-            return EventCell()
-        })
-
         autoScroller.setup(eventScrollView: self)
+    }
+    
+    internal func setupCreator(willCreateEventHandler: @escaping CreatorWillCreateEventHandler) {
+        creator.setup(eventScrollView: self, willCreateEventHandler: willCreateEventHandler)
     }
 
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {

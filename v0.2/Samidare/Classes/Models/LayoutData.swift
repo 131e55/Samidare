@@ -14,6 +14,10 @@ public struct LayoutUnit {
     public let heightUnit: CGFloat
 }
 
+internal typealias PointX = CGFloat
+internal typealias Height = CGFloat
+internal typealias Second = Int
+
 internal struct LayoutData {
     let timeRange: ClosedRange<Date>
     let layoutUnit: LayoutUnit
@@ -40,7 +44,7 @@ internal struct LayoutData {
     }
 
     /// Minutes computed by height and layoutUnit.
-    func roundedMinutes(from height: CGFloat) -> Int {
+    func roundedMinutes(from height: Height) -> Int {
         let numberOfUnits = Int(round(height / layoutUnit.heightUnit))
         return layoutUnit.minuteUnit * numberOfUnits
     }
@@ -56,16 +60,30 @@ internal struct LayoutData {
     }
 
     /// Height computed by seconds and layoutUnit.
-    func roundedHeight(from seconds: Int) -> CGFloat {
+    func roundedHeight(from seconds: Second) -> CGFloat {
         let minutes = roundedMinutes(from: seconds)
         let numberOfUnits = Int(round(Float(minutes) / Float(layoutUnit.minuteUnit)))
         let height = CGFloat(numberOfUnits) * layoutUnit.heightUnit
         return height
     }
 
-    private func roundedMinutes(from seconds: Int) -> Int {
+    private func roundedMinutes(from seconds: Second) -> Int {
         let floorMinutes = seconds / 60
         let roundedMinutes = floorMinutes + (seconds % 60 >= 30 ? 1 : 0)
         return roundedMinutes
+    }
+    
+    /// IndexPath computed by contentOffset.x and layoutUnit.
+    func indexPath(from x: PointX) -> IndexPath {
+        var result: IndexPath = indexPaths.last!
+        for indexPath in indexPaths {
+            let columnX = xPositionOfColumn[indexPath]!
+            if x >= columnX {
+                result = indexPath
+            } else {
+                return result
+            }
+        }
+        return result
     }
 }

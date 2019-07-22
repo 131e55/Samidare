@@ -74,6 +74,7 @@ internal extension EventScrollView {
             addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
             let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(eventCellWasLongPressed))
             cell.addGestureRecognizer(recognizer)
+            dprint("Add eventCellWasLongPressed")
             addedLongPressGestureRecognizers.append(recognizer)
         }
 

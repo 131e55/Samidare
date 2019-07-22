@@ -11,7 +11,15 @@ import Samidare
 
 final class CustomCell: EventCell {
 
+    @IBOutlet private weak var nameLabel: UILabel!
+
     override func configure(event: Event) {
         super.configure(event: event)
+    }
+    
+    override func didMoveToSuperview() {
+        if superview != nil {
+            nameLabel.text = "\(indexPath!)"
+        }
     }
 }

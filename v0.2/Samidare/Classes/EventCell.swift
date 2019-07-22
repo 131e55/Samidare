@@ -20,7 +20,7 @@ open class EventCell: UIView {
     }
 
     /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
-    internal var indexPath: IndexPath!
+    public internal(set) var indexPath: IndexPath!
 
     internal var reuseIdentifier: String?
 

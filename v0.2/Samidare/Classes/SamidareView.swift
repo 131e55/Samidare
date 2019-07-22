@@ -28,7 +28,16 @@ public class SamidareView: UIView {
         get { return survivorManager.expansionRateOfSurvivorArea }
         set { survivorManager.expansionRateOfSurvivorArea = newValue }
     }
-    
+    /// If you want to use EventCreator, implement it.
+    public var willCreateEventHandler: CreatorWillCreateEventHandler? {
+        didSet {
+            if let handler = willCreateEventHandler {
+                dprint("call")
+                eventScrollView.setupCreator(willCreateEventHandler: handler)
+            }
+        }
+    }
+
     // TODO:
     public var didBeginEditingEventHandler: (() -> Void)?
     // TODO:
