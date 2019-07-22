@@ -38,22 +38,27 @@ public class SamidareView: UIView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        initialize()
+        didInit()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        initialize()
+        didInit()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
-    private func initialize() {
+    private func didInit() {
         let inset: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
         eventScrollView.frame = bounds
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         eventScrollView.autoresizesSubviews = false
         eventScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
-        eventScrollView.delegate = self
         addSubview(eventScrollView)
+        NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
+                                               name: EventScrollView.didScrollNotification, object: nil)
 
         frozenBackgroundView.isUserInteractionEnabled = false
         frozenBackgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -143,9 +148,8 @@ public class SamidareView: UIView {
     }
 }
 
-extension SamidareView: UIScrollViewDelegate {
-
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+extension SamidareView {
+    @objc private func eventScrollViewDidScroll(_ notification: Notification) {
         setNeedsLayout()
     }
 }

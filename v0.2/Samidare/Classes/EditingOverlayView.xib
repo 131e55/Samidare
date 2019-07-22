@@ -15,7 +15,8 @@
                 <outlet property="cellHeightConstraint" destination="xBj-tq-Y8a" id="OAr-h0-7cF"/>
                 <outlet property="cellOverlayView" destination="YCx-HK-hiL" id="GdO-YY-pJD"/>
                 <outlet property="cellWidthConstraint" destination="hfH-2U-npR" id="5ki-sD-zeT"/>
-                <outlet property="timeRangeView" destination="aKH-gy-LRd" id="fPV-M1-beG"/>
+                <outlet property="leftTimeArea" destination="at4-Ai-IzB" id="RIh-bN-xRV"/>
+                <outlet property="rightTimeArea" destination="5DY-eg-D6R" id="TXh-ru-HfK"/>
                 <outlet property="topKnobView" destination="Hpj-mY-ged" id="gGX-wF-i8j"/>
             </connections>
         </placeholder>
@@ -32,11 +33,18 @@
                         <constraint firstAttribute="height" priority="250" constant="64" id="xBj-tq-Y8a"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aKH-gy-LRd" userLabel="Time Range View" customClass="TimeRangeView" customModule="Samidare" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="at4-Ai-IzB" userLabel="Left Time View Area">
                     <rect key="frame" x="8" y="86" width="44" height="84"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="44" id="b0v-kg-z1d"/>
+                        <constraint firstAttribute="width" constant="44" id="oAz-Uv-MN9"/>
+                    </constraints>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5DY-eg-D6R" userLabel="Right Time View Area">
+                    <rect key="frame" x="112" y="86" width="44" height="84"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="44" id="lKI-hy-CQl"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Hpj-mY-ged">
@@ -96,17 +104,21 @@
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.40000000000000002" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
             <constraints>
+                <constraint firstItem="at4-Ai-IzB" firstAttribute="height" secondItem="YCx-HK-hiL" secondAttribute="height" constant="20" id="8Sq-Ye-DG7"/>
                 <constraint firstItem="Njg-GR-Jwk" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="90l-ly-f8l"/>
+                <constraint firstItem="5DY-eg-D6R" firstAttribute="height" secondItem="at4-Ai-IzB" secondAttribute="height" id="FNh-gd-NMm"/>
                 <constraint firstItem="Hpj-mY-ged" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Isd-1B-8FL"/>
                 <constraint firstItem="YCx-HK-hiL" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Kuu-Wf-OdX"/>
                 <constraint firstItem="Njg-GR-Jwk" firstAttribute="width" secondItem="YCx-HK-hiL" secondAttribute="width" id="LJl-QR-hGk"/>
                 <constraint firstItem="Hpj-mY-ged" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="top" id="LRv-d2-L9a"/>
                 <constraint firstItem="Hpj-mY-ged" firstAttribute="width" secondItem="YCx-HK-hiL" secondAttribute="width" id="SSM-nn-h8X"/>
-                <constraint firstItem="YCx-HK-hiL" firstAttribute="leading" secondItem="aKH-gy-LRd" secondAttribute="trailing" constant="8" id="Ufj-5m-P2x"/>
+                <constraint firstItem="5DY-eg-D6R" firstAttribute="width" secondItem="at4-Ai-IzB" secondAttribute="width" id="XJC-w4-em4"/>
+                <constraint firstItem="5DY-eg-D6R" firstAttribute="leading" secondItem="YCx-HK-hiL" secondAttribute="trailing" constant="8" id="bXd-EB-y5V"/>
+                <constraint firstItem="at4-Ai-IzB" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="c3U-pd-d3o"/>
                 <constraint firstItem="Njg-GR-Jwk" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="bottom" id="dq3-t5-dgG"/>
+                <constraint firstItem="5DY-eg-D6R" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="centerY" id="i2x-Xv-Sto"/>
+                <constraint firstItem="YCx-HK-hiL" firstAttribute="leading" secondItem="at4-Ai-IzB" secondAttribute="trailing" constant="8" id="iQA-d4-fbk"/>
                 <constraint firstItem="YCx-HK-hiL" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kQz-Tk-9S4"/>
-                <constraint firstItem="aKH-gy-LRd" firstAttribute="height" secondItem="YCx-HK-hiL" secondAttribute="height" constant="20" id="sJb-dM-N9R"/>
-                <constraint firstItem="aKH-gy-LRd" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="centerY" id="wcM-QR-2F6"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>

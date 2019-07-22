@@ -18,7 +18,9 @@ internal class EditingOverlayView: TouchPassedView {
     @IBOutlet private weak var cellWidthConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellHeightConstraint: NSLayoutConstraint!
     @IBOutlet private weak var cellOverlayView: UIView!
-    @IBOutlet private weak var timeRangeView: TimeRangeView!
+    @IBOutlet private weak var leftTimeArea: UIView!
+    @IBOutlet private weak var rightTimeArea: UIView!
+    private var timeRangeView: TimeRangeView = TimeRangeView()
     @IBOutlet private weak var topKnobView: UIView!
     @IBOutlet private weak var bottomKnobView: UIView!
 
@@ -67,6 +69,10 @@ internal class EditingOverlayView: TouchPassedView {
     internal var didPanCellHandler: ((_ length: CGFloat) -> Void)?
     /// Tells that ended panning cell or top-bottom knobs.
     internal var didEndPanningHandler: ((_ panningPoint: PanningPoint) -> Void)?
+
+    internal var timeInfoWidth: CGFloat {
+        return timeRangeView.intrinsicContentSize.width + 8 * 2
+    }
     
     /// - Parameter cell: Editing target EventCell
     init(cell: EventCell) {
@@ -77,15 +83,8 @@ internal class EditingOverlayView: TouchPassedView {
         translatesAutoresizingMaskIntoConstraints = false
 
         let view = type(of: self).nib.instantiate(withOwner: self, options: nil).first as! UIView
-        view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(view)
-
-        NSLayoutConstraint.activate([
-            view.centerXAnchor.constraint(equalTo: centerXAnchor),
-            view.centerYAnchor.constraint(equalTo: centerYAnchor),
-            view.widthAnchor.constraint(equalTo: widthAnchor),
-            view.heightAnchor.constraint(equalTo: heightAnchor)
-        ])
+        view.activateFitFrameConstarintsToSuperview()
 
         cellPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPanCellOverlayView))
         cellOverlayView.addGestureRecognizer(cellPanGestureRecognizer)
@@ -96,7 +95,7 @@ internal class EditingOverlayView: TouchPassedView {
 
         NotificationCenter.default.addObserver(self, selector: #selector(eventCellDidSetEvent),
                                                name: EventCell.didSetEventNotification, object: nil)
-        
+        setTimeRangeViewPosition(toRight: false)
         updateTimeLabels()
     }
     required public init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -120,8 +119,8 @@ internal class EditingOverlayView: TouchPassedView {
                                              constant: -topKnobView.bounds.height / 2)
         bottomConstraint = bottomAnchor.constraint(equalTo: editingCell.bottomAnchor,
                                                    constant: bottomKnobView.bounds.height / 2)
-        // for support left and right sides. 8 is one-side space.
-        let additionalWidth = timeRangeView.bounds.width * 2 + 8 * 2
+        // left and right timeRangeView width.
+        let additionalWidth = timeInfoWidth * 2
 
         NSLayoutConstraint.activate([
             topConstraint,
@@ -131,6 +130,16 @@ internal class EditingOverlayView: TouchPassedView {
             cellOverlayView.widthAnchor.constraint(equalTo: editingCell.widthAnchor),
             cellOverlayView.heightAnchor.constraint(equalTo: editingCell.heightAnchor)
         ])
+    }
+    
+    internal func setTimeRangeViewPosition(toRight: Bool) {
+        if toRight && timeRangeView.superview != rightTimeArea {
+            rightTimeArea.addSubview(timeRangeView)
+            timeRangeView.activateFitFrameConstarintsToSuperview()
+        } else if toRight == false && timeRangeView.superview != leftTimeArea {
+            leftTimeArea.addSubview(timeRangeView)
+            timeRangeView.activateFitFrameConstarintsToSuperview()
+        }
     }
     
     private func updateTimeLabels() {

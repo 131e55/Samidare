@@ -15,6 +15,10 @@ internal final class TimeRangeView: UIView {
     @IBOutlet private weak var endTimeView: UIView!
     @IBOutlet private weak var endTimeLabel: UILabel!
     
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: 44, height: UIView.noIntrinsicMetric)
+    }
+    
     init() {
         super.init(frame: .zero)
         didInit()

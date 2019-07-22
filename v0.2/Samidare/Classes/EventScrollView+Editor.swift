@@ -38,6 +38,8 @@ internal extension EventScrollView {
         /// Copy of editingCell.frame at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
         private var cellFrameAtBeginEditing: CGRect?
         
+        private var didScrollInOneEditing: Bool = false
+        
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
@@ -122,11 +124,16 @@ internal extension EventScrollView {
             }
             scrollView.addSubview(overlayView)
             editingOverlayView = overlayView
+            updateTimeRangeViewPosition()
 
             let recognizer = UITapGestureRecognizer(target: self, action: #selector(eventScrollViewWasTapped))
             recognizer.delegate = self
             scrollView.addGestureRecognizer(recognizer)
             eventScrollViewTapGestureRecognizer = recognizer
+
+            NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
+                                                   name: EventScrollView.didScrollNotification, object: nil)
+            didScrollInOneEditing = false
 
             state = .editing
             heavyImpactFeedbackGenerator.impactOccurred()
@@ -140,6 +147,7 @@ internal extension EventScrollView {
             if let recognizer = eventScrollViewTapGestureRecognizer {
                 eventScrollView?.removeGestureRecognizer(recognizer)
             }
+            NotificationCenter.default.removeObserver(self, name: EventScrollView.didScrollNotification, object: nil)
             state = .ready
         }
 
@@ -229,14 +237,26 @@ internal extension EventScrollView {
         }
         
         @objc private func eventScrollViewWasTapped(_ sender: UITapGestureRecognizer) {
-            guard let scrollView = eventScrollView, let cell = editingCell
-                else { fatalError("Add gestureRecognizer in beginEditing.") }
+            guard let scrollView = eventScrollView, let cell = editingCell,
+                didScrollInOneEditing == false else { return }
             // When touch point that not in cell.frame, end editing.
             let cellFrameInScrollView = cell.convert(cell.bounds, to: scrollView)
             let touchPointInScrollView = sender.location(in: scrollView)
             if cellFrameInScrollView.contains(touchPointInScrollView) == false {
                 endEditing()
             }
+        }
+        
+        @objc private func eventScrollViewDidScroll(_ notification: Notification) {
+            didScrollInOneEditing = true
+            updateTimeRangeViewPosition()
+        }
+        
+        private func updateTimeRangeViewPosition() {
+            guard  let scrollView = eventScrollView, let cell = editingCell,
+                let overlayView = editingOverlayView else { return }
+            let cellXInScrollView = cell.frame.minX - scrollView.contentOffset.x - scrollView.contentInset.left
+            overlayView.setTimeRangeViewPosition(toRight: cellXInScrollView <= overlayView.timeInfoWidth)
         }
 
         @objc private func eventCellWillRemoveFromSuperview(_ notification: Notification) {

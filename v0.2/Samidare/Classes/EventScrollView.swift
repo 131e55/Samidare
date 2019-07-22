@@ -8,11 +8,7 @@
 
 import UIKit
 
-protocol EventScrollViewDelegate: UIScrollViewDelegate {
-
-}
-
-public class EventScrollView: UIScrollView {
+internal class EventScrollView: UIScrollView {
 
     private(set) var layoutData: LayoutData!
 
@@ -21,6 +17,13 @@ public class EventScrollView: UIScrollView {
     private let editor: Editor = Editor()
     private let creator: Creator = Creator()
     private let autoScroller: AutoScroller = AutoScroller()
+    
+    internal override var delegate: UIScrollViewDelegate? {
+        didSet {
+            if let _ = delegate as? EventScrollView {}
+            else { fatalError("Don't use delegate") }
+        }
+    }
 
     internal var didSetup: Bool {
         return layoutData != nil
@@ -28,15 +31,17 @@ public class EventScrollView: UIScrollView {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        initialize()
+        didInit()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        initialize()
+        didInit()
     }
 
-    private func initialize() {}
+    private func didInit() {
+        delegate = self
+    }
 
     internal func setup(layoutData: LayoutData) {
         self.layoutData = layoutData
@@ -97,6 +102,17 @@ public class EventScrollView: UIScrollView {
             return cells
         }
         return nil
+    }
+}
+
+extension EventScrollView: UIScrollViewDelegate {
+    
+    static let didScrollNotification: Notification.Name = .init("EventScrollViewDidScrollNotification")
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        NotificationCenter.default.post(
+            Notification(name: EventScrollView.didScrollNotification, object: nil, userInfo: nil)
+        )
     }
 }
 

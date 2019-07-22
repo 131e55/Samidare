@@ -22,10 +22,10 @@
             <rect key="frame" x="0.0" y="0.0" width="64" height="160"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-au-zoX" userLabel="Start Time View">
-                    <rect key="frame" x="0.0" y="0.0" width="64" height="20"/>
+                    <rect key="frame" x="10" y="0.0" width="44" height="20"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="86h-7b-xbk">
-                            <rect key="frame" x="4" y="0.0" width="56" height="20"/>
+                            <rect key="frame" x="4" y="0.0" width="36" height="20"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -34,6 +34,7 @@
                     <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstItem="86h-7b-xbk" firstAttribute="leading" secondItem="BTv-au-zoX" secondAttribute="leading" constant="4" id="LQc-gg-qFh"/>
+                        <constraint firstAttribute="width" constant="44" id="MbS-9G-kF8"/>
                         <constraint firstItem="86h-7b-xbk" firstAttribute="top" secondItem="BTv-au-zoX" secondAttribute="top" id="Pxv-fH-aYb"/>
                         <constraint firstAttribute="height" constant="20" id="Tyd-Zb-Uve"/>
                         <constraint firstAttribute="trailing" secondItem="86h-7b-xbk" secondAttribute="trailing" constant="4" id="fYe-kd-8fs"/>
@@ -49,10 +50,10 @@
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ui6-P2-NxY" userLabel="End Time View">
-                    <rect key="frame" x="0.0" y="140" width="64" height="20"/>
+                    <rect key="frame" x="10" y="140" width="44" height="20"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fDv-rW-4Ql">
-                            <rect key="frame" x="4" y="0.0" width="56" height="20"/>
+                            <rect key="frame" x="4" y="0.0" width="36" height="20"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -60,6 +61,7 @@
                     </subviews>
                     <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
+                        <constraint firstAttribute="width" constant="44" id="HKa-dU-fQz"/>
                         <constraint firstItem="fDv-rW-4Ql" firstAttribute="leading" secondItem="Ui6-P2-NxY" secondAttribute="leading" constant="4" id="QFN-PD-dhH"/>
                         <constraint firstAttribute="bottom" secondItem="fDv-rW-4Ql" secondAttribute="bottom" id="SYN-hB-Qsh"/>
                         <constraint firstAttribute="trailing" secondItem="fDv-rW-4Ql" secondAttribute="trailing" constant="4" id="UNN-gz-zpH"/>
@@ -78,11 +80,9 @@
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="BTv-au-zoX" firstAttribute="leading" secondItem="qUX-iq-rQb" secondAttribute="leading" id="CRs-ka-h8w"/>
-                <constraint firstAttribute="trailing" secondItem="Ui6-P2-NxY" secondAttribute="trailing" id="Ffm-Lb-KdN"/>
-                <constraint firstItem="Ui6-P2-NxY" firstAttribute="leading" secondItem="qUX-iq-rQb" secondAttribute="leading" id="Mns-y9-mpU"/>
+                <constraint firstItem="BTv-au-zoX" firstAttribute="centerX" secondItem="qUX-iq-rQb" secondAttribute="centerX" id="74O-QM-JST"/>
                 <constraint firstAttribute="bottom" secondItem="Ui6-P2-NxY" secondAttribute="bottom" id="ZwJ-f3-Zjd"/>
-                <constraint firstAttribute="trailing" secondItem="BTv-au-zoX" secondAttribute="trailing" id="cvJ-aK-m0W"/>
+                <constraint firstItem="Ui6-P2-NxY" firstAttribute="centerX" secondItem="qUX-iq-rQb" secondAttribute="centerX" id="fmS-Rt-vcX"/>
                 <constraint firstItem="BTv-au-zoX" firstAttribute="top" secondItem="qUX-iq-rQb" secondAttribute="top" id="yPm-r0-dwc"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
