@@ -18,8 +18,14 @@ final class CustomCell: EventCell {
     }
     
     override func didMoveToSuperview() {
-        if superview != nil {
-            nameLabel.text = "\(indexPath!)"
+        if superview != nil, let indexPath = indexPath {
+            nameLabel.text = "\(indexPath)"
         }
+    }
+    
+    func applyCreatingStyle() {
+        backgroundColor = .clear
+        layer.borderColor = UIColor.blue.cgColor
+        layer.borderWidth = 1
     }
 }

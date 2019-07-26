@@ -20,7 +20,10 @@ final class ViewController: UIViewController {
         samidareView.dataSource = self
         samidareView.register(UINib(nibName: "CustomCell", bundle: .main), forCellReuseIndentifier: "CustomCell")
         samidareView.willCreateEventHandler = { [weak self] event, indexPath in
-            return EventCell()
+            let cell = CustomCell()
+            cell.configure(event: event)
+            cell.applyCreatingStyle()
+            return cell
         }
     }
 }

@@ -30,7 +30,7 @@ extension SamidareViewDataSource {
     }
     
     public func layoutUnit(in samidareView: SamidareView) -> LayoutUnit {
-        return LayoutUnit(minuteUnit: 15, heightUnit: 8)
+        return LayoutUnit(minuteUnit: 15, heightUnit: 8, initialMinutesInCreating: 60)
     }
     
     public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {

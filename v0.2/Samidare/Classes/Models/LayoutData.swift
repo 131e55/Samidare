@@ -5,18 +5,21 @@
 //  Created by Keisuke Kawamura on 2019/07/13.
 //
 
-import Foundation
+import UIKit
 
 public struct LayoutUnit {
     /// Minute unit for displaying EventCell.
-    public let minuteUnit: Int
+    public let minuteUnit: Minute
     /// Height unit for displaying EventCell.
     public let heightUnit: CGFloat
+    /// Initial minutes in creating EventCell.
+    public let initialMinutesInCreating: Minute
 }
 
 internal typealias PointX = CGFloat
-internal typealias Height = CGFloat
-internal typealias Second = Int
+public typealias Height = CGFloat
+public typealias Second = Int
+public typealias Minute = Int
 
 internal struct LayoutData {
     let timeRange: ClosedRange<Date>

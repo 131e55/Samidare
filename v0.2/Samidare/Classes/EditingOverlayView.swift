@@ -32,9 +32,9 @@ internal class EditingOverlayView: TouchPassedView {
 
     /// First touch location in referencing EventScrollView.
     /// It's reset each time any gesture recognized.
-    private var firstTouchLocation: CGPoint!
+    private var firstTouchLocation: CGPoint?
     /// Last touch location in referencing EventScrollView.
-    private var lastTouchLocation: CGPoint!
+    private var lastTouchLocation: CGPoint?
     
     /// Current PanningPoint (cell or topKnob or bottomKnob)
     private var currentPanningPoint: PanningPoint? {
@@ -146,44 +146,57 @@ internal class EditingOverlayView: TouchPassedView {
         guard let cell = editingCell else { return }
         timeRangeView.update(timeRange: cell.event.start ... cell.event.end)
     }
-
-    @objc private func didPanCellOverlayView(_ sender: UIGestureRecognizer) {
-        let panningPoint: PanningPoint = .cell
-        let location = sender.location(in: nil)
-
-        switch sender.state {
-        case .began:
-            currentPanningPoint = panningPoint
-            firstTouchLocation = location
-            lastTouchLocation = location
-            willPanHandler?(panningPoint)
-
-        case .changed:
-            lastTouchLocation = location
-            let length = lastTouchLocation.y - firstTouchLocation.y
-            didPanCellHandler?(length)
-
-        default:
-            currentPanningPoint = nil
-            didEndPanningHandler?(panningPoint)
-        }
+    
+    private func endPanning() {
+        guard let panningPoint = currentPanningPoint else { return }
+        currentPanningPoint = nil
+        firstTouchLocation = nil
+        lastTouchLocation = nil
+        didEndPanningHandler?(panningPoint)
     }
 
-    /// 🤔
-    /// for EventScrollView.Editor.
-    /// Editor wants to move cell by panning after detected long press cell.
-    internal func simulateCellOverlayViewPanning(_ sender: UIGestureRecognizer) {
-        didPanCellOverlayView(sender)
+    @objc private func didPanCellOverlayView(_ sender: UIGestureRecognizer) {
+        guard sender.view == cellOverlayView else { fatalError() }
+        handleCellPanning(recognizer: sender)
+    }
+    
+    private func handleCellPanning(recognizer: UIGestureRecognizer) {
+        guard currentPanningPoint == nil || currentPanningPoint == .cell
+            else { fatalError("Restrict (cell, top, bottom)PanGestureRecognizer.isEnabled") }
+
+        let location = recognizer.location(in: nil)
+        
+        switch recognizer.state {
+        case .began:
+            currentPanningPoint = .cell
+            firstTouchLocation = location
+            lastTouchLocation = location
+            willPanHandler?(currentPanningPoint!)
+            
+        case .changed:
+            guard let firstTouchLocation = firstTouchLocation else { fatalError("Not passed .began") }
+            lastTouchLocation = location
+            let length = lastTouchLocation!.y - firstTouchLocation.y
+            didPanCellHandler?(length)
+            
+        default:
+            endPanning()
+        }
     }
 
     @objc private func didPanKnobView(_ sender: UIPanGestureRecognizer) {
         guard sender.view == topKnobView || sender.view == bottomKnobView else { fatalError() }
         let panningPoint: PanningPoint = sender.view == topKnobView ? .topKnob : .bottomKnob
+        handleKnobPanning(panningPoint: panningPoint, recognizer: sender)
+    }
+    
+    private func handleKnobPanning(panningPoint: PanningPoint, recognizer: UIGestureRecognizer) {
         guard currentPanningPoint == nil || currentPanningPoint == panningPoint
             else { fatalError("Restrict (cell, top, bottom)PanGestureRecognizer.isEnabled") }
-        let location = sender.location(in: nil)
 
-        switch sender.state {
+        let location = recognizer.location(in: nil)
+        
+        switch recognizer.state {
         case .began:
             currentPanningPoint = panningPoint
             // top and bottom may overlap, so bring touched knob and timeView to front
@@ -194,19 +207,19 @@ internal class EditingOverlayView: TouchPassedView {
                 timeRangeView.bringEndViewToFront()
                 bottomKnobView.superview!.insertSubview(bottomKnobView, aboveSubview: topKnobView)
             }
-
+            
             firstTouchLocation = location
             lastTouchLocation = location
-            willPanHandler?(panningPoint)
-
+            willPanHandler?(currentPanningPoint!)
+            
         case .changed:
+            guard let firstTouchLocation = firstTouchLocation else { fatalError("Not passed .began") }
             lastTouchLocation = location
-            let length = lastTouchLocation.y - firstTouchLocation.y
+            let length = lastTouchLocation!.y - firstTouchLocation.y
             didPanKnobHandler?(panningPoint, length)
-
+            
         default:
-            currentPanningPoint = nil
-            didEndPanningHandler?(panningPoint)
+            endPanning()
         }
     }
     
@@ -221,5 +234,21 @@ extension EditingOverlayView {
         case cell
         case topKnob
         case bottomKnob
+    }
+}
+
+extension EditingOverlayView {
+    /// 🤔
+    /// for EventScrollView.Editor.
+    /// Editor wants to move cell by panning after detected long press cell.
+    internal func simulateCellOverlayViewPanning(_ recognizer: UIGestureRecognizer) {
+        handleCellPanning(recognizer: recognizer)
+    }
+
+    /// 🤔
+    /// for EventScrollView.Editor.
+    /// Editor supports editor.simulateBottomKnobPanning(_ recognizer: UIGestureRecognizer)
+    internal func simulateBottomKnobPanning(_ recognizer: UIGestureRecognizer) {
+        handleKnobPanning(panningPoint: .bottomKnob, recognizer: recognizer)
     }
 }

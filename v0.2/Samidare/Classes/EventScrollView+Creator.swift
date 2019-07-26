@@ -16,12 +16,9 @@ internal extension EventScrollView {
         private weak var eventScrollView: EventScrollView!
 
         internal var willCreateEventHandler: CreatorWillCreateEventHandler!
-
-        /// First touch location in referencing EventScrollView.
-        /// It's reset each time any gesture recognized.
-        private var firstTouchLocation: CGPoint!
-        /// Last touch location in referencing EventScrollView.
-        private var lastTouchLocation: CGPoint!
+        
+        private weak var cellInCreating: EventCell?
+        private let editor: Editor = Editor()
         
         /// Setup Creator
         ///
@@ -34,39 +31,33 @@ internal extension EventScrollView {
             let longPressGesture = UILongPressGestureRecognizer(target: self,
                                                                 action: #selector(eventScrollViewWasLongPressed))
             eventScrollView.addGestureRecognizer(longPressGesture)
-            dprint("eventScrollViewWasLongPressed")
+            editor.setup(eventScrollView: eventScrollView, displaysOriginalCell: false)
         }
         
         @objc private func eventScrollViewWasLongPressed(_ sender: UILongPressGestureRecognizer) {
-            switch sender.state {
-            case .began:
+            if sender.state == .began {
                 beginCreating(atPointInEventScrollView: sender.location(in: eventScrollView))
-                let location = sender.location(in: eventScrollView)
-                let indexPath = eventScrollView.layoutData.indexPath(from: location.x)
-//                let eventCell = willCreateEventHandler()
-//                let eventCell = EventCell(frame: .zero)
-                dprint(indexPath)
-                break
-            default:
-                break
             }
-            dprint("eventScrollViewWasLongPressed")
+            editor.simulateBottomKnobPanning(sender)
         }
         
         private func beginCreating(atPointInEventScrollView point: CGPoint) {
-            guard let layoutData = eventScrollView.layoutData else { return }
+            guard let layoutData = eventScrollView.layoutData else { fatalError() }
             let indexPath = layoutData.indexPath(from: point.x)
+            guard let x = layoutData.xPositionOfColumn[indexPath],
+                let width = layoutData.widthOfColumn[indexPath] else { fatalError() }
             let minutes = layoutData.roundedMinutes(from: point.y)
-            dprint(layoutData.timeRange.lowerBound)
             let startDate = layoutData.timeRange.lowerBound.addingTimeInterval(TimeInterval(minutes * 60))
-            let endDate = startDate.addingTimeInterval(TimeInterval(layoutData.layoutUnit.minuteUnit * 60))
+            let endDate = startDate.addingTimeInterval(TimeInterval(layoutData.layoutUnit.initialMinutesInCreating * 60))
             let event = Event(time: startDate ... endDate)
-            dprint(startDate, endDate)
-            let creatingCell = willCreateEventHandler(event, indexPath)
+            let cell = willCreateEventHandler(event, indexPath)
+            let y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start)
+            let height = layoutData.roundedHeight(from: cell.event.durationInSeconds)
+            cell.frame = CGRect(x: x, y: y, width: width, height: height)
+            eventScrollView.addSubview(cell)
+            self.cellInCreating = cell
             
+            editor.beginEditing(for: cell)
         }
     }
 }
-
-// willCreateEventHandler(IndexPath) -> EventCell
-//

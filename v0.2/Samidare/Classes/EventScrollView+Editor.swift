@@ -11,11 +11,6 @@ internal extension EventScrollView {
 
     final class Editor: NSObject {
 
-        internal enum State {
-            case ready
-            case editing
-        }
-
         private enum Edge {
             case top
             case bottom
@@ -29,14 +24,15 @@ internal extension EventScrollView {
         private var addedLongPressGestureRecognizers: [UILongPressGestureRecognizer] = []
         private var eventScrollViewTapGestureRecognizer: UITapGestureRecognizer?
 
-        private(set) var state: State = .ready
-
         /// Current editing EventCell.
         private weak var editingCell: EventCell?
         /// Copy of editingCell.event at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
         private var eventAtBeginEditing: Event?
         /// Copy of editingCell.frame at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
         private var cellFrameAtBeginEditing: CGRect?
+
+        /// Whether Editor displays original cell(means before editing).
+        private(set) var displaysOriginalCell: Bool = true
         
         private var didScrollInOneEditing: Bool = false
         
@@ -61,10 +57,12 @@ internal extension EventScrollView {
         ///
         /// - Parameters:
         ///   - eventScrollView: EventScrollView to apply Editor function.
-        internal func setup(eventScrollView: EventScrollView) {
+        internal func setup(eventScrollView: EventScrollView, displaysOriginalCell: Bool = true) {
             self.eventScrollView = eventScrollView
+            self.displaysOriginalCell = displaysOriginalCell
         }
 
+        /// Editor observes long-press on EventCell.
         internal func observe(cell: EventCell) {
             let cellRecognizers = cell.gestureRecognizers?.compactMap({ $0 as? UILongPressGestureRecognizer }) ?? []
             guard cellRecognizers.contains(where: { recognizer -> Bool in
@@ -74,7 +72,6 @@ internal extension EventScrollView {
             addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
             let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(eventCellWasLongPressed))
             cell.addGestureRecognizer(recognizer)
-            dprint("Add eventCellWasLongPressed")
             addedLongPressGestureRecognizers.append(recognizer)
         }
 
@@ -89,7 +86,7 @@ internal extension EventScrollView {
         }
 
         internal func beginEditing(for cell: EventCell) {
-            guard let scrollView = eventScrollView else { return }
+            guard let scrollView = eventScrollView else { fatalError("Call setup() first.") }
 
             heavyImpactFeedbackGenerator.prepare()
             lightImpactFeedbackGenerator.prepare()
@@ -97,11 +94,13 @@ internal extension EventScrollView {
             endEditing()
             editingCell = cell
 
-            let snapshot = cell.snapshotView()
-            snapshot.frame = cell.frame
-            snapshot.alpha = 0.25
-            scrollView.insertSubview(snapshot, belowSubview: cell)
-            snapshotView = snapshot
+            if displaysOriginalCell {
+                let snapshot = cell.snapshotView()
+                snapshot.frame = cell.frame
+                snapshot.alpha = 0.25
+                scrollView.insertSubview(snapshot, belowSubview: cell)
+                snapshotView = snapshot
+            }
 
             let overlayView = EditingOverlayView(cell: cell)
             overlayView.willPanHandler = { [weak self] _ in
@@ -136,7 +135,6 @@ internal extension EventScrollView {
                                                    name: EventScrollView.didScrollNotification, object: nil)
             didScrollInOneEditing = false
 
-            state = .editing
             heavyImpactFeedbackGenerator.impactOccurred()
             didBeginEditingHandler?()
         }
@@ -149,7 +147,6 @@ internal extension EventScrollView {
                 eventScrollView?.removeGestureRecognizer(recognizer)
             }
             NotificationCenter.default.removeObserver(self, name: EventScrollView.didScrollNotification, object: nil)
-            state = .ready
         }
 
         private func edit(edge: Edge, panningLength: CGFloat) {
@@ -280,5 +277,15 @@ extension EventScrollView.Editor: UIGestureRecognizerDelegate {
             return true
         }
         return false
+    }
+}
+
+extension EventScrollView.Editor {
+    /// 🤔
+    /// for EventScrollView.Creator.
+    /// Creator wants to expand cell height by panning after detected long press on EventScrollView.
+    internal func simulateBottomKnobPanning(_ recognizer: UIGestureRecognizer) {
+        guard let editingOverlayView = editingOverlayView else { fatalError("Editor is not editing.") }
+        editingOverlayView.simulateBottomKnobPanning(recognizer)
     }
 }
