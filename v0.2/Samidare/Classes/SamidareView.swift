@@ -37,6 +37,8 @@ public class SamidareView: UIView {
             }
         }
     }
+    // TODO:
+    public var didUpdateCreatingEventHandler: (() -> Void)?
 
     // TODO:
     public var didBeginEditingEventHandler: (() -> Void)?

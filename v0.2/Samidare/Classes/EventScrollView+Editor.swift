@@ -139,7 +139,7 @@ internal extension EventScrollView {
             didBeginEditingHandler?()
         }
 
-        internal func endEditing() {
+        private func endEditing() {
             editingCell = nil
             snapshotView?.removeFromSuperview()
             editingOverlayView?.removeFromSuperview()

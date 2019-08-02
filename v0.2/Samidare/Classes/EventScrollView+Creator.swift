@@ -8,6 +8,7 @@
 import UIKit
 
 public typealias CreatorWillCreateEventHandler = (_ event: Event, _ indexPath: IndexPath) -> EventCell
+public typealias CreatorDidUpdateCreatingEventHandler = (_ event: Event, _ indexPath: IndexPath) -> Void
 
 internal extension EventScrollView {
     
@@ -16,6 +17,7 @@ internal extension EventScrollView {
         private weak var eventScrollView: EventScrollView!
 
         internal var willCreateEventHandler: CreatorWillCreateEventHandler!
+        internal var didUpdateCreatingEventHandler: CreatorDidUpdateCreatingEventHandler?
         
         private weak var cellInCreating: EventCell?
         private let editor: Editor = Editor()
@@ -31,6 +33,8 @@ internal extension EventScrollView {
             let longPressGesture = UILongPressGestureRecognizer(target: self,
                                                                 action: #selector(eventScrollViewWasLongPressed))
             eventScrollView.addGestureRecognizer(longPressGesture)
+            NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
+                                                   name: EventScrollView.didScrollNotification, object: nil)
             editor.setup(eventScrollView: eventScrollView, displaysOriginalCell: false)
         }
         
@@ -39,6 +43,15 @@ internal extension EventScrollView {
                 beginCreating(atPointInEventScrollView: sender.location(in: eventScrollView))
             }
             editor.simulateBottomKnobPanning(sender)
+        }
+        
+        @objc private func eventScrollViewDidScroll(_ notification: Notification) {
+            guard let cell = cellInCreating, let scrollView = eventScrollView else { return }
+            let cellRange = cell.frame.minX ... cell.frame.maxX
+            let scrollViewRange = scrollView.contentOffset.x ... scrollView.contentOffset.x + scrollView.frame.width
+            if cellRange.overlaps(scrollViewRange) == false {
+                cancelCreating()
+            }
         }
         
         private func beginCreating(atPointInEventScrollView point: CGPoint) {
@@ -58,6 +71,13 @@ internal extension EventScrollView {
             self.cellInCreating = cell
             
             editor.beginEditing(for: cell)
+            
+            didUpdateCreatingEventHandler?(event, indexPath)
+        }
+        
+        private func cancelCreating() {
+            guard let cell = cellInCreating else { return }
+            cell.removeFromSuperview()
         }
     }
 }
