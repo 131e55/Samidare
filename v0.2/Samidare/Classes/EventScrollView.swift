@@ -18,6 +18,14 @@ internal class EventScrollView: UIScrollView {
     private let creator: Creator = Creator()
     private let autoScroller: AutoScroller = AutoScroller()
     
+    private weak var cellInCreating: EventCell?
+
+    /// Tells editing has begun.
+    internal var didBeginEditingHandler: ((_ cell: EventCell) -> Void)?
+    internal var didEditHandler: ((_ cell: EventCell) -> Void)?
+
+    internal var didUpdateCreatingEventHandler: ((_ cell: EventCell) -> Void)?
+    
     internal override var delegate: UIScrollViewDelegate? {
         didSet {
             if let _ = delegate as? EventScrollView {}
@@ -52,15 +60,31 @@ internal class EventScrollView: UIScrollView {
         contentSize = CGSize(width: contentWidth, height: contentHeight)
 
         editor.setup(eventScrollView: self)
-        editor.didBeginEditingHandler = { [weak self] in
+        editor.didBeginEditingHandler = { [weak self] cell in
             guard let self = self else { return }
+            self.didBeginEditingHandler?(cell)
             self.autoScroller.isEnabled = true
+        }
+        editor.didEditHandler = { [weak self] cell in
+            guard let self = self else { return }
+            if self.cellInCreating == cell {
+                self.didUpdateCreatingEventHandler?(cell)
+            } else {
+                self.didEditHandler?(cell)
+            }
         }
         autoScroller.setup(eventScrollView: self)
     }
     
     internal func setupCreator(willCreateEventHandler: @escaping CreatorWillCreateEventHandler) {
-        creator.setup(eventScrollView: self, willCreateEventHandler: willCreateEventHandler)
+        creator.setup(
+            eventScrollView: self,
+            willCreateEventHandler: willCreateEventHandler,
+            didCreateEventHandler: { [weak self] cell in
+                guard let self = self else { return }
+                self.cellInCreating = cell
+                self.editor.beginEditing(for: cell, displaysOriginalCell: false)
+            })
     }
 
     internal func insertCells(_ cells: [EventCell], at indexPath: IndexPath) {
@@ -106,10 +130,34 @@ internal class EventScrollView: UIScrollView {
 extension EventScrollView: UIScrollViewDelegate {
     
     static let didScrollNotification: Notification.Name = .init("EventScrollViewDidScrollNotification")
+    static let didEndScrollNotification: Notification.Name = .init("EventScrollViewDidEndScrollNotification")
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // Cancel Creating
+        if let cell = cellInCreating {
+            let cellRange = cell.frame.minX ... cell.frame.maxX
+            let scrollViewRange = scrollView.contentOffset.x ... scrollView.contentOffset.x + scrollView.frame.width
+            if cellRange.overlaps(scrollViewRange) == false {
+                cell.removeFromSuperview()
+            }
+        }
+        
         NotificationCenter.default.post(
             Notification(name: EventScrollView.didScrollNotification, object: nil, userInfo: nil)
+        )
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if decelerate == false {
+            NotificationCenter.default.post(
+                Notification(name: EventScrollView.didEndScrollNotification, object: nil, userInfo: nil)
+            )
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        NotificationCenter.default.post(
+            Notification(name: EventScrollView.didEndScrollNotification, object: nil, userInfo: nil)
         )
     }
 }

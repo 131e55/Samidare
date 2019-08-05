@@ -28,6 +28,10 @@ public class SamidareView: UIView {
         get { return survivorManager.expansionRateOfSurvivorArea }
         set { survivorManager.expansionRateOfSurvivorArea = newValue }
     }
+    
+    public var didBeginEditingEventHandler: ((_ cell: EventCell) -> Void)?
+    public var didEditEventHandler: ((_ cell: EventCell) -> Void)?
+    
     /// If you want to use EventCreator, implement it.
     public var willCreateEventHandler: CreatorWillCreateEventHandler? {
         didSet {
@@ -37,13 +41,7 @@ public class SamidareView: UIView {
             }
         }
     }
-    // TODO:
-    public var didUpdateCreatingEventHandler: (() -> Void)?
-
-    // TODO:
-    public var didBeginEditingEventHandler: (() -> Void)?
-    // TODO:
-    public var didEditEventHandler: (() -> Void)?
+    public var didUpdateCreatingEventHandler: ((_ cell: EventCell) -> Void)?
 
     private var mustCallReloadData = true
 
@@ -67,6 +65,15 @@ public class SamidareView: UIView {
         eventScrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         eventScrollView.autoresizesSubviews = false
         eventScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
+        eventScrollView.didBeginEditingHandler = { [weak self] cell in
+            self?.didBeginEditingEventHandler?(cell)
+        }
+        eventScrollView.didEditHandler = { [weak self] cell in
+            self?.didEditEventHandler?(cell)
+        }
+        eventScrollView.didUpdateCreatingEventHandler = { [weak self] cell in
+            self?.didUpdateCreatingEventHandler?(cell)
+        }
         addSubview(eventScrollView)
         NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
                                                name: EventScrollView.didScrollNotification, object: nil)

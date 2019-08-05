@@ -31,18 +31,13 @@ internal extension EventScrollView {
         /// Copy of editingCell.frame at begin editing such as 'top knob panning', 'bottom knob panning' and 'cell panning'.
         private var cellFrameAtBeginEditing: CGRect?
 
-        /// Whether Editor displays original cell(means before editing).
-        private(set) var displaysOriginalCell: Bool = true
-        
-        private var didScrollInOneEditing: Bool = false
-        
         private weak var snapshotView: UIView?
         private weak var editingOverlayView: EditingOverlayView?
 
         /// Tells editing has begun.
-        internal var didBeginEditingHandler: (() -> Void)?
-        
-        internal var didEditHandler: (() -> Void)?
+        internal var didBeginEditingHandler: ((_ cell: EventCell) -> Void)?
+
+        internal var didEditHandler: ((_ cell: EventCell) -> Void)?
 
         override init() {
             super.init()
@@ -59,7 +54,6 @@ internal extension EventScrollView {
         ///   - eventScrollView: EventScrollView to apply Editor function.
         internal func setup(eventScrollView: EventScrollView, displaysOriginalCell: Bool = true) {
             self.eventScrollView = eventScrollView
-            self.displaysOriginalCell = displaysOriginalCell
         }
 
         /// Editor observes long-press on EventCell.
@@ -85,7 +79,7 @@ internal extension EventScrollView {
             addedLongPressGestureRecognizers = addedLongPressGestureRecognizers.filter({ $0.view != cell })
         }
 
-        internal func beginEditing(for cell: EventCell) {
+        internal func beginEditing(for cell: EventCell, displaysOriginalCell: Bool = true) {
             guard let scrollView = eventScrollView else { fatalError("Call setup() first.") }
 
             heavyImpactFeedbackGenerator.prepare()
@@ -93,7 +87,7 @@ internal extension EventScrollView {
 
             endEditing()
             editingCell = cell
-
+            
             if displaysOriginalCell {
                 let snapshot = cell.snapshotView()
                 snapshot.frame = cell.frame
@@ -133,10 +127,11 @@ internal extension EventScrollView {
 
             NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
                                                    name: EventScrollView.didScrollNotification, object: nil)
-            didScrollInOneEditing = false
+            NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidEndScroll),
+                                                   name: EventScrollView.didEndScrollNotification, object: nil)
 
             heavyImpactFeedbackGenerator.impactOccurred()
-            didBeginEditingHandler?()
+            didBeginEditingHandler?(cell)
         }
 
         private func endEditing() {
@@ -203,7 +198,7 @@ internal extension EventScrollView {
                 cell.configure(event: newEvent)
 
                 lightImpactFeedbackGenerator.impactOccurred()
-                didEditHandler?()
+                didEditHandler?(cell)
             }
         }
         
@@ -235,8 +230,7 @@ internal extension EventScrollView {
         }
         
         @objc private func eventScrollViewWasTapped(_ sender: UITapGestureRecognizer) {
-            guard let scrollView = eventScrollView, let cell = editingCell,
-                didScrollInOneEditing == false else { return }
+            guard let scrollView = eventScrollView, let cell = editingCell else { return }
             // When touch point that not in cell.frame, end editing.
             let cellFrameInScrollView = cell.convert(cell.bounds, to: scrollView)
             let touchPointInScrollView = sender.location(in: scrollView)
@@ -246,8 +240,12 @@ internal extension EventScrollView {
         }
         
         @objc private func eventScrollViewDidScroll(_ notification: Notification) {
-            didScrollInOneEditing = true
+            eventScrollViewTapGestureRecognizer?.isEnabled = false
             updateTimeRangeViewPosition()
+        }
+        
+        @objc private func eventScrollViewDidEndScroll(_ notification: Notification) {
+            eventScrollViewTapGestureRecognizer?.isEnabled = true
         }
         
         private func updateTimeRangeViewPosition() {

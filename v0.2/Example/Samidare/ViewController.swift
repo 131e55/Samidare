@@ -19,11 +19,20 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         samidareView.dataSource = self
         samidareView.register(UINib(nibName: "CustomCell", bundle: .main), forCellReuseIndentifier: "CustomCell")
+        samidareView.didBeginEditingEventHandler = { cell in
+            print("didBeginEditingEventHandler")
+        }
+        samidareView.didEditEventHandler = { cell in
+            print(cell.event)
+        }
         samidareView.willCreateEventHandler = { [weak self] event, indexPath in
             let cell = CustomCell()
             cell.configure(event: event)
             cell.applyCreatingStyle()
             return cell
+        }
+        samidareView.didUpdateCreatingEventHandler = { [weak self] cell in
+            print(cell.event)
         }
     }
 }
