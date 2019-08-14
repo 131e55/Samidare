@@ -46,6 +46,10 @@ extension ViewController: SamidareViewDataSource {
         return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/09 06:30")!
     }
     
+    func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat {
+        return 44
+    }
+    
     func numberOfSections(in samidareView: SamidareView) -> Int {
         return 4
     }

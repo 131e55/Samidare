@@ -13,6 +13,7 @@ final internal class LayoutDataStore {
     var cachedEventScrollViewLayoutData: EventScrollViewLayoutData?
     var cachedFrozenEventScrollViewLayoutData: EventScrollViewLayoutData?
     var cachedTimeScrollViewLayoutData: TimeScrollViewLayoutData?
+    var cachedHeightOfColumnTitle: CGFloat?
 
     func clear() {
         cachedEventScrollViewLayoutData = nil
@@ -29,6 +30,8 @@ final internal class LayoutDataStore {
         var totalWidthOfColumns: CGFloat = 0
         var totalSpacingOfColumns: CGFloat = 0
         let columnSpacing = dataSource.columnSpacing(in: samidareView)
+        
+        cachedHeightOfColumnTitle = dataSource.heightOfColumnTitle(in: samidareView)
         
         //
         // Make cachedEventScrollViewLayoutData

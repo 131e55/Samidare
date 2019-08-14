@@ -25,8 +25,7 @@ public class SamidareView: UIView {
     private var frozenEventScrollViewLeftConstraint: NSLayoutConstraint!
 
     private let timeScrollView = TimeScrollView()
-    private let frozenColumnBackgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
-    private var frozenColumnBackgroundViewWidthConstraint: NSLayoutConstraint!
+    private let frozenBackgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
 
     public var expansionRateOfSurvivorArea: CGFloat {
         get { return survivorManager.expansionRateOfSurvivorArea }
@@ -84,16 +83,10 @@ public class SamidareView: UIView {
                                                name: EventScrollView.didScrollNotification,
                                                object: eventScrollView)
 
-        frozenColumnBackgroundView.isUserInteractionEnabled = false
-        frozenColumnBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(frozenColumnBackgroundView)
-        frozenColumnBackgroundViewWidthConstraint = frozenColumnBackgroundView.widthAnchor.constraint(equalToConstant: 0)
-        NSLayoutConstraint.activate([
-            frozenColumnBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
-            frozenColumnBackgroundView.topAnchor.constraint(equalTo: topAnchor),
-            frozenColumnBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            frozenColumnBackgroundViewWidthConstraint
-        ])
+        frozenBackgroundView.isUserInteractionEnabled = false
+        frozenBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(frozenBackgroundView)
+        frozenBackgroundView.activateFitFrameConstarintsToSuperview()
 
         frozenEventScrollView.autoresizesSubviews = false
         frozenEventScrollView.showsVerticalScrollIndicator = false
@@ -130,13 +123,11 @@ public class SamidareView: UIView {
         let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData!
         let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData!
 
-        frozenColumnBackgroundViewWidthConstraint.constant = timeLayoutData.widthOfColumn
-                                                             + frozenLayoutData.columnSpacing
-                                                             + frozenLayoutData.totalWidthOfColumns
-                                                             + frozenLayoutData.totalSpacingOfColumns
-
         // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
-        eventScrollView.contentInset.left = frozenColumnBackgroundViewWidthConstraint.constant
+        eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
+                                            + frozenLayoutData.columnSpacing
+                                            + frozenLayoutData.totalWidthOfColumns
+                                            + frozenLayoutData.totalSpacingOfColumns
                                             + eventLayoutData.columnSpacing
         eventScrollView.contentInset.right = eventLayoutData.columnSpacing
         eventScrollView.scrollIndicatorInsets.left = eventScrollView.contentInset.left
@@ -152,6 +143,24 @@ public class SamidareView: UIView {
         frozenEventScrollView.setup(layoutData: frozenLayoutData)
         insertCellsIntoFrozenScrollView()
         timeScrollView.setup(layoutData: timeLayoutData)
+
+        // Reset FrozenBackgroundView mask rule
+        let frozenBackgroundWidth: CGFloat = timeLayoutData.widthOfColumn
+                                             + frozenLayoutData.columnSpacing
+                                             + frozenLayoutData.totalWidthOfColumns
+                                             + frozenLayoutData.totalSpacingOfColumns
+        let frozenBackgroundHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
+        let maskLayer = CAShapeLayer()
+        let maskPath = CGMutablePath()
+        maskPath.addPath(CGPath(rect: bounds, transform: nil))
+        maskPath.addPath(CGPath(rect: CGRect(x: frozenBackgroundWidth,
+                                             y: frozenBackgroundHeight,
+                                             width: bounds.width - frozenBackgroundWidth,
+                                             height: bounds.height - frozenBackgroundHeight),
+                                transform: nil))
+        maskLayer.path = maskPath
+        maskLayer.fillRule = .evenOdd
+        frozenBackgroundView.layer.mask = maskLayer
 
         mustCallReloadData = false
         setNeedsLayout()
