@@ -24,8 +24,11 @@ public protocol SamidareViewDataSource: class {
     func frozenCells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
     // TimeScrollView
     func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat
-    //
+    // TitleScrollView
     func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat
+    func titleViewOfTimeColumn(in samidareView: SamidareView) -> UIView?
+    func titleViewOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UIView?
+    func titleCellOfEventColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UICollectionViewCell?
 }
 
 extension SamidareViewDataSource {
@@ -63,5 +66,14 @@ extension SamidareViewDataSource {
 
     public func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat {
         return 0
+    }
+    public func titleViewOfTimeColumn(in samidareView: SamidareView) -> UIView? {
+        return nil
+    }
+    public func titleViewOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UIView? {
+        return nil
+    }
+    public func titleCellOfEventColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UICollectionViewCell? {
+        return nil
     }
 }

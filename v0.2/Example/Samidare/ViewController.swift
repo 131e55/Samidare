@@ -43,11 +43,18 @@ extension ViewController: SamidareViewDataSource {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
-        return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/09 06:30")!
+        return formatter.date(from: "2019/08/07 00:00")! ... formatter.date(from: "2019/08/09 06:30")!
     }
     
     func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat {
         return 44
+    }
+    
+    func titleViewOfTimeColumn(in samidareView: SamidareView) -> UIView? {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Time"
+        return label
     }
     
     func numberOfSections(in samidareView: SamidareView) -> Int {
@@ -107,7 +114,7 @@ final class SampleData {
                 Event(time: formatter.date(from: "2019/08/07 19:30")! ... formatter.date(from: "2019/08/08 03:00")!, isEditable: true, source: nil),
             ],
             [
-                Event(time: formatter.date(from: "2019/08/06 22:30")! ... formatter.date(from: "2019/08/07 10:20")!, isEditable: true, source: nil),
+                Event(time: formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/07 10:20")!, isEditable: true, source: nil),
             ]
         ]
         

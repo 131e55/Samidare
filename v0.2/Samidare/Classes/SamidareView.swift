@@ -16,16 +16,21 @@ public class SamidareView: UIView {
             setNeedsLayout()
         }
     }
-    private let layoutDataStore = LayoutDataStore()
-    private let survivorManager = SurvivorManager()
-    private let reusableCellQueue = ReusableCellQueue()
-    private let eventScrollView = EventScrollView()
-    private let frozenEventScrollView = EventScrollView()
+    private let layoutDataStore: LayoutDataStore = LayoutDataStore()
+    private let survivorManager: SurvivorManager = SurvivorManager()
+    private let reusableCellQueue: ReusableCellQueue = ReusableCellQueue()
+
+    private let frozenBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private let frozenBackgroundView2: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+
+    private let titleViewContainer: UIView = UIView()
+    private var titleViewContainerHeightConstraint: NSLayoutConstraint!
+    
+    private let eventScrollView: EventScrollView = EventScrollView()
+    private let timeScrollView: TimeScrollView = TimeScrollView()
+    private let frozenEventScrollView: EventScrollView = EventScrollView()
     private var frozenEventScrollViewWidthConstraint: NSLayoutConstraint!
     private var frozenEventScrollViewLeftConstraint: NSLayoutConstraint!
-
-    private let timeScrollView = TimeScrollView()
-    private let frozenBackgroundView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
 
     public var expansionRateOfSurvivorArea: CGFloat {
         get { return survivorManager.expansionRateOfSurvivorArea }
@@ -46,7 +51,7 @@ public class SamidareView: UIView {
     }
     public var didUpdateCreatingEventHandler: ((_ cell: EventCell) -> Void)?
 
-    private var mustCallReloadData = true
+    private var mustCallReloadData: Bool = true
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,11 +68,7 @@ public class SamidareView: UIView {
     }
 
     private func didInit() {
-        let inset: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
         eventScrollView.autoresizesSubviews = false
-        dprint(eventScrollView.contentOffset)
-        eventScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
-        dprint(eventScrollView.contentOffset)
         eventScrollView.didBeginEditingHandler = { [weak self] cell in
             self?.didBeginEditingEventHandler?(cell)
         }
@@ -86,8 +87,24 @@ public class SamidareView: UIView {
         frozenBackgroundView.isUserInteractionEnabled = false
         frozenBackgroundView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(frozenBackgroundView)
-        frozenBackgroundView.activateFitFrameConstarintsToSuperview()
-
+        NSLayoutConstraint.activate([
+            frozenBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenBackgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 44),
+            frozenBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            frozenBackgroundView.widthAnchor.constraint(equalToConstant: 108)
+        ])
+//        frozenBackgroundView.activateFitFrameConstarintsToSuperview()
+        
+        titleViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        titleViewContainerHeightConstraint = titleViewContainer.heightAnchor.constraint(equalToConstant: 0)
+        addSubview(titleViewContainer)
+        NSLayoutConstraint.activate([
+            titleViewContainer.leftAnchor.constraint(equalTo: leftAnchor),
+            titleViewContainer.topAnchor.constraint(equalTo: topAnchor),
+            titleViewContainer.rightAnchor.constraint(equalTo: rightAnchor),
+            titleViewContainerHeightConstraint
+        ])
+        
         frozenEventScrollView.autoresizesSubviews = false
         frozenEventScrollView.showsVerticalScrollIndicator = false
         frozenEventScrollView.showsHorizontalScrollIndicator = false
@@ -107,9 +124,18 @@ public class SamidareView: UIView {
     
         timeScrollView.autoresizesSubviews = false
         timeScrollView.isUserInteractionEnabled = false
-        timeScrollView.contentInset = UIEdgeInsets(top: inset, left: 0, bottom: inset, right: 0)
         addSubview(timeScrollView)
         timeScrollView.activateFitFrameConstarintsToSuperview()
+        
+        frozenBackgroundView2.isUserInteractionEnabled = false
+        frozenBackgroundView2.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(frozenBackgroundView2)
+        NSLayoutConstraint.activate([
+            frozenBackgroundView2.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenBackgroundView2.topAnchor.constraint(equalTo: topAnchor),
+            frozenBackgroundView2.rightAnchor.constraint(equalTo: rightAnchor),
+            frozenBackgroundView2.heightAnchor.constraint(equalToConstant: 44)
+        ])
     }
 
     public func reloadData() {
@@ -122,28 +148,7 @@ public class SamidareView: UIView {
         let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData!
         let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData!
         let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData!
-
-        // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
-        eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
-                                            + frozenLayoutData.columnSpacing
-                                            + frozenLayoutData.totalWidthOfColumns
-                                            + frozenLayoutData.totalSpacingOfColumns
-                                            + eventLayoutData.columnSpacing
-        eventScrollView.contentInset.right = eventLayoutData.columnSpacing
-        eventScrollView.scrollIndicatorInsets.left = eventScrollView.contentInset.left
-        eventScrollView.scrollIndicatorInsets.right = eventScrollView.contentInset.right
- 
-        frozenEventScrollViewLeftConstraint.constant = timeLayoutData.widthOfColumn
-                                                       + frozenLayoutData.columnSpacing
-        frozenEventScrollViewWidthConstraint.constant = frozenLayoutData.totalWidthOfColumns
-                                                        + frozenLayoutData.totalSpacingOfColumns
-
-        eventScrollView.setup(layoutData: eventLayoutData)
-        survivorManager.setup(layoutData: eventLayoutData)
-        frozenEventScrollView.setup(layoutData: frozenLayoutData)
-        insertCellsIntoFrozenScrollView()
-        timeScrollView.setup(layoutData: timeLayoutData)
-
+        
         // Reset FrozenBackgroundView mask rule
         let frozenBackgroundWidth: CGFloat = timeLayoutData.widthOfColumn
                                              + frozenLayoutData.columnSpacing
@@ -160,7 +165,42 @@ public class SamidareView: UIView {
                                 transform: nil))
         maskLayer.path = maskPath
         maskLayer.fillRule = .evenOdd
-        frozenBackgroundView.layer.mask = maskLayer
+//        frozenBackgroundView.layer.mask = maskLayer
+        
+        reInsertTitleViewsIfNeeded()
+
+        //
+        // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
+        //
+        let halfFontLineHeight: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
+        let scrollViewContentInsetTop: CGFloat = frozenBackgroundHeight + halfFontLineHeight
+        let scrollViewContentInsetBottom: CGFloat = halfFontLineHeight
+
+        eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
+                                            + frozenLayoutData.columnSpacing
+                                            + frozenLayoutData.totalWidthOfColumns
+                                            + frozenLayoutData.totalSpacingOfColumns
+                                            + eventLayoutData.columnSpacing
+        eventScrollView.contentInset.right = eventLayoutData.columnSpacing
+        eventScrollView.contentInset.top = scrollViewContentInsetTop
+        eventScrollView.contentInset.bottom = scrollViewContentInsetBottom
+        eventScrollView.scrollIndicatorInsets = eventScrollView.contentInset
+ 
+        frozenEventScrollView.contentInset.top = scrollViewContentInsetTop
+        frozenEventScrollView.contentInset.bottom = scrollViewContentInsetBottom
+        frozenEventScrollViewLeftConstraint.constant = timeLayoutData.widthOfColumn
+                                                       + frozenLayoutData.columnSpacing
+        frozenEventScrollViewWidthConstraint.constant = frozenLayoutData.totalWidthOfColumns
+                                                        + frozenLayoutData.totalSpacingOfColumns
+        
+        eventScrollView.setup(layoutData: eventLayoutData)
+        survivorManager.setup(layoutData: eventLayoutData)
+        frozenEventScrollView.setup(layoutData: frozenLayoutData)
+        insertCellsIntoFrozenScrollView()
+        
+        timeScrollView.contentInset.top = scrollViewContentInsetTop
+        timeScrollView.contentInset.bottom = scrollViewContentInsetBottom
+        timeScrollView.setup(layoutData: timeLayoutData)
 
         mustCallReloadData = false
         setNeedsLayout()
@@ -180,6 +220,33 @@ public class SamidareView: UIView {
         layoutEventScrollView()
         timeScrollView.contentOffset.y = eventScrollView.contentOffset.y
         frozenEventScrollView.contentOffset.y = eventScrollView.contentOffset.y
+    }
+    
+    private func reInsertTitleViewsIfNeeded() {
+        guard let dataSource = dataSource,
+            let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData else { return }
+
+        titleViewContainer.subviews.forEach { $0.removeFromSuperview() }
+        titleViewContainerHeightConstraint.constant = layoutDataStore.cachedHeightOfColumnTitle ?? 0
+        guard titleViewContainerHeightConstraint.constant > 0 else { return }
+
+        var constraints: [NSLayoutConstraint] = []
+        
+        if let timeTitleView = dataSource.titleViewOfTimeColumn(in: self) {
+            dprint(timeTitleView)
+            timeTitleView.translatesAutoresizingMaskIntoConstraints = false
+            titleViewContainer.addSubview(timeTitleView)
+            constraints.append(contentsOf: [
+                timeTitleView.leftAnchor.constraint(equalTo: titleViewContainer.leftAnchor),
+                timeTitleView.topAnchor.constraint(equalTo: titleViewContainer.topAnchor),
+                timeTitleView.bottomAnchor.constraint(equalTo: titleViewContainer.bottomAnchor),
+                timeTitleView.widthAnchor.constraint(equalToConstant: timeLayoutData.widthOfColumn)
+            ])
+        }
+        
+        if constraints.isEmpty == false {
+            NSLayoutConstraint.activate(constraints)
+        }
     }
 
     private func layoutEventScrollView() {
