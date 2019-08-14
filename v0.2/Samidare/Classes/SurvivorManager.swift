@@ -25,7 +25,7 @@ extension SamidareView {
                 expansionRateOfSurvivorArea = max(expansionRateOfSurvivorArea, 1)
             }
         }
-        private var layoutData: LayoutData!
+        private var layoutData: EventScrollViewLayoutData!
         private(set) var survivorArea: CGRect = .zero
         private(set) var survivorIndexPaths: Set<IndexPath> = []
         private(set) var judgeResult: JudgeResult = .empty
@@ -34,7 +34,7 @@ extension SamidareView {
             return layoutData != nil
         }
 
-        func setup(layoutData: LayoutData) {
+        func setup(layoutData: EventScrollViewLayoutData) {
             self.layoutData = layoutData
         }
 

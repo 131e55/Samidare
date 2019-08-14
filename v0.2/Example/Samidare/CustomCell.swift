@@ -17,8 +17,15 @@ final class CustomCell: EventCell {
         super.configure(event: event)
     }
     
-    override func didMoveToSuperview() {
+    override func awakeFromNib() {
+        super.awakeFromNib()
         if superview != nil, let indexPath = indexPath {
+            nameLabel.text = "\(indexPath)"
+        }
+    }
+    
+    override func didMoveToSuperview() {
+        if superview != nil, let indexPath = indexPath, let nameLabel = nameLabel {
             nameLabel.text = "\(indexPath)"
         }
     }

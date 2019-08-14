@@ -45,7 +45,7 @@ extension ViewController: SamidareViewDataSource {
         formatter.dateFormat = "yyyy/MM/dd HH:mm"
         return formatter.date(from: "2019/08/07 00:30")! ... formatter.date(from: "2019/08/09 06:30")!
     }
-
+    
     func numberOfSections(in samidareView: SamidareView) -> Int {
         return 4
     }
@@ -58,6 +58,25 @@ extension ViewController: SamidareViewDataSource {
         let events = sampleData[indexPath] ?? []
         let cells = events.map({ event -> EventCell in
             let cell = samidareView.dequeueCell(withReuseIdentifier: "CustomCell")
+            cell.configure(event: event)
+            return cell
+        })
+        return cells
+    }
+    
+    func widthOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
+        return 64
+    }
+    
+    func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
+        return 1
+    }
+    
+    func frozenCells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell] {
+        let events = sampleData[indexPath] ?? []
+        let cells = events.map({ event -> EventCell in
+            let cell = CustomCell()
+            cell.backgroundColor = .green
             cell.configure(event: event)
             return cell
         })

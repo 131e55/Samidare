@@ -10,7 +10,7 @@ import UIKit
 
 open class TimeScrollView: UIScrollView {
 
-    private var layoutData: LayoutData!
+    private var layoutData: TimeScrollViewLayoutData!
 
     var didSetup: Bool {
         return layoutData != nil
@@ -31,7 +31,7 @@ open class TimeScrollView: UIScrollView {
     private func initialize() {
     }
 
-    internal func setup(layoutData: LayoutData) {
+    internal func setup(layoutData: TimeScrollViewLayoutData) {
         self.layoutData = layoutData
 
         let contentHeight = layoutData.totalHeightForTimeRange
@@ -99,7 +99,7 @@ open class TimeScrollView: UIScrollView {
                 height = CGFloat(numberOfUnits) * heightUnit
             }
 
-            let cell = TimeCell(timeText: timeText, timeViewWidth: layoutData.widthOfTimeColumn)
+            let cell = TimeCell(timeText: timeText, timeViewWidth: layoutData.widthOfColumn)
             cell.autoresizingMask = .flexibleWidth
             cell.frame = CGRect(x: 0, y: nextCellPositionY, width: 44, height: height)
             addSubview(cell)

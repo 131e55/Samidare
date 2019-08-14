@@ -9,6 +9,7 @@
 import Foundation
 
 public extension IndexPath {
+    /// Same as IndexPath.item
     var column: Int {
         return item
     }

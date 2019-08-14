@@ -10,9 +10,9 @@ import UIKit
 
 internal class EventScrollView: UIScrollView {
 
-    private(set) var layoutData: LayoutData!
+    private(set) var layoutData: EventScrollViewLayoutData!
 
-    private(set) var addedCells: [IndexPath: [EventCell]] = [:]
+    private var addedCells: [IndexPath: [EventCell]] = [:]
 
     private let editor: Editor = Editor()
     private let creator: Creator = Creator()
@@ -51,11 +51,10 @@ internal class EventScrollView: UIScrollView {
         delegate = self
     }
 
-    internal func setup(layoutData: LayoutData) {
+    internal func setup(layoutData: EventScrollViewLayoutData) {
         self.layoutData = layoutData
 
-        let totalSpacing = layoutData.columnSpacing * CGFloat(layoutData.widthOfColumn.keys.count - 1)
-        let contentWidth = layoutData.totalWidthOfColumns + totalSpacing
+        let contentWidth = layoutData.totalWidthOfColumns + layoutData.totalSpacingOfColumns
         let contentHeight = layoutData.totalHeightForTimeRange
         contentSize = CGSize(width: contentWidth, height: contentHeight)
 
@@ -111,6 +110,7 @@ internal class EventScrollView: UIScrollView {
         }
     }
 
+    @discardableResult
     internal func removeCells(at indexPath: IndexPath) -> [EventCell]? {
         let addedCellsAtIndexPath = addedCells.removeValue(forKey: indexPath)
         if let cells = addedCellsAtIndexPath {
@@ -124,6 +124,12 @@ internal class EventScrollView: UIScrollView {
             return cells
         }
         return nil
+    }
+    
+    internal func removeAllAddedCells() {
+        for indexPath in addedCells.keys {
+            removeCells(at: indexPath)
+        }
     }
 }
 
@@ -143,21 +149,21 @@ extension EventScrollView: UIScrollViewDelegate {
         }
         
         NotificationCenter.default.post(
-            Notification(name: EventScrollView.didScrollNotification, object: nil, userInfo: nil)
+            Notification(name: EventScrollView.didScrollNotification, object: self, userInfo: nil)
         )
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate == false {
             NotificationCenter.default.post(
-                Notification(name: EventScrollView.didEndScrollNotification, object: nil, userInfo: nil)
+                Notification(name: EventScrollView.didEndScrollNotification, object: self, userInfo: nil)
             )
         }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         NotificationCenter.default.post(
-            Notification(name: EventScrollView.didEndScrollNotification, object: nil, userInfo: nil)
+            Notification(name: EventScrollView.didEndScrollNotification, object: self, userInfo: nil)
         )
     }
 }

@@ -9,15 +9,23 @@
 import UIKit
 
 public protocol SamidareViewDataSource: class {
+    // Shared
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date>
     func layoutUnit(in samidareView: SamidareView) -> LayoutUnit
+    func columnSpacing(in samidareView: SamidareView) -> CGFloat
+    // EventScrollView
     func numberOfSections(in samidareView: SamidareView) -> Int
     func numberOfColumns(in section: Int, in samidareView: SamidareView) -> Int
-    func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
-    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
     func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
+    func cells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
+    // EventScrollView(frozen)
+    func numberOfFrozenColumns(in samidareView: SamidareView) -> Int
+    func widthOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat
+    func frozenCells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell]
+    // TimeScrollView
     func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat
-    func columnSpacing(in samidareView: SamidareView) -> CGFloat
+    //
+    func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat
 }
 
 extension SamidareViewDataSource {
@@ -28,21 +36,32 @@ extension SamidareViewDataSource {
         let end = calendar.date(byAdding: .day, value: 1, to: start)!
         return start ... end
     }
-    
     public func layoutUnit(in samidareView: SamidareView) -> LayoutUnit {
         return LayoutUnit(minuteUnit: 15, heightUnit: 8, initialMinutesInCreating: 60)
+    }
+    public func columnSpacing(in samidareView: SamidareView) -> CGFloat {
+        return 2
+    }
+
+    public func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
+        return 44
     }
     
     public func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
         return 0
     }
-    public func widthOfColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
+    public func widthOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
         return 44
     }
+    public func frozenCells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell] {
+        return []
+    }
+
     public func widthOfTimeColumn(in samidareView: SamidareView) -> CGFloat {
         return 40
     }
-    public func columnSpacing(in samidareView: SamidareView) -> CGFloat {
-        return 2
+
+    public func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat {
+        return 0
     }
 }
