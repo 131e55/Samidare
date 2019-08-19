@@ -20,14 +20,18 @@ public class SamidareView: UIView {
     private let survivorManager: SurvivorManager = SurvivorManager()
     private let reusableCellQueue: ReusableCellQueue = ReusableCellQueue()
 
+    private let frozenRowView: UIView = UIView()
+    private var frozenRowViewHeightConstraint: NSLayoutConstraint!
+    private let frozenTopLeftBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private var frozenTopLeftBackgroundViewWidthConstraint: NSLayoutConstraint!
+    private let frozenRowBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private let frozenColumnTitleViewContainer: UIView = UIView()
+    private var frozenColumnTitleViewContainerWidthConstraint: NSLayoutConstraint!
+    private let eventTitleCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
     private let frozenColumnBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
     private var frozenColumnBackgroundViewTopConstraint: NSLayoutConstraint!
     private var frozenColumnBackgroundViewWidthConstraint: NSLayoutConstraint!
-    private let frozenRowBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
-    private var frozenRowBackgroundViewHeightConstraint: NSLayoutConstraint!
-
-    private let titleViewContainer: UIView = UIView()
-    private var titleViewContainerHeightConstraint: NSLayoutConstraint!
     
     private let eventScrollView: EventScrollView = EventScrollView()
     private let timeScrollView: TimeScrollView = TimeScrollView()
@@ -99,16 +103,6 @@ public class SamidareView: UIView {
             frozenColumnBackgroundViewWidthConstraint
         ])
         
-        titleViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        titleViewContainerHeightConstraint = titleViewContainer.heightAnchor.constraint(equalToConstant: 0)
-        addSubview(titleViewContainer)
-        NSLayoutConstraint.activate([
-            titleViewContainer.leftAnchor.constraint(equalTo: leftAnchor),
-            titleViewContainer.topAnchor.constraint(equalTo: topAnchor),
-            titleViewContainer.rightAnchor.constraint(equalTo: rightAnchor),
-            titleViewContainerHeightConstraint
-        ])
-        
         frozenEventScrollView.autoresizesSubviews = false
         frozenEventScrollView.showsVerticalScrollIndicator = false
         frozenEventScrollView.showsHorizontalScrollIndicator = false
@@ -131,42 +125,93 @@ public class SamidareView: UIView {
         addSubview(timeScrollView)
         timeScrollView.activateFitFrameConstarintsToSuperview()
         
+        frozenRowView.isUserInteractionEnabled = false
+        frozenRowView.translatesAutoresizingMaskIntoConstraints = false
+        frozenRowViewHeightConstraint = frozenRowView.heightAnchor.constraint(equalToConstant: 0)
+        addSubview(frozenRowView)
+        NSLayoutConstraint.activate([
+            frozenRowView.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenRowView.topAnchor.constraint(equalTo: topAnchor),
+            frozenRowView.rightAnchor.constraint(equalTo: rightAnchor),
+            frozenRowViewHeightConstraint
+        ])
+        
+        frozenRowView.addSubview(frozenTopLeftBackgroundView)
+        frozenTopLeftBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        frozenTopLeftBackgroundViewWidthConstraint = frozenTopLeftBackgroundView.widthAnchor.constraint(equalToConstant: 0)
+        NSLayoutConstraint.activate([
+            frozenTopLeftBackgroundView.leftAnchor.constraint(equalTo: frozenRowView.leftAnchor),
+            frozenTopLeftBackgroundView.topAnchor.constraint(equalTo: frozenRowView.topAnchor),
+            frozenTopLeftBackgroundView.bottomAnchor.constraint(equalTo: frozenRowView.bottomAnchor),
+            frozenTopLeftBackgroundViewWidthConstraint
+        ])
+
+        frozenRowView.addSubview(frozenRowBackgroundView)
         frozenRowBackgroundView.isUserInteractionEnabled = false
         frozenRowBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        frozenRowBackgroundViewHeightConstraint = frozenRowBackgroundView.heightAnchor.constraint(equalToConstant: 0)
-        addSubview(frozenRowBackgroundView)
         NSLayoutConstraint.activate([
-            frozenRowBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
-            frozenRowBackgroundView.topAnchor.constraint(equalTo: topAnchor),
-            frozenRowBackgroundView.rightAnchor.constraint(equalTo: rightAnchor),
-            frozenRowBackgroundViewHeightConstraint
+            frozenRowBackgroundView.leftAnchor.constraint(equalTo: frozenTopLeftBackgroundView.rightAnchor),
+            frozenRowBackgroundView.topAnchor.constraint(equalTo: frozenRowView.topAnchor),
+            frozenRowBackgroundView.bottomAnchor.constraint(equalTo: frozenRowView.bottomAnchor),
+            frozenRowBackgroundView.rightAnchor.constraint(equalTo: frozenRowView.rightAnchor)
         ])
+
+        eventTitleCollectionView.backgroundColor = .clear
+        eventTitleCollectionView.showsVerticalScrollIndicator = false
+        eventTitleCollectionView.showsHorizontalScrollIndicator = false
+        let layout = eventTitleCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = .zero
+        layout.minimumInteritemSpacing = 0
+        eventTitleCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        eventTitleCollectionView.dataSource = self
+        eventTitleCollectionView.delegate = self
+        frozenRowView.addSubview(eventTitleCollectionView)
+        eventTitleCollectionView.activateFitFrameConstarintsToSuperview()
+        
+        frozenRowView.addSubview(frozenColumnTitleViewContainer)
+        frozenColumnTitleViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        frozenColumnTitleViewContainerWidthConstraint = frozenColumnTitleViewContainer.widthAnchor.constraint(equalToConstant: 0)
+        NSLayoutConstraint.activate([
+            frozenColumnTitleViewContainer.leftAnchor.constraint(equalTo: frozenRowView.leftAnchor),
+            frozenColumnTitleViewContainer.topAnchor.constraint(equalTo: frozenRowView.topAnchor),
+            frozenColumnTitleViewContainer.bottomAnchor.constraint(equalTo: frozenRowView.bottomAnchor),
+            frozenTopLeftBackgroundViewWidthConstraint
+        ])
+        
+        // Sort frozenRowView subviews
+        frozenRowView.insertSubview(frozenRowBackgroundView, at: 0)
+        frozenRowView.insertSubview(eventTitleCollectionView, at: 1)
+        frozenRowView.insertSubview(frozenTopLeftBackgroundView, at: 2)
+        frozenRowView.insertSubview(frozenColumnTitleViewContainer, at: 3)
     }
 
     public func reloadData() {
-        dprint("SamidareView reloadData")
         layoutDataStore.clear()
         eventScrollView.removeAllAddedCells()
         frozenEventScrollView.removeAllAddedCells()
+        survivorManager.resetSurvivorIndexPaths([])
         guard let dataSource = dataSource else { return }
         layoutDataStore.store(dataSource: dataSource, for: self)
         let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData!
         let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData!
         let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData!
         
-        let frozenRowBackgroundHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
-        frozenRowBackgroundViewHeightConstraint.constant = frozenRowBackgroundHeight
-        frozenColumnBackgroundViewTopConstraint.constant = frozenRowBackgroundHeight
+        let frozenRowHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
+        frozenRowViewHeightConstraint.constant = frozenRowHeight
+        frozenColumnBackgroundViewTopConstraint.constant = frozenRowHeight
         frozenColumnBackgroundViewWidthConstraint.constant = timeLayoutData.widthOfColumn
                                                              + frozenLayoutData.columnSpacing
                                                              + frozenLayoutData.totalWidthOfColumns
+                                                             + frozenLayoutData.totalSpacingOfColumns
+        frozenTopLeftBackgroundViewWidthConstraint.constant = frozenColumnBackgroundViewWidthConstraint.constant
         reInsertTitleViewsIfNeeded()
 
         //
         // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
         //
         let halfFontLineHeight: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
-        let scrollViewContentInsetTop: CGFloat = frozenRowBackgroundHeight + halfFontLineHeight
+        let scrollViewContentInsetTop: CGFloat = frozenRowHeight + halfFontLineHeight
         let scrollViewContentInsetBottom: CGFloat = halfFontLineHeight
 
         eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
@@ -178,6 +223,12 @@ public class SamidareView: UIView {
         eventScrollView.contentInset.top = scrollViewContentInsetTop
         eventScrollView.contentInset.bottom = scrollViewContentInsetBottom
         eventScrollView.scrollIndicatorInsets = eventScrollView.contentInset
+        
+        eventTitleCollectionView.contentInset.left = eventScrollView.contentInset.left
+        eventTitleCollectionView.contentInset.right = eventScrollView.contentInset.right
+        let layout = eventTitleCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        layout.minimumLineSpacing = eventLayoutData.columnSpacing
+        eventTitleCollectionView.reloadData()
  
         frozenEventScrollView.contentInset.top = scrollViewContentInsetTop
         frozenEventScrollView.contentInset.bottom = scrollViewContentInsetBottom
@@ -213,28 +264,48 @@ public class SamidareView: UIView {
         layoutEventScrollView()
         timeScrollView.contentOffset.y = eventScrollView.contentOffset.y
         frozenEventScrollView.contentOffset.y = eventScrollView.contentOffset.y
+        eventTitleCollectionView.contentOffset.x = eventScrollView.contentOffset.x
     }
     
     private func reInsertTitleViewsIfNeeded() {
+        frozenColumnTitleViewContainer.subviews.forEach { $0.removeFromSuperview() }
         guard let dataSource = dataSource,
-            let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData else { return }
-
-        titleViewContainer.subviews.forEach { $0.removeFromSuperview() }
-        titleViewContainerHeightConstraint.constant = layoutDataStore.cachedHeightOfColumnTitle ?? 0
-        guard titleViewContainerHeightConstraint.constant > 0 else { return }
+            let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData,
+            let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
+            let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return }
+        
+        guard frozenRowViewHeightConstraint.constant > 0 else { return }
 
         var constraints: [NSLayoutConstraint] = []
         
-        if let timeTitleView = dataSource.titleViewOfTimeColumn(in: self) {
-            dprint(timeTitleView)
-            timeTitleView.translatesAutoresizingMaskIntoConstraints = false
-            titleViewContainer.addSubview(timeTitleView)
+        let superview = frozenColumnTitleViewContainer
+        
+        if let titleView = dataSource.titleViewOfTimeColumn(in: self) {
+            superview.addSubview(titleView)
+            titleView.translatesAutoresizingMaskIntoConstraints = false
             constraints.append(contentsOf: [
-                timeTitleView.leftAnchor.constraint(equalTo: titleViewContainer.leftAnchor),
-                timeTitleView.topAnchor.constraint(equalTo: titleViewContainer.topAnchor),
-                timeTitleView.bottomAnchor.constraint(equalTo: titleViewContainer.bottomAnchor),
-                timeTitleView.widthAnchor.constraint(equalToConstant: timeLayoutData.widthOfColumn)
+                titleView.leftAnchor.constraint(equalTo: superview.leftAnchor),
+                titleView.topAnchor.constraint(equalTo: superview.topAnchor),
+                titleView.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+                titleView.widthAnchor.constraint(equalToConstant: timeLayoutData.widthOfColumn)
             ])
+        }
+        
+        for indexPath in frozenLayoutData.indexPaths {
+            let x = timeLayoutData.widthOfColumn + frozenLayoutData.columnSpacing
+                + frozenLayoutData.xPositionOfColumn[indexPath]!
+            let width = frozenLayoutData.widthOfColumn[indexPath]!
+            if let titleView = dataSource.titleViewOfFrozenColumn(at: indexPath, in: self) {
+                superview.addSubview(titleView)
+                
+                titleView.translatesAutoresizingMaskIntoConstraints = false
+                constraints.append(contentsOf: [
+                    titleView.leftAnchor.constraint(equalTo: superview.leftAnchor, constant: x),
+                    titleView.topAnchor.constraint(equalTo: superview.topAnchor),
+                    titleView.bottomAnchor.constraint(equalTo: superview.bottomAnchor),
+                    titleView.widthAnchor.constraint(equalToConstant: width)
+                ])
+            }
         }
         
         if constraints.isEmpty == false {
@@ -269,7 +340,6 @@ public class SamidareView: UIView {
             let cells = dataSource.frozenCells(at: indexPath, in: self)
             if cells.isEmpty == false {
                 frozenEventScrollView.insertCells(cells, at: indexPath)
-                dprint(cells)
             }
         }
     }
@@ -298,5 +368,35 @@ extension SamidareView {
             scrollView == frozenEventScrollView else { return }
         eventScrollView.contentOffset.y = frozenEventScrollView.contentOffset.y
         setNeedsLayout()
+    }
+}
+
+// MARK: - Interface eventTitleCollectionView methods
+extension SamidareView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    public func registerEventTitleCell(_ cellClass: AnyClass?, forCellWithReuseIdentifier: String) {
+        eventTitleCollectionView.register(cellClass, forCellWithReuseIdentifier: forCellWithReuseIdentifier)
+    }
+    
+    public func registerEventTitleCell(_ nib: UINib?, forCellWithReuseIdentifier: String) {
+        eventTitleCollectionView.register(nib, forCellWithReuseIdentifier: forCellWithReuseIdentifier)
+    }
+    
+    public func dequeueReusableEventTitleCell(withReuseIdentifier identifier: String, for indexPath: IndexPath) -> UICollectionViewCell {
+        return eventTitleCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return 0 }
+        return layoutData.indexPaths.count
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return dataSource?.titleCellOfEventColumn(at: indexPath, in: self) ?? UICollectionViewCell()
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return .zero }
+        let convertedIndexPath = layoutData.indexPaths[indexPath.item]
+        return CGSize(width: layoutData.widthOfColumn[convertedIndexPath]!, height: collectionView.bounds.height)
     }
 }

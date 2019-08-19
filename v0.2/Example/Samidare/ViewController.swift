@@ -19,6 +19,7 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         samidareView.dataSource = self
         samidareView.register(UINib(nibName: "CustomCell", bundle: .main), forCellReuseIndentifier: "CustomCell")
+        samidareView.registerEventTitleCell(UINib(nibName: "EventTitleCell", bundle: .main), forCellWithReuseIdentifier: "EventTitleCell")
         samidareView.didBeginEditingEventHandler = { cell in
             print("didBeginEditingEventHandler")
         }
@@ -57,6 +58,19 @@ extension ViewController: SamidareViewDataSource {
         return label
     }
     
+    func titleViewOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UIView? {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "❄️\(indexPath.item)"
+        return label
+    }
+    
+    func titleCellOfEventColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> UICollectionViewCell? {
+        let cell = samidareView.dequeueReusableEventTitleCell(withReuseIdentifier: "EventTitleCell", for: indexPath) as! EventTitleCell
+        cell.titleLabel.text = "\(indexPath)"
+        return cell
+    }
+    
     func numberOfSections(in samidareView: SamidareView) -> Int {
         return 4
     }
@@ -76,11 +90,11 @@ extension ViewController: SamidareViewDataSource {
     }
     
     func widthOfFrozenColumn(at indexPath: IndexPath, in samidareView: SamidareView) -> CGFloat {
-        return 64
+        return 40
     }
     
     func numberOfFrozenColumns(in samidareView: SamidareView) -> Int {
-        return 1
+        return 2
     }
     
     func frozenCells(at indexPath: IndexPath, in samidareView: SamidareView) -> [EventCell] {

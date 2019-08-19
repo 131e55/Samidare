@@ -86,7 +86,6 @@ open class TimeScrollView: UIScrollView {
                 timeText = String.timeText(date: floorEnd)
                 let numberOfUnits = endMinute / minuteUnit
                 height = CGFloat(numberOfUnits) * heightUnit
-                dprint(endMinute, height)
 
             case numberOfRows - 1:
                 timeText = String.timeText(date: end)

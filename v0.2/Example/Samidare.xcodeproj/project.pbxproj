@@ -15,6 +15,8 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		86D054DA76EADEAD80423F22 /* Pods_Samidare_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F76474BEC720A3792DA6356 /* Pods_Samidare_Example.framework */; };
+		F7FC575A230A8F6A00D7F418 /* EventTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */; };
+		F7FC575B230A8F6A00D7F418 /* EventTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 		6E460FF01FA20D9BCD8FCFA6 /* Pods-Samidare_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Samidare_Example.release.xcconfig"; path = "Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example.release.xcconfig"; sourceTree = "<group>"; };
 		854DB55DE098DF1EA18604B7 /* Samidare.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Samidare.podspec; path = ../Samidare.podspec; sourceTree = "<group>"; };
 		89AB968F4EE0593F90B272F7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTitleCell.swift; sourceTree = "<group>"; };
+		F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EventTitleCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +92,8 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */,
+				F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */,
 				4330EEE92174ADA20036FC42 /* CustomCell.xib */,
 				4330EEEB2174AEC60036FC42 /* CustomCell.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -178,6 +184,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7FC575B230A8F6A00D7F418 /* EventTitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				4330EEEA2174ADA20036FC42 /* CustomCell.xib in Resources */,
@@ -237,6 +244,7 @@
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				4330EEEC2174AEC60036FC42 /* CustomCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				F7FC575A230A8F6A00D7F418 /* EventTitleCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

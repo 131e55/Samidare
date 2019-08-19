@@ -56,7 +56,7 @@ extension SamidareView {
         }
 
         private func judge() {
-            guard didSetup else { print("SurvivorManager not setup yet"); return }
+            guard didSetup else { return }
             let lastSurvivorIndexPaths = self.survivorIndexPaths
             var newSurvivorIndexPaths: Set<IndexPath> = []
 
