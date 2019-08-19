@@ -20,8 +20,11 @@ public class SamidareView: UIView {
     private let survivorManager: SurvivorManager = SurvivorManager()
     private let reusableCellQueue: ReusableCellQueue = ReusableCellQueue()
 
-    private let frozenBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
-    private let frozenBackgroundView2: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private let frozenColumnBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private var frozenColumnBackgroundViewTopConstraint: NSLayoutConstraint!
+    private var frozenColumnBackgroundViewWidthConstraint: NSLayoutConstraint!
+    private let frozenRowBackgroundView: UIVisualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private var frozenRowBackgroundViewHeightConstraint: NSLayoutConstraint!
 
     private let titleViewContainer: UIView = UIView()
     private var titleViewContainerHeightConstraint: NSLayoutConstraint!
@@ -84,16 +87,17 @@ public class SamidareView: UIView {
                                                name: EventScrollView.didScrollNotification,
                                                object: eventScrollView)
 
-        frozenBackgroundView.isUserInteractionEnabled = false
-        frozenBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(frozenBackgroundView)
+        frozenColumnBackgroundView.isUserInteractionEnabled = false
+        frozenColumnBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        frozenColumnBackgroundViewTopConstraint = frozenColumnBackgroundView.topAnchor.constraint(equalTo: topAnchor)
+        frozenColumnBackgroundViewWidthConstraint = frozenColumnBackgroundView.widthAnchor.constraint(equalToConstant: 0)
+        addSubview(frozenColumnBackgroundView)
         NSLayoutConstraint.activate([
-            frozenBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
-            frozenBackgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 44),
-            frozenBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            frozenBackgroundView.widthAnchor.constraint(equalToConstant: 108)
+            frozenColumnBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenColumnBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            frozenColumnBackgroundViewTopConstraint,
+            frozenColumnBackgroundViewWidthConstraint
         ])
-//        frozenBackgroundView.activateFitFrameConstarintsToSuperview()
         
         titleViewContainer.translatesAutoresizingMaskIntoConstraints = false
         titleViewContainerHeightConstraint = titleViewContainer.heightAnchor.constraint(equalToConstant: 0)
@@ -127,14 +131,15 @@ public class SamidareView: UIView {
         addSubview(timeScrollView)
         timeScrollView.activateFitFrameConstarintsToSuperview()
         
-        frozenBackgroundView2.isUserInteractionEnabled = false
-        frozenBackgroundView2.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(frozenBackgroundView2)
+        frozenRowBackgroundView.isUserInteractionEnabled = false
+        frozenRowBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+        frozenRowBackgroundViewHeightConstraint = frozenRowBackgroundView.heightAnchor.constraint(equalToConstant: 0)
+        addSubview(frozenRowBackgroundView)
         NSLayoutConstraint.activate([
-            frozenBackgroundView2.leftAnchor.constraint(equalTo: leftAnchor),
-            frozenBackgroundView2.topAnchor.constraint(equalTo: topAnchor),
-            frozenBackgroundView2.rightAnchor.constraint(equalTo: rightAnchor),
-            frozenBackgroundView2.heightAnchor.constraint(equalToConstant: 44)
+            frozenRowBackgroundView.leftAnchor.constraint(equalTo: leftAnchor),
+            frozenRowBackgroundView.topAnchor.constraint(equalTo: topAnchor),
+            frozenRowBackgroundView.rightAnchor.constraint(equalTo: rightAnchor),
+            frozenRowBackgroundViewHeightConstraint
         ])
     }
 
@@ -149,31 +154,19 @@ public class SamidareView: UIView {
         let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData!
         let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData!
         
-        // Reset FrozenBackgroundView mask rule
-        let frozenBackgroundWidth: CGFloat = timeLayoutData.widthOfColumn
-                                             + frozenLayoutData.columnSpacing
-                                             + frozenLayoutData.totalWidthOfColumns
-                                             + frozenLayoutData.totalSpacingOfColumns
-        let frozenBackgroundHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
-        let maskLayer = CAShapeLayer()
-        let maskPath = CGMutablePath()
-        maskPath.addPath(CGPath(rect: bounds, transform: nil))
-        maskPath.addPath(CGPath(rect: CGRect(x: frozenBackgroundWidth,
-                                             y: frozenBackgroundHeight,
-                                             width: bounds.width - frozenBackgroundWidth,
-                                             height: bounds.height - frozenBackgroundHeight),
-                                transform: nil))
-        maskLayer.path = maskPath
-        maskLayer.fillRule = .evenOdd
-//        frozenBackgroundView.layer.mask = maskLayer
-        
+        let frozenRowBackgroundHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
+        frozenRowBackgroundViewHeightConstraint.constant = frozenRowBackgroundHeight
+        frozenColumnBackgroundViewTopConstraint.constant = frozenRowBackgroundHeight
+        frozenColumnBackgroundViewWidthConstraint.constant = timeLayoutData.widthOfColumn
+                                                             + frozenLayoutData.columnSpacing
+                                                             + frozenLayoutData.totalWidthOfColumns
         reInsertTitleViewsIfNeeded()
 
         //
         // First, set contentInset before set contentSize(set it in setup()), otherwise contentOffset is not correct.
         //
         let halfFontLineHeight: CGFloat = round(TimeCell.preferredFont.lineHeight / 2)
-        let scrollViewContentInsetTop: CGFloat = frozenBackgroundHeight + halfFontLineHeight
+        let scrollViewContentInsetTop: CGFloat = frozenRowBackgroundHeight + halfFontLineHeight
         let scrollViewContentInsetBottom: CGFloat = halfFontLineHeight
 
         eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
