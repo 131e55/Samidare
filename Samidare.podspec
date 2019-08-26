@@ -12,11 +12,11 @@ Pod::Spec.new do |s|
   s.summary          = 'A short description of SamidareView.'
   s.ios.deployment_target = '11.0'
   s.source_files = 'SamidareView/Classes/**/*'
-  s.source           = { :git => 'https://github.com/Keisuke Kawamura/Samidare.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/131e55/Samidare.git', :tag => s.version.to_s }
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
                        DESC
-  s.homepage         = 'https://github.com/Keisuke Kawamura/Samidare'
+  s.homepage         = 'https://github.com/131e55/Samidare'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Keisuke Kawamura' => '' }
   s.social_media_url = 'https://twitter.com/131e55'
