@@ -15,6 +15,13 @@ internal final class TimeRangeView: UIView {
     @IBOutlet private weak var endTimeView: UIView!
     @IBOutlet private weak var endTimeLabel: UILabel!
     
+    var color: UIColor = .white {
+        didSet {
+            startTimeView.backgroundColor = color
+            endTimeView.backgroundColor = color
+        }
+    }
+    
     override var intrinsicContentSize: CGSize {
         return CGSize(width: 44, height: UIView.noIntrinsicMetric)
     }

@@ -133,6 +133,7 @@ internal class EditingOverlayView: TouchPassedView {
     }
     
     internal func setTimeRangeViewPosition(toRight: Bool) {
+        timeRangeView.color = editingCell.editingColor
         if toRight && timeRangeView.superview != rightTimeArea {
             rightTimeArea.addSubview(timeRangeView)
             timeRangeView.activateFitFrameConstarintsToSuperview()

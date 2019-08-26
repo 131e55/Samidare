@@ -18,6 +18,8 @@ open class EventCell: UIView {
             NotificationCenter.default.post(name: EventCell.didSetEventNotification, object: self)
         }
     }
+    
+    public var editingColor: UIColor = .white
 
     /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     public internal(set) var indexPath: IndexPath!
