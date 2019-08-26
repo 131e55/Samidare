@@ -3,35 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4840A946E4F27C17D9CC2B2F /* Pods_SamidareView_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B9ACD94BF3BCBBD85806AA /* Pods_SamidareView_Example.framework */; };
+		4330EEEA2174ADA20036FC42 /* CustomCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4330EEE92174ADA20036FC42 /* CustomCell.xib */; };
+		4330EEEC2174AEC60036FC42 /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4330EEEB2174AEC60036FC42 /* CustomCell.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
+		86D054DA76EADEAD80423F22 /* Pods_Samidare_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F76474BEC720A3792DA6356 /* Pods_Samidare_Example.framework */; };
+		F7FC575A230A8F6A00D7F418 /* EventTitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */; };
+		F7FC575B230A8F6A00D7F418 /* EventTitleCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		077B8E4D186C0047C910D6B1 /* Pods_SamidareView_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SamidareView_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		379BBB5ACCCF53384614F118 /* Pods-SamidareView_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SamidareView_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example.release.xcconfig"; sourceTree = "<group>"; };
-		3B4907C3663CCB691DA92D34 /* Pods-SamidareView_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SamidareView_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SamidareView_Tests/Pods-SamidareView_Tests.debug.xcconfig"; sourceTree = "<group>"; };
-		607FACD01AFB9204008FA782 /* SamidareView_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SamidareView_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2CE9C78159C1F893D8F75A7A /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		3513EAABE5705CC50BADEACC /* Pods-Samidare_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Samidare_Example.debug.xcconfig"; path = "Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example.debug.xcconfig"; sourceTree = "<group>"; };
+		4330EEE92174ADA20036FC42 /* CustomCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CustomCell.xib; sourceTree = "<group>"; };
+		4330EEEB2174AEC60036FC42 /* CustomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
+		5F76474BEC720A3792DA6356 /* Pods_Samidare_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Samidare_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		607FACD01AFB9204008FA782 /* Samidare_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Samidare_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		607FACD71AFB9204008FA782 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		607FACDA1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		607FACDF1AFB9204008FA782 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		7D3749374EE61D06270DA516 /* SamidareView.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = SamidareView.podspec; path = ../SamidareView.podspec; sourceTree = "<group>"; };
-		9CA952AC2203E888D0BC4976 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		B3B9ACD94BF3BCBBD85806AA /* Pods_SamidareView_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SamidareView_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D06FC0376D422EA6D08033DB /* Pods-SamidareView_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SamidareView_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-SamidareView_Tests/Pods-SamidareView_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		E4CE65D04DD6011F37C36BC4 /* Pods-SamidareView_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SamidareView_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		FF618C9C1ED6DD9E4250EA6B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		6E460FF01FA20D9BCD8FCFA6 /* Pods-Samidare_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Samidare_Example.release.xcconfig"; path = "Target Support Files/Pods-Samidare_Example/Pods-Samidare_Example.release.xcconfig"; sourceTree = "<group>"; };
+		854DB55DE098DF1EA18604B7 /* Samidare.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Samidare.podspec; path = ../Samidare.podspec; sourceTree = "<group>"; };
+		89AB968F4EE0593F90B272F7 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTitleCell.swift; sourceTree = "<group>"; };
+		F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EventTitleCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,18 +44,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4840A946E4F27C17D9CC2B2F /* Pods_SamidareView_Example.framework in Frameworks */,
+				86D054DA76EADEAD80423F22 /* Pods_Samidare_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		28275E0D2B7AB1912E4D5DC5 /* Frameworks */ = {
+		191A48DCF10FEBD6FB5C30BC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B3B9ACD94BF3BCBBD85806AA /* Pods_SamidareView_Example.framework */,
-				077B8E4D186C0047C910D6B1 /* Pods_SamidareView_Tests.framework */,
+				3513EAABE5705CC50BADEACC /* Pods-Samidare_Example.debug.xcconfig */,
+				6E460FF01FA20D9BCD8FCFA6 /* Pods-Samidare_Example.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		2AB1247055974F5E7CF672A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F76474BEC720A3792DA6356 /* Pods_Samidare_Example.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -59,33 +72,37 @@
 			isa = PBXGroup;
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for SamidareView */,
+				607FACD21AFB9204008FA782 /* Example for Samidare */,
 				607FACD11AFB9204008FA782 /* Products */,
-				C4F3DFAE116964374A74778D /* Pods */,
-				28275E0D2B7AB1912E4D5DC5 /* Frameworks */,
+				191A48DCF10FEBD6FB5C30BC /* Pods */,
+				2AB1247055974F5E7CF672A4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		607FACD11AFB9204008FA782 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				607FACD01AFB9204008FA782 /* SamidareView_Example.app */,
+				607FACD01AFB9204008FA782 /* Samidare_Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for SamidareView */ = {
+		607FACD21AFB9204008FA782 /* Example for Samidare */ = {
 			isa = PBXGroup;
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
+				F7FC5758230A8F6900D7F418 /* EventTitleCell.swift */,
+				F7FC5759230A8F6A00D7F418 /* EventTitleCell.xib */,
+				4330EEE92174ADA20036FC42 /* CustomCell.xib */,
+				4330EEEB2174AEC60036FC42 /* CustomCell.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = "Example for SamidareView";
-			path = SamidareView;
+			name = "Example for Samidare";
+			path = Samidare;
 			sourceTree = "<group>";
 		};
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
@@ -99,44 +116,32 @@
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				7D3749374EE61D06270DA516 /* SamidareView.podspec */,
-				FF618C9C1ED6DD9E4250EA6B /* README.md */,
-				9CA952AC2203E888D0BC4976 /* LICENSE */,
+				854DB55DE098DF1EA18604B7 /* Samidare.podspec */,
+				89AB968F4EE0593F90B272F7 /* README.md */,
+				2CE9C78159C1F893D8F75A7A /* LICENSE */,
 			);
 			name = "Podspec Metadata";
-			sourceTree = "<group>";
-		};
-		C4F3DFAE116964374A74778D /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E4CE65D04DD6011F37C36BC4 /* Pods-SamidareView_Example.debug.xcconfig */,
-				379BBB5ACCCF53384614F118 /* Pods-SamidareView_Example.release.xcconfig */,
-				3B4907C3663CCB691DA92D34 /* Pods-SamidareView_Tests.debug.xcconfig */,
-				D06FC0376D422EA6D08033DB /* Pods-SamidareView_Tests.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		607FACCF1AFB9204008FA782 /* SamidareView_Example */ = {
+		607FACCF1AFB9204008FA782 /* Samidare_Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SamidareView_Example" */;
+			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Samidare_Example" */;
 			buildPhases = (
-				753E87FA1F8F7C65B8718AC0 /* [CP] Check Pods Manifest.lock */,
+				C84CFF740FF1E2EDF4F2CB77 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
-				B36EA9F3C08A05F8138E245B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = SamidareView_Example;
-			productName = SamidareView;
-			productReference = 607FACD01AFB9204008FA782 /* SamidareView_Example.app */;
+			name = Samidare_Example;
+			productName = Samidare;
+			productReference = 607FACD01AFB9204008FA782 /* Samidare_Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -146,19 +151,18 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = 7462AJ4VTX;
 						LastSwiftMigration = 0900;
 					};
 				};
 			};
-			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SamidareView" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Samidare" */;
+			compatibilityVersion = "Xcode 10.0";
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -169,7 +173,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				607FACCF1AFB9204008FA782 /* SamidareView_Example */,
+				607FACCF1AFB9204008FA782 /* Samidare_Example */,
 			);
 		};
 /* End PBXProject section */
@@ -179,8 +183,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7FC575B230A8F6A00D7F418 /* EventTitleCell.xib in Resources */,
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
+				4330EEEA2174ADA20036FC42 /* CustomCell.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -188,40 +194,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		753E87FA1F8F7C65B8718AC0 /* [CP] Check Pods Manifest.lock */ = {
+		C84CFF740FF1E2EDF4F2CB77 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-SamidareView_Example-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Samidare_Example-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B36EA9F3C08A05F8138E245B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Samidare/Samidare.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Samidare.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SamidareView_Example/Pods-SamidareView_Example-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -232,7 +224,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				4330EEEC2174AEC60036FC42 /* CustomCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				F7FC575A230A8F6A00D7F418 /* EventTitleCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +256,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -270,12 +265,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -303,11 +300,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -315,6 +313,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -323,12 +322,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -349,52 +350,66 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E4CE65D04DD6011F37C36BC4 /* Pods-SamidareView_Example.debug.xcconfig */;
+			baseConfigurationReference = 3513EAABE5705CC50BADEACC /* Pods-Samidare_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7462AJ4VTX;
-				INFOPLIST_FILE = SamidareView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INFOPLIST_FILE = Samidare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 379BBB5ACCCF53384614F118 /* Pods-SamidareView_Example.release.xcconfig */;
+			baseConfigurationReference = 6E460FF01FA20D9BCD8FCFA6 /* Pods-Samidare_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7462AJ4VTX;
-				INFOPLIST_FILE = SamidareView/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				INFOPLIST_FILE = Samidare/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "SamidareView" */ = {
+		607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "Samidare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACED1AFB9204008FA782 /* Debug */,
@@ -403,7 +418,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "SamidareView_Example" */ = {
+		607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "Samidare_Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,

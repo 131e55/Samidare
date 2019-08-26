@@ -1,4 +1,4 @@
-# SamidareView
+# Samidare
 
 さみだれびゅー
 
@@ -14,7 +14,7 @@ SamidareView is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'SamidareView'
+pod 'Samidare'
 ```
 
 ## Author

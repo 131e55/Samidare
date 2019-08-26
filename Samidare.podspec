@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint SamidareView.podspec' to ensure this is a
+# Be sure to run `pod lib lint Samidare.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -8,35 +8,16 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Samidare'
-  s.version          = '0.1.22'
+  s.version          = '1.0-beta.1'
   s.summary          = 'A short description of SamidareView.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
-
+  s.ios.deployment_target = '11.0'
+  s.source_files = 'SamidareView/Classes/**/*'
+  s.source           = { :git => 'https://github.com/Keisuke Kawamura/Samidare.git', :tag => s.version.to_s }
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
                        DESC
-
-  s.homepage         = 'https://github.com/Keisuke Kawamura/SamidareView'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/Keisuke Kawamura/Samidare'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Keisuke Kawamura' => '131e550807@gmail.com' }
-  s.source           = { :git => 'https://github.com/Keisuke Kawamura/SamidareView.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
-  s.ios.deployment_target = '10.0'
-
-  s.source_files = 'SamidareView/Classes/**/*'
-
-  # s.resource_bundles = {
-  #   'SamidareView' => ['SamidareView/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
-end
+  s.author           = { 'Keisuke Kawamura' => '' }
+  s.social_media_url = 'https://twitter.com/131e55'
+ end
