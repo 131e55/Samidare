@@ -9,9 +9,10 @@
 Pod::Spec.new do |s|
   s.name             = 'Samidare'
   s.version          = '1.0-beta.1'
-  s.summary          = 'A short description of SamidareView.'
+  s.summary          = 'A short description of Samidare.'
   s.ios.deployment_target = '11.0'
-  s.source_files = 'SamidareView/Classes/**/*'
+  s.swift_version = '5.0'
+  s.source_files = 'Samidare/Classes/**/*'
   s.source           = { :git => 'https://github.com/131e55/Samidare.git', :tag => s.version.to_s }
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
