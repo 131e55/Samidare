@@ -43,7 +43,9 @@ public class SamidareView: UIView {
         get { return survivorManager.expansionRateOfSurvivorArea }
         set { survivorManager.expansionRateOfSurvivorArea = newValue }
     }
-    
+
+    public var cellWasTappedHandler: ((_ cell: EventCell) -> Void)?
+
     public var didBeginEditingEventHandler: ((_ cell: EventCell) -> Void)?
     public var didEditEventHandler: ((_ cell: EventCell) -> Void)?
     
@@ -76,6 +78,9 @@ public class SamidareView: UIView {
 
     private func didInit() {
         eventScrollView.autoresizesSubviews = false
+        eventScrollView.cellWasTappedHandler = { [weak self] cell in
+            self?.cellWasTappedHandler?(cell)
+        }
         eventScrollView.didBeginEditingHandler = { [weak self] cell in
             self?.didBeginEditingEventHandler?(cell)
         }
@@ -196,14 +201,18 @@ public class SamidareView: UIView {
         let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData!
         let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData!
         let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData!
-        
+        let existsFrozenEventScrollView: Bool = frozenLayoutData.totalWidthOfColumns > 0
+        let frozenEventScrollViewWidth: CGFloat = frozenLayoutData.totalWidthOfColumns > 0
+            ? frozenLayoutData.totalWidthOfColumns + frozenLayoutData.totalSpacingOfColumns
+            : 0
         let frozenRowHeight: CGFloat = layoutDataStore.cachedHeightOfColumnTitle ?? 0
+
         frozenRowViewHeightConstraint.constant = frozenRowHeight
         frozenColumnBackgroundViewTopConstraint.constant = frozenRowHeight
         frozenColumnBackgroundViewWidthConstraint.constant = timeLayoutData.widthOfColumn
-                                                             + frozenLayoutData.columnSpacing
-                                                             + frozenLayoutData.totalWidthOfColumns
-                                                             + frozenLayoutData.totalSpacingOfColumns
+        if existsFrozenEventScrollView {
+            frozenColumnBackgroundViewWidthConstraint.constant += frozenLayoutData.columnSpacing + frozenEventScrollViewWidth
+        }
         frozenTopLeftBackgroundViewWidthConstraint.constant = frozenColumnBackgroundViewWidthConstraint.constant
         reInsertTitleViewsIfNeeded()
 
@@ -214,29 +223,25 @@ public class SamidareView: UIView {
         let scrollViewContentInsetTop: CGFloat = frozenRowHeight + halfFontLineHeight
         let scrollViewContentInsetBottom: CGFloat = halfFontLineHeight
 
-        eventScrollView.contentInset.left = timeLayoutData.widthOfColumn
-                                            + frozenLayoutData.columnSpacing
-                                            + frozenLayoutData.totalWidthOfColumns
-                                            + frozenLayoutData.totalSpacingOfColumns
-                                            + eventLayoutData.columnSpacing
-        eventScrollView.contentInset.right = eventLayoutData.columnSpacing
+        eventScrollView.contentInset.left = timeLayoutData.widthOfColumn + eventLayoutData.columnSpacing
+        if existsFrozenEventScrollView {
+            eventScrollView.contentInset.left += frozenLayoutData.columnSpacing + frozenEventScrollViewWidth
+        }
         eventScrollView.contentInset.top = scrollViewContentInsetTop
         eventScrollView.contentInset.bottom = scrollViewContentInsetBottom
         eventScrollView.scrollIndicatorInsets = eventScrollView.contentInset
         
         eventTitleCollectionView.contentInset.left = eventScrollView.contentInset.left
-        eventTitleCollectionView.contentInset.right = eventScrollView.contentInset.right
         let layout = eventTitleCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumLineSpacing = eventLayoutData.columnSpacing
         eventTitleCollectionView.reloadData()
  
         frozenEventScrollView.contentInset.top = scrollViewContentInsetTop
         frozenEventScrollView.contentInset.bottom = scrollViewContentInsetBottom
-        frozenEventScrollViewLeftConstraint.constant = timeLayoutData.widthOfColumn
-                                                       + frozenLayoutData.columnSpacing
-        frozenEventScrollViewWidthConstraint.constant = frozenLayoutData.totalWidthOfColumns
-                                                        + frozenLayoutData.totalSpacingOfColumns
-        
+        frozenEventScrollViewLeftConstraint.constant = existsFrozenEventScrollView
+            ? timeLayoutData.widthOfColumn + frozenLayoutData.columnSpacing
+            : 0
+        frozenEventScrollViewWidthConstraint.constant = frozenEventScrollViewWidth
         eventScrollView.setup(layoutData: eventLayoutData)
         survivorManager.setup(layoutData: eventLayoutData)
         frozenEventScrollView.setup(layoutData: frozenLayoutData)

@@ -27,7 +27,7 @@ open class EventCell: UIView {
     internal var reuseIdentifier: String?
 
     deinit {
-        dprint("deinit")
+//        dprint("deinit")
     }
 
     open func configure(event: Event) {

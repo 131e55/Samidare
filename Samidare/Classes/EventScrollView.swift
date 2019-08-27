@@ -20,6 +20,8 @@ internal class EventScrollView: UIScrollView {
     
     private weak var cellInCreating: EventCell?
 
+    internal var cellWasTappedHandler: ((_ cell: EventCell) -> Void)?
+
     /// Tells editing has begun.
     internal var didBeginEditingHandler: ((_ cell: EventCell) -> Void)?
     internal var didEditHandler: ((_ cell: EventCell) -> Void)?
@@ -29,7 +31,7 @@ internal class EventScrollView: UIScrollView {
     internal override var delegate: UIScrollViewDelegate? {
         didSet {
             if let _ = delegate as? EventScrollView {}
-            else { fatalError("Don't use delegate") }
+            else if delegate != nil { fatalError("🙅‍♀️\(delegate)\nDon't use delegate") }
         }
     }
 
@@ -175,6 +177,7 @@ extension EventScrollView: UIScrollViewDelegate {
 extension EventScrollView {
 
     @objc private func eventCellDidTap(_ sender: UITapGestureRecognizer) {
-        // TODO:
+        guard let eventCell = sender.view as? EventCell else { return }
+        cellWasTappedHandler?(eventCell)
     }
 }

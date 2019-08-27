@@ -77,6 +77,12 @@ public struct LayoutUnit {
     public let heightUnit: CGFloat
     /// Initial minutes in creating EventCell.
     public let initialMinutesInCreating: Minute
+
+    public init(minuteUnit: Minute, heightUnit: CGFloat, initialMinutesInCreating: Minute) {
+        self.minuteUnit = minuteUnit
+        self.heightUnit = heightUnit
+        self.initialMinutesInCreating = initialMinutesInCreating
+    }
 }
 
 internal struct EventScrollViewLayoutData: LayoutDataProtocol {
