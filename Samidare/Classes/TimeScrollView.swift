@@ -108,4 +108,8 @@ open class TimeScrollView: UIScrollView {
 
         mustCallInsertCells = false
     }
+    
+    internal func removeAllAddedCells() {
+        subviews.forEach { $0.removeFromSuperview() }
+    }
 }

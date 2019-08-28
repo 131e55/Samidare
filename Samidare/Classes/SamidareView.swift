@@ -196,6 +196,7 @@ public class SamidareView: UIView {
         eventScrollView.removeAllAddedCells()
         frozenEventScrollView.removeAllAddedCells()
         survivorManager.resetSurvivorIndexPaths([])
+        timeScrollView.removeAllAddedCells()
         guard let dataSource = dataSource else { return }
         layoutDataStore.store(dataSource: dataSource, for: self)
         let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData!
