@@ -26,6 +26,9 @@ final class ViewController: UIViewController {
         samidareView.didEditEventHandler = { cell in
             print(cell.event)
         }
+        samidareView.didEndEditingEventHandler = { cell in
+            print("didEndEditingEventHandler")
+        }
         samidareView.willCreateEventHandler = { [weak self] event, indexPath in
             let cell = CustomCell()
             cell.configure(event: event)

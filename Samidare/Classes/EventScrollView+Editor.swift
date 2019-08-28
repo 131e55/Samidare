@@ -36,8 +36,8 @@ internal extension EventScrollView {
 
         /// Tells editing has begun.
         internal var didBeginEditingHandler: ((_ cell: EventCell) -> Void)?
-
         internal var didEditHandler: ((_ cell: EventCell) -> Void)?
+        internal var didEndEditingHandler: ((_ cell: EventCell) -> Void)?
 
         override init() {
             super.init()
@@ -135,13 +135,17 @@ internal extension EventScrollView {
         }
 
         private func endEditing() {
-            editingCell = nil
             snapshotView?.removeFromSuperview()
             editingOverlayView?.removeFromSuperview()
             if let recognizer = eventScrollViewTapGestureRecognizer {
                 eventScrollView?.removeGestureRecognizer(recognizer)
             }
             NotificationCenter.default.removeObserver(self, name: EventScrollView.didScrollNotification, object: nil)
+            
+            if let editingCell = editingCell {
+                didEndEditingHandler?(editingCell)
+            }
+            editingCell = nil
         }
 
         private func edit(edge: Edge, panningLength: CGFloat) {

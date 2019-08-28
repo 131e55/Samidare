@@ -48,6 +48,7 @@ public class SamidareView: UIView {
 
     public var didBeginEditingEventHandler: ((_ cell: EventCell) -> Void)?
     public var didEditEventHandler: ((_ cell: EventCell) -> Void)?
+    public var didEndEditingEventHandler: ((_ cell: EventCell) -> Void)?
     
     /// If you want to use EventCreator, implement it.
     public var willCreateEventHandler: CreatorWillCreateEventHandler? {
@@ -86,6 +87,9 @@ public class SamidareView: UIView {
         }
         eventScrollView.didEditHandler = { [weak self] cell in
             self?.didEditEventHandler?(cell)
+        }
+        eventScrollView.didEndEditingEventHandler = { [weak self] cell in
+            self?.didEndEditingEventHandler?(cell)
         }
         eventScrollView.didUpdateCreatingEventHandler = { [weak self] cell in
             self?.didUpdateCreatingEventHandler?(cell)

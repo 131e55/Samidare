@@ -25,6 +25,7 @@ internal class EventScrollView: UIScrollView {
     /// Tells editing has begun.
     internal var didBeginEditingHandler: ((_ cell: EventCell) -> Void)?
     internal var didEditHandler: ((_ cell: EventCell) -> Void)?
+    internal var didEndEditingEventHandler: ((_ cell: EventCell) -> Void)?
 
     internal var didUpdateCreatingEventHandler: ((_ cell: EventCell) -> Void)?
     
@@ -73,6 +74,10 @@ internal class EventScrollView: UIScrollView {
             } else {
                 self.didEditHandler?(cell)
             }
+        }
+        editor.didEndEditingHandler = { [weak self] cell in
+            guard let self = self else { return }
+            self.didEndEditingEventHandler?(cell)
         }
         autoScroller.setup(eventScrollView: self)
     }
