@@ -146,6 +146,7 @@ internal extension EventScrollView {
 
         private func edit(edge: Edge, panningLength: CGFloat) {
             guard let layoutData = eventScrollView?.layoutData,
+                let scrollView = eventScrollView,
                 let cell = editingCell,
                 let eventAtBeginEditing = eventAtBeginEditing,
                 let cellFrameAtBeginEditing = cellFrameAtBeginEditing,
@@ -164,9 +165,13 @@ internal extension EventScrollView {
                 if newFrame.size.height - deltaHeight < heightUnit {
                     deltaHeight = deltaHeightSign * (newFrame.size.height - heightUnit)
                 }
+                // Guard minimum origin.minY
+                if newFrame.origin.y + deltaHeight < 0 {
+                    deltaHeight = -newFrame.origin.y
+                }
                 newFrame.origin.y += deltaHeight
                 newFrame.size.height -= deltaHeight
-
+                
             case .bottom:
                 // if the height is positive, the frame will be expanded to bottom-side.
                 // if the height is negative, the frame will be contracted to top-side.
@@ -175,10 +180,25 @@ internal extension EventScrollView {
                 if newFrame.size.height + deltaHeight < heightUnit {
                     deltaHeight = deltaHeightSign * (newFrame.size.height - heightUnit)
                 }
+                // Guard maximum origin.maxY
+                if newFrame.maxY + deltaHeight > scrollView.contentSize.height - TimeCell.preferredFont.lineHeight / 2 {
+                    deltaHeight = scrollView.contentSize.height - TimeCell.preferredFont.lineHeight / 2 - newFrame.maxY
+                }
                 newFrame.size.height += deltaHeight
 
             case .both:
-                newFrame.origin.y += panningLength
+                var deltaY = panningLength
+                
+                // Guard minimum origin.minY
+                if newFrame.origin.y + deltaY < 0 {
+                    deltaY = -newFrame.origin.y
+                }
+                // Guard maximum origin.maxY
+                if newFrame.maxY + deltaY > scrollView.contentSize.height - TimeCell.preferredFont.lineHeight / 2 {
+                    deltaY = scrollView.contentSize.height - TimeCell.preferredFont.lineHeight / 2 - newFrame.maxY
+                }
+                
+                newFrame.origin.y += deltaY
             }
             cell.frame = newFrame
             
