@@ -61,6 +61,21 @@ public class SamidareView: UIView {
     }
     public var didUpdateCreatingEventHandler: ((_ cell: EventCell) -> Void)?
 
+    public var isScrollEnabled: Bool = true {
+        didSet {
+            eventScrollView.isScrollEnabled = isScrollEnabled
+            frozenEventScrollView.isScrollEnabled = isScrollEnabled
+            timeScrollView.isScrollEnabled = isScrollEnabled
+        }
+    }
+    
+    public var contentSize: CGSize {
+        return eventScrollView.contentSize
+    }
+    public var contentInset: UIEdgeInsets {
+        return eventScrollView.contentInset
+    }
+    
     private var mustCallReloadData: Bool = true
 
     public override init(frame: CGRect) {
