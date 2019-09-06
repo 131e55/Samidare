@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Samidare'
-  s.version          = '1.0-beta.4'
+  s.version          = '1.0-beta.5'
   s.summary          = 'A short description of Samidare.'
   s.ios.deployment_target = '11.0'
   s.swift_version = '5.0'
