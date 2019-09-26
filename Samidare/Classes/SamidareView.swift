@@ -54,7 +54,6 @@ public class SamidareView: UIView {
     public var willCreateEventHandler: CreatorWillCreateEventHandler? {
         didSet {
             if let handler = willCreateEventHandler {
-                dprint("call")
                 eventScrollView.setupCreator(willCreateEventHandler: handler)
             }
         }
@@ -192,6 +191,8 @@ public class SamidareView: UIView {
         eventTitleCollectionView.delegate = self
         frozenRowView.addSubview(eventTitleCollectionView)
         eventTitleCollectionView.activateFitFrameConstarintsToSuperview()
+
+        eventTitleCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "None")
         
         frozenRowView.addSubview(frozenColumnTitleViewContainer)
         frozenColumnTitleViewContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -296,8 +297,8 @@ public class SamidareView: UIView {
         frozenColumnTitleViewContainer.subviews.forEach { $0.removeFromSuperview() }
         guard let dataSource = dataSource,
             let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData,
-            let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
-            let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return }
+            let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData
+            else { return }
         
         guard frozenRowViewHeightConstraint.constant > 0 else { return }
 
@@ -410,13 +411,19 @@ extension SamidareView: UICollectionViewDataSource, UICollectionViewDelegateFlow
         return eventTitleCollectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
     }
 
+    public func numberOfSections(in collectionView: UICollectionView) -> Int {
+        guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return 0 }
+        return Set(layoutData.indexPaths.map({ $0.section })).count
+    }
+
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return 0 }
-        return layoutData.indexPaths.count
+        return layoutData.indexPaths.filter({ $0.section == section }).count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return dataSource?.titleCellOfEventColumn(at: indexPath, in: self) ?? UICollectionViewCell()
+        return dataSource?.titleCellOfEventColumn(at: indexPath, in: self)
+                ?? eventTitleCollectionView.dequeueReusableCell(withReuseIdentifier: "None", for: indexPath)
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

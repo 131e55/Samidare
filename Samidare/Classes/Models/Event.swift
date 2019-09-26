@@ -13,11 +13,13 @@ public struct Event {
     public var end: Date { return time.upperBound }
     public var durationInSeconds: Int { return time.durationInSeconds }
 
+    public var color: UIColor
     public var isEditable: Bool
     public var source: Any?
 
-    public init(time: ClosedRange<Date>, isEditable: Bool = true, source: Any? = nil) {
+    public init(time: ClosedRange<Date>, color: UIColor = .cyan, isEditable: Bool = true, source: Any? = nil) {
         self.time = time
+        self.color = color
         self.isEditable = isEditable
         self.source = source
     }
