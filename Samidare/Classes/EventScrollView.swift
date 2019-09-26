@@ -32,7 +32,7 @@ internal class EventScrollView: UIScrollView {
     internal override var delegate: UIScrollViewDelegate? {
         didSet {
             if let _ = delegate as? EventScrollView {}
-            else if delegate != nil { fatalError("🙅‍♀️\(delegate)\nDon't use delegate") }
+            else if delegate != nil { fatalError("🙅‍♀️\(String(describing: delegate))\nDon't use delegate") }
         }
     }
 

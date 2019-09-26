@@ -22,52 +22,52 @@
             <rect key="frame" x="0.0" y="0.0" width="64" height="160"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BTv-au-zoX" userLabel="Start Time View">
-                    <rect key="frame" x="10" y="0.0" width="44" height="20"/>
+                    <rect key="frame" x="10" y="0.0" width="44" height="18"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="86h-7b-xbk">
-                            <rect key="frame" x="4" y="0.0" width="36" height="20"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <rect key="frame" x="2" y="0.0" width="40" height="18"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
                     <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstItem="86h-7b-xbk" firstAttribute="leading" secondItem="BTv-au-zoX" secondAttribute="leading" constant="4" id="LQc-gg-qFh"/>
-                        <constraint firstAttribute="width" constant="44" id="MbS-9G-kF8"/>
                         <constraint firstItem="86h-7b-xbk" firstAttribute="top" secondItem="BTv-au-zoX" secondAttribute="top" id="Pxv-fH-aYb"/>
-                        <constraint firstAttribute="height" constant="20" id="Tyd-Zb-Uve"/>
-                        <constraint firstAttribute="trailing" secondItem="86h-7b-xbk" secondAttribute="trailing" constant="4" id="fYe-kd-8fs"/>
+                        <constraint firstItem="86h-7b-xbk" firstAttribute="leading" secondItem="BTv-au-zoX" secondAttribute="leading" constant="2" id="Q1H-60-YaF"/>
+                        <constraint firstAttribute="height" constant="18" id="Tyd-Zb-Uve"/>
                         <constraint firstAttribute="bottom" secondItem="86h-7b-xbk" secondAttribute="bottom" id="l56-bd-lD9"/>
+                        <constraint firstAttribute="width" constant="44" id="mqV-t8-HC1"/>
+                        <constraint firstAttribute="trailing" secondItem="86h-7b-xbk" secondAttribute="trailing" constant="2" id="rzv-Ow-Aoh"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                            <integer key="value" value="10"/>
+                            <integer key="value" value="9"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ui6-P2-NxY" userLabel="End Time View">
-                    <rect key="frame" x="10" y="140" width="44" height="20"/>
+                    <rect key="frame" x="10" y="142" width="44" height="18"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="88:88" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="fDv-rW-4Ql">
-                            <rect key="frame" x="4" y="0.0" width="36" height="20"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <rect key="frame" x="2" y="0.0" width="40" height="18"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
                     <color key="backgroundColor" red="0.96470588239999999" green="0.1764705882" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="44" id="HKa-dU-fQz"/>
-                        <constraint firstItem="fDv-rW-4Ql" firstAttribute="leading" secondItem="Ui6-P2-NxY" secondAttribute="leading" constant="4" id="QFN-PD-dhH"/>
+                        <constraint firstItem="fDv-rW-4Ql" firstAttribute="leading" secondItem="Ui6-P2-NxY" secondAttribute="leading" constant="2" id="QFN-PD-dhH"/>
                         <constraint firstAttribute="bottom" secondItem="fDv-rW-4Ql" secondAttribute="bottom" id="SYN-hB-Qsh"/>
-                        <constraint firstAttribute="trailing" secondItem="fDv-rW-4Ql" secondAttribute="trailing" constant="4" id="UNN-gz-zpH"/>
+                        <constraint firstAttribute="trailing" secondItem="fDv-rW-4Ql" secondAttribute="trailing" constant="2" id="UNN-gz-zpH"/>
+                        <constraint firstAttribute="width" constant="44" id="m8V-fp-dXb"/>
                         <constraint firstItem="fDv-rW-4Ql" firstAttribute="top" secondItem="Ui6-P2-NxY" secondAttribute="top" id="svF-Vv-EN6"/>
-                        <constraint firstAttribute="height" constant="20" id="x7N-3M-x58"/>
+                        <constraint firstAttribute="height" constant="18" id="x7N-3M-x58"/>
                     </constraints>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                            <integer key="value" value="10"/>
+                            <integer key="value" value="9"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                 </view>
@@ -82,6 +82,7 @@
             <nil key="simulatedTopBarMetrics"/>
             <nil key="simulatedBottomBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="137.68115942028987" y="153.2608695652174"/>
         </view>
     </objects>
 </document>

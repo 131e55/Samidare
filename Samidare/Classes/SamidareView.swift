@@ -54,7 +54,6 @@ public class SamidareView: UIView {
     public var willCreateEventHandler: CreatorWillCreateEventHandler? {
         didSet {
             if let handler = willCreateEventHandler {
-                dprint("call")
                 eventScrollView.setupCreator(willCreateEventHandler: handler)
             }
         }
@@ -298,8 +297,8 @@ public class SamidareView: UIView {
         frozenColumnTitleViewContainer.subviews.forEach { $0.removeFromSuperview() }
         guard let dataSource = dataSource,
             let timeLayoutData = layoutDataStore.cachedTimeScrollViewLayoutData,
-            let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
-            let eventLayoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return }
+            let frozenLayoutData = layoutDataStore.cachedFrozenEventScrollViewLayoutData
+            else { return }
         
         guard frozenRowViewHeightConstraint.constant > 0 else { return }
 

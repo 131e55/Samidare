@@ -19,8 +19,6 @@ open class EventCell: UIView {
         }
     }
     
-    public var editingColor: UIColor = .white
-
     /// Current indexPath in EventScrollView or nil If the cell not a subview of EventScrollView.
     public internal(set) var indexPath: IndexPath!
 

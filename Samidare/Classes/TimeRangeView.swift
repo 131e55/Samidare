@@ -17,8 +17,12 @@ internal final class TimeRangeView: UIView {
     
     var color: UIColor = .white {
         didSet {
-            startTimeView.backgroundColor = color
-            endTimeView.backgroundColor = color
+            startTimeView.backgroundColor = .white
+            startTimeView.layer.borderWidth = 1
+            startTimeView.layer.borderColor = color.cgColor
+            endTimeView.backgroundColor = .white
+            endTimeView.layer.borderWidth = 1
+            endTimeView.layer.borderColor = color.cgColor
         }
     }
     

@@ -11,13 +11,15 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="EditingOverlayView" customModule="Samidare" customModuleProvider="target">
             <connections>
-                <outlet property="bottomKnobView" destination="Njg-GR-Jwk" id="P5g-z8-Tjm"/>
+                <outlet property="bottomKnobContainerView" destination="Njg-GR-Jwk" id="MgQ-2a-v6h"/>
+                <outlet property="bottomKnobView" destination="aVw-s7-aZJ" id="ElQ-xR-Sd1"/>
                 <outlet property="cellHeightConstraint" destination="xBj-tq-Y8a" id="OAr-h0-7cF"/>
                 <outlet property="cellOverlayView" destination="YCx-HK-hiL" id="GdO-YY-pJD"/>
                 <outlet property="cellWidthConstraint" destination="hfH-2U-npR" id="5ki-sD-zeT"/>
                 <outlet property="leftTimeArea" destination="at4-Ai-IzB" id="RIh-bN-xRV"/>
                 <outlet property="rightTimeArea" destination="5DY-eg-D6R" id="TXh-ru-HfK"/>
-                <outlet property="topKnobView" destination="Hpj-mY-ged" id="gGX-wF-i8j"/>
+                <outlet property="topKnobContainerView" destination="Hpj-mY-ged" id="9ba-9m-JYn"/>
+                <outlet property="topKnobView" destination="R8F-qQ-oTW" id="glm-xn-kZ2"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -34,14 +36,14 @@
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="at4-Ai-IzB" userLabel="Left Time View Area">
-                    <rect key="frame" x="8" y="86" width="44" height="84"/>
+                    <rect key="frame" x="12" y="86" width="44" height="84"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="44" id="oAz-Uv-MN9"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5DY-eg-D6R" userLabel="Right Time View Area">
-                    <rect key="frame" x="112" y="86" width="44" height="84"/>
+                    <rect key="frame" x="108" y="86" width="44" height="84"/>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="44" id="lKI-hy-CQl"/>
@@ -107,11 +109,11 @@
                 <constraint firstItem="Hpj-mY-ged" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="top" id="LRv-d2-L9a"/>
                 <constraint firstItem="Hpj-mY-ged" firstAttribute="width" secondItem="YCx-HK-hiL" secondAttribute="width" id="SSM-nn-h8X"/>
                 <constraint firstItem="5DY-eg-D6R" firstAttribute="width" secondItem="at4-Ai-IzB" secondAttribute="width" id="XJC-w4-em4"/>
-                <constraint firstItem="5DY-eg-D6R" firstAttribute="leading" secondItem="YCx-HK-hiL" secondAttribute="trailing" constant="8" id="bXd-EB-y5V"/>
+                <constraint firstItem="5DY-eg-D6R" firstAttribute="leading" secondItem="YCx-HK-hiL" secondAttribute="trailing" constant="4" id="bXd-EB-y5V"/>
                 <constraint firstItem="at4-Ai-IzB" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="c3U-pd-d3o"/>
                 <constraint firstItem="Njg-GR-Jwk" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="bottom" id="dq3-t5-dgG"/>
                 <constraint firstItem="5DY-eg-D6R" firstAttribute="centerY" secondItem="YCx-HK-hiL" secondAttribute="centerY" id="i2x-Xv-Sto"/>
-                <constraint firstItem="YCx-HK-hiL" firstAttribute="leading" secondItem="at4-Ai-IzB" secondAttribute="trailing" constant="8" id="iQA-d4-fbk"/>
+                <constraint firstItem="YCx-HK-hiL" firstAttribute="leading" secondItem="at4-Ai-IzB" secondAttribute="trailing" constant="4" id="iQA-d4-fbk"/>
                 <constraint firstItem="YCx-HK-hiL" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="kQz-Tk-9S4"/>
             </constraints>
             <nil key="simulatedTopBarMetrics"/>
