@@ -126,10 +126,11 @@ internal extension EventScrollView {
             eventScrollViewTapGestureRecognizer = recognizer
 
             NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidScroll),
-                                                   name: EventScrollView.didScrollNotification, object: nil)
+                                                   name: EventScrollView.didScrollNotification,
+                                                   object: scrollView)
             NotificationCenter.default.addObserver(self, selector: #selector(eventScrollViewDidEndScroll),
-                                                   name: EventScrollView.didEndScrollNotification, object: nil)
-
+                                                   name: EventScrollView.didEndScrollNotification,
+                                                   object: scrollView)
             heavyImpactFeedbackGenerator.impactOccurred()
             didBeginEditingHandler?(cell)
         }

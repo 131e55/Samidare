@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet private weak var samidareView: SamidareView!
 
-    let sampleData = SampleData.events(sections: 4, columns: 50)
+    var sampleData = SampleData.events(sections: 4, columns: 50)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +26,7 @@ final class ViewController: UIViewController {
         samidareView.didEditEventHandler = { cell in
             print(cell.event)
         }
-        samidareView.didEndEditingEventHandler = { cell in
+        samidareView.didEndEditingEventHandler = { [weak self] cell in
             print("didEndEditingEventHandler")
         }
         samidareView.willCreateEventHandler = { [weak self] event, indexPath in
@@ -44,10 +44,8 @@ final class ViewController: UIViewController {
 extension ViewController: SamidareViewDataSource {
     
     func timeRange(in samidareView: SamidareView) -> ClosedRange<Date> {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy/MM/dd HH:mm"
-        return formatter.date(from: "2019/08/07 00:00")! ... formatter.date(from: "2019/08/09 06:30")!
+        let all = sampleData.values.flatMap({ $0 }).sorted(by: { $0.start < $1.start })
+        return all.first!.start ... all.last!.end
     }
     
     func heightOfColumnTitle(in samidareView: SamidareView) -> CGFloat {
