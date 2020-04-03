@@ -431,4 +431,21 @@ extension SamidareView: UICollectionViewDataSource, UICollectionViewDelegateFlow
         let convertedIndexPath = layoutData.indexPaths[indexPath.item]
         return CGSize(width: layoutData.widthOfColumn[convertedIndexPath]!, height: collectionView.bounds.height)
     }
+    
+    public func scrollToItem(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
+        guard let dataSource = dataSource,
+            let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
+            let frozenData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
+            let widthOfColumn = layoutDataStore.cachedTimeScrollViewLayoutData?.widthOfColumn,
+            let x = layoutData.xPositionOfColumn[indexPath] else { return }
+        
+        let cells = dataSource.cells(at: indexPath, in: self)
+        let y = layoutData.roundedDistanceOfTimeRangeStart(to: cells.first!.event.start)
+        let heightOfColumnTitle = dataSource.heightOfColumnTitle(in: self)
+            
+        eventScrollView.setContentOffset(
+            CGPoint(x: x - frozenData.totalWidthOfColumns - frozenData.totalSpacingOfColumns - widthOfColumn - space,
+                    y: y - heightOfColumnTitle - space),
+            animated: animated)
+    }
 }
