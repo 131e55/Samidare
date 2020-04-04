@@ -380,6 +380,27 @@ public class SamidareView: UIView {
         }
         return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
+    
+    public func scrollToItem(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
+        guard let dataSource = dataSource,
+            let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
+            let frozenData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
+            let widthOfColumn = layoutDataStore.cachedTimeScrollViewLayoutData?.widthOfColumn,
+            let xPositionOfColumn = layoutData.xPositionOfColumn[indexPath],
+            let cell = dataSource.cells(at: indexPath, in: self).first else { return }
+        
+        let heightOfColumnTitle = dataSource.heightOfColumnTitle(in: self)
+        
+        // contentOffset.yが大きくてスクロール時にカクつかないように、制御する
+        var y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - heightOfColumnTitle - space
+        let maxContentOffsetY = eventScrollView.contentSize.height - eventScrollView.frame.height
+        y = min(y, maxContentOffsetY)
+        
+        let x = xPositionOfColumn - frozenData.totalWidthOfColumns
+            - frozenData.totalSpacingOfColumns - widthOfColumn - space
+        
+        eventScrollView.setContentOffset(CGPoint(x: x, y: y), animated: animated)
+    }
 }
 
 extension SamidareView {
@@ -430,22 +451,5 @@ extension SamidareView: UICollectionViewDataSource, UICollectionViewDelegateFlow
         guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return .zero }
         let convertedIndexPath = layoutData.indexPaths[indexPath.item]
         return CGSize(width: layoutData.widthOfColumn[convertedIndexPath]!, height: collectionView.bounds.height)
-    }
-    
-    public func scrollToItem(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
-        guard let dataSource = dataSource,
-            let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
-            let frozenData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
-            let widthOfColumn = layoutDataStore.cachedTimeScrollViewLayoutData?.widthOfColumn,
-            let x = layoutData.xPositionOfColumn[indexPath] else { return }
-        
-        let cells = dataSource.cells(at: indexPath, in: self)
-        let y = layoutData.roundedDistanceOfTimeRangeStart(to: cells.first!.event.start)
-        let heightOfColumnTitle = dataSource.heightOfColumnTitle(in: self)
-            
-        eventScrollView.setContentOffset(
-            CGPoint(x: x - frozenData.totalWidthOfColumns - frozenData.totalSpacingOfColumns - widthOfColumn - space,
-                    y: y - heightOfColumnTitle - space),
-            animated: animated)
     }
 }
