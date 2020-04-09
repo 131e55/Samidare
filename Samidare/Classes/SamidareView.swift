@@ -381,7 +381,7 @@ public class SamidareView: UIView {
         return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
     
-    public func scrollToItem(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
+    public func scrollToColumn(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
         guard let dataSource = dataSource,
             let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
             let frozenData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
@@ -390,11 +390,12 @@ public class SamidareView: UIView {
             let cell = dataSource.cells(at: indexPath, in: self).first else { return }
         
         let heightOfColumnTitle = dataSource.heightOfColumnTitle(in: self)
+        let heightOfTitle = heightOfColumnTitle + space
         
         // contentOffset.yが大きくてスクロール時にカクつかないように、制御する
-        var y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - heightOfColumnTitle - space
+        var y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - heightOfTitle
         let maxContentOffsetY = eventScrollView.contentSize.height - eventScrollView.frame.height
-        y = min(y, maxContentOffsetY)
+        y = max(heightOfTitle, min(y, maxContentOffsetY))
         
         let x = xPositionOfColumn - frozenData.totalWidthOfColumns
             - frozenData.totalSpacingOfColumns - widthOfColumn - space
