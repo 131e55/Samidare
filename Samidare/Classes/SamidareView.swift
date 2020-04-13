@@ -380,6 +380,37 @@ public class SamidareView: UIView {
         }
         return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
+    
+    public func scrollToColumn(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
+        guard let dataSource = dataSource,
+            let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
+            let xPositionOfColumn = layoutData.xPositionOfColumn[indexPath],
+            let cell = dataSource.cells(at: indexPath, in: self).first else { return }
+        
+        // control contentOffset so that contentOffset exceed contentSize
+        let insetTop: CGFloat = eventScrollView.contentInset.top
+        var y: CGFloat
+        let isScrollableY: Bool = eventScrollView.contentSize.height > eventScrollView.frame.height
+        if isScrollableY {
+            let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height
+            y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - insetTop - space
+            y = min(y, maxContentOffsetY)
+        } else {
+            y = -insetTop
+        }
+        
+        let insetLeft: CGFloat = eventScrollView.contentInset.left
+        var x: CGFloat
+        let isScrollableX: Bool = eventScrollView.contentSize.width > eventScrollView.frame.width
+        if isScrollableX {
+            let maxContentOffsetX: CGFloat = eventScrollView.contentSize.width - eventScrollView.frame.width
+            x = xPositionOfColumn - insetLeft - space
+            x = min(x, maxContentOffsetX)
+        } else {
+            x = -insetLeft
+        }
+        eventScrollView.setContentOffset(CGPoint(x: x, y: y), animated: animated)
+    }
 }
 
 extension SamidareView {
