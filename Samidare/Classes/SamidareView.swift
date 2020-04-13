@@ -384,22 +384,31 @@ public class SamidareView: UIView {
     public func scrollToColumn(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
         guard let dataSource = dataSource,
             let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
-            let frozenData = layoutDataStore.cachedFrozenEventScrollViewLayoutData,
-            let widthOfColumn = layoutDataStore.cachedTimeScrollViewLayoutData?.widthOfColumn,
             let xPositionOfColumn = layoutData.xPositionOfColumn[indexPath],
             let cell = dataSource.cells(at: indexPath, in: self).first else { return }
         
-        let heightOfColumnTitle = dataSource.heightOfColumnTitle(in: self)
-        let heightOfTitle = heightOfColumnTitle + space
+        // control contentOffset so that contentOffset exceed contentSize
+        let insetTop: CGFloat = eventScrollView.contentInset.top
+        var y: CGFloat
+        let isScrollableY: Bool = eventScrollView.contentSize.height > eventScrollView.frame.height
+        if isScrollableY {
+            let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height
+            y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - insetTop - space
+            y = min(y, maxContentOffsetY)
+        } else {
+            y = -insetTop
+        }
         
-        // contentOffset.yが大きくてスクロール時にカクつかないように、制御する
-        var y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - heightOfTitle
-        let maxContentOffsetY = eventScrollView.contentSize.height - eventScrollView.frame.height
-        y = max(heightOfTitle, min(y, maxContentOffsetY))
-        
-        let x = xPositionOfColumn - frozenData.totalWidthOfColumns
-            - frozenData.totalSpacingOfColumns - widthOfColumn - space
-        
+        let insetLeft: CGFloat = eventScrollView.contentInset.left
+        var x: CGFloat
+        let isScrollableX: Bool = eventScrollView.contentSize.width > eventScrollView.frame.width
+        if isScrollableX {
+            let maxContentOffsetX: CGFloat = eventScrollView.contentSize.width - eventScrollView.frame.width
+            x = xPositionOfColumn - insetLeft - space
+            x = min(x, maxContentOffsetX)
+        } else {
+            x = -insetLeft
+        }
         eventScrollView.setContentOffset(CGPoint(x: x, y: y), animated: animated)
     }
 }
