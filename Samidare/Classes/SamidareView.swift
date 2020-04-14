@@ -395,13 +395,13 @@ public class SamidareView: UIView {
         
         // control contentOffset so that contentOffset exceed contentSize
         let insetTop: CGFloat = eventScrollView.contentInset.top
-        let additionalContentInsetBottom = (additionalContentInset?.bottom ?? 0)
+        let contentInsetBottom = contentInset.bottom
         var y: CGFloat
         let isScrollableY: Bool =
-            eventScrollView.contentSize.height + additionalContentInsetBottom > eventScrollView.frame.height
+            eventScrollView.contentSize.height + contentInsetBottom > eventScrollView.frame.height
         if isScrollableY {
             let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height
-                + additionalContentInsetBottom
+                + contentInsetBottom
             y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - insetTop - space
             y = min(y, maxContentOffsetY)
         } else {
@@ -409,13 +409,13 @@ public class SamidareView: UIView {
         }
         
         let insetLeft: CGFloat = eventScrollView.contentInset.left
-        let additionalContentInsetRight = additionalContentInset?.right ?? 0
+        let contentInsetRight = contentInset.right
         var x: CGFloat
         let isScrollableX: Bool =
-            eventScrollView.contentSize.width + additionalContentInsetRight > eventScrollView.frame.width
+            eventScrollView.contentSize.width + contentInsetRight > eventScrollView.frame.width
         if isScrollableX {
             let maxContentOffsetX: CGFloat = eventScrollView.contentSize.width - eventScrollView.frame.width
-                + additionalContentInsetRight
+                + contentInsetRight
             x = xPositionOfColumn - insetLeft - space
             x = min(x, maxContentOffsetX)
         } else {
