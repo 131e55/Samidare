@@ -394,32 +394,27 @@ public class SamidareView: UIView {
             let cell = dataSource.cells(at: indexPath, in: self).first else { return }
         
         // control contentOffset so that contentOffset exceed contentSize
-        let insetTop: CGFloat = eventScrollView.contentInset.top
-        let contentInsetBottom = contentInset.bottom
+        let inset: UIEdgeInsets = eventScrollView.contentInset
         var y: CGFloat
-        let isScrollableY: Bool =
-            eventScrollView.contentSize.height + contentInsetBottom > eventScrollView.frame.height
+        let isScrollableY: Bool
+            = eventScrollView.contentSize.height + inset.bottom > eventScrollView.frame.height
         if isScrollableY {
-            let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height
-                + contentInsetBottom
-            y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - insetTop - space
+            let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height + inset.bottom
+            y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - inset.top - space
             y = min(y, maxContentOffsetY)
         } else {
-            y = -insetTop
+            y = -inset.top
         }
-        
-        let insetLeft: CGFloat = eventScrollView.contentInset.left
-        let contentInsetRight = contentInset.right
+
         var x: CGFloat
-        let isScrollableX: Bool =
-            eventScrollView.contentSize.width + contentInsetRight > eventScrollView.frame.width
+        let isScrollableX: Bool
+            = eventScrollView.contentSize.width + inset.right > eventScrollView.frame.width
         if isScrollableX {
-            let maxContentOffsetX: CGFloat = eventScrollView.contentSize.width - eventScrollView.frame.width
-                + contentInsetRight
-            x = xPositionOfColumn - insetLeft - space
+            let maxContentOffsetX: CGFloat = eventScrollView.contentSize.width - eventScrollView.frame.width + inset.right
+            x = xPositionOfColumn - inset.left - space
             x = min(x, maxContentOffsetX)
         } else {
-            x = -insetLeft
+            x = -inset.left
         }
         eventScrollView.setContentOffset(CGPoint(x: x, y: y), animated: animated)
     }
