@@ -387,11 +387,18 @@ public class SamidareView: UIView {
         return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
     
-    public func scrollToColumn(at indexPath: IndexPath, animated: Bool, space: CGFloat = 0) {
+    public func scrollToColumn(at indexPath: IndexPath, animated: Bool, startTime: Date? = nil, space: CGFloat = 0) {
         guard let dataSource = dataSource,
             let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,
             let xPositionOfColumn = layoutData.xPositionOfColumn[indexPath],
             let cell = dataSource.cells(at: indexPath, in: self).first else { return }
+        
+        let scrollStartTime: Date
+        if let startTime = startTime {
+            scrollStartTime = startTime
+        } else {
+            scrollStartTime = cell.event.start
+        }
         
         // control contentOffset so that contentOffset exceed contentSize
         let inset: UIEdgeInsets = eventScrollView.contentInset
@@ -400,7 +407,7 @@ public class SamidareView: UIView {
             = eventScrollView.contentSize.height + inset.bottom > eventScrollView.frame.height
         if isScrollableY {
             let maxContentOffsetY: CGFloat = eventScrollView.contentSize.height - eventScrollView.frame.height + inset.bottom
-            y = layoutData.roundedDistanceOfTimeRangeStart(to: cell.event.start) - inset.top - space
+            y = layoutData.roundedDistanceOfTimeRangeStart(to: scrollStartTime) - inset.top - space
             y = min(y, maxContentOffsetY)
         } else {
             y = -inset.top
