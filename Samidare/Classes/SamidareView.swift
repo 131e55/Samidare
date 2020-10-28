@@ -387,6 +387,15 @@ public class SamidareView: UIView {
         return reusableCellQueue.create(withReuseIdentifier: identifier) as! T
     }
     
+    public func scroll(to date: Date) {
+        guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return }
+        let sanitizedDate: Date = min(max(date, layoutData.timeRange.lowerBound), layoutData.timeRange.upperBound)
+        let distnce: CGFloat = layoutData.roundedDistanceOfTimeRangeStart(to: sanitizedDate)
+        let y: CGFloat = distnce - eventScrollView.contentInset.top
+        let offset: CGPoint = CGPoint(x: eventScrollView.contentOffset.x, y: y)
+        eventScrollView.setContentOffset(offset, animated: true)
+    }
+    
     public func scrollToColumn(at indexPath: IndexPath, animated: Bool, startTime: Date? = nil, space: CGFloat = 0) {
         guard let dataSource = dataSource,
             let layoutData = layoutDataStore.cachedEventScrollViewLayoutData,

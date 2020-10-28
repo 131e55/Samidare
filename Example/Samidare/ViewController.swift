@@ -39,6 +39,15 @@ final class ViewController: UIViewController {
             print(cell.event)
         }
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+//        let formatter = DateFormatter()
+//        formatter.locale = Locale(identifier: "en_US_POSIX")
+//        formatter.dateFormat = "yyyy/MM/dd HH:mm"
+//        samidareView.scroll(to: formatter.date(from: "2019/08/07 10:00")!)
+    }
 }
 
 extension ViewController: SamidareViewDataSource {
@@ -56,6 +65,7 @@ extension ViewController: SamidareViewDataSource {
         let label = UILabel()
         label.textAlignment = .center
         label.text = "Time"
+        label.textColor = .black
         return label
     }
     
@@ -63,6 +73,7 @@ extension ViewController: SamidareViewDataSource {
         let label = UILabel()
         label.textAlignment = .center
         label.text = "❄️\(indexPath.item)"
+        label.textColor = .black
         return label
     }
     
