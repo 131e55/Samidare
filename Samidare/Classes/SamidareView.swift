@@ -258,11 +258,14 @@ public class SamidareView: UIView {
             eventScrollView.contentInset.right += additionalContentInset.right
             eventScrollView.contentInset.bottom += additionalContentInset.bottom
         }
+        
         eventTitleCollectionView.contentInset.left = eventScrollView.contentInset.left
+        eventTitleCollectionView.reloadData()
         let layout = eventTitleCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumLineSpacing = eventLayoutData.columnSpacing
-        eventTitleCollectionView.reloadData()
- 
+        layout.invalidateLayout()
+        eventTitleCollectionView.layoutIfNeeded()
+
         frozenEventScrollView.contentInset.top = scrollViewContentInsetTop
         frozenEventScrollView.contentInset.bottom = scrollViewContentInsetBottom
         frozenEventScrollViewLeftConstraint.constant = existsFrozenEventScrollView
