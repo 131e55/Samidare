@@ -8,9 +8,9 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Samidare'
-  s.version          = '1.0-beta.12'
-  s.summary          = 'A short description of Samidare.'
-  s.ios.deployment_target = '11.0'
+  s.version          = '1.0-beta.13'
+  s.summary          = 'Samidare is Event Viewer like 五月雨(Samidare).'
+  s.ios.deployment_target = '12.0'
   s.swift_version = '5.0'
   s.source_files = 'Samidare/Classes/**/*'
   s.source           = { :git => 'https://github.com/131e55/Samidare.git', :tag => s.version.to_s }
