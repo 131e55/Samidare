@@ -485,7 +485,6 @@ extension SamidareView: UICollectionViewDataSource, UICollectionViewDelegateFlow
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let layoutData = layoutDataStore.cachedEventScrollViewLayoutData else { return .zero }
-        let convertedIndexPath = layoutData.indexPaths[indexPath.item]
-        return CGSize(width: layoutData.widthOfColumn[convertedIndexPath]!, height: collectionView.bounds.height)
+        return CGSize(width: layoutData.widthOfColumn[indexPath]!, height: collectionView.bounds.height)
     }
 }

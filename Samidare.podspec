@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Samidare'
-  s.version          = '1.0-beta.13'
+  s.version          = '1.0-beta.14'
   s.summary          = 'Samidare is Event Viewer like 五月雨(Samidare).'
   s.ios.deployment_target = '12.0'
   s.swift_version = '5.0'
